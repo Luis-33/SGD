@@ -128,7 +128,8 @@ class UserModel
     {
         $query = "UPDATE usuario SET usuario_password = :password WHERE usuario_id = :userID";
         $stmt = $this->db->prepare($query);
-        $hashedPassword = password_hash('12345', PASSWORD_BCRYPT);
+        $hashedPassword = '12345';
+    //    $hashedPassword = password_hash('12345', PASSWORD_BCRYPT);
         $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         return $stmt->execute();

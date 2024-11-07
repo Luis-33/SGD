@@ -7,6 +7,7 @@ function generateModal($class, $title, $showClose)
                         <div class=\"modal_header\">
                             <h2>$title</h2>";
     if ($showClose === true) {
+
         $modal .= "<button onclick=\"closeModal('$class')\">Cerrar</button>";
     }
     $modal .= "</div>

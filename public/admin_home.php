@@ -16,6 +16,7 @@ if (!Session::isLoggedIn()) {
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +45,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $documentController = new DocumentController($db);
 
             switch ($page) {
+
                 case 'dashboard':
+
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
                             $permiso = $_POST['permiso'];

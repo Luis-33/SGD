@@ -47,9 +47,11 @@ class LoginController
                     exit();
                 }
 
+
+
                 // Validate password
-                if ($user['usuario_password'] === $password) {
-                    // if (password_verify($password, $user['usuario_password'])) {
+              //  if ($user['usuario_password'] === $password) {
+                if (password_verify($password, $user['usuario_password'])) {
                     // Logging the user in
                     $this->initializeSession($user);
 

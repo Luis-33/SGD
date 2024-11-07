@@ -87,15 +87,14 @@ class DocumentController
 
     public function generateDiaCumple($db, $userID)
     {
-
         $result = $this->documentModel->countDiaCumple($userID);
 
         if ($result['diaCumple'] >= 1) {
-
             Session::set('document_warning', 'Solo puedes generar un dia de cumpleaños.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
         } else {
 
+            //$actualDate = sustituir por la variable birthday
             $actualDate = date("Y-m-d");
             $userModel = new UserModel($db);
             $userInfo = $userModel->getUserById($userID);

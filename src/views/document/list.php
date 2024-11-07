@@ -15,7 +15,10 @@
 
 <?php endif; ?>
 
+
+
 <?php if (!empty($documents)) : ?>
+
     <div class="card_table">
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis documentos" : "Documentos"; ?></h2>

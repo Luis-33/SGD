@@ -55,8 +55,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $endDate = $_POST['end-date'];
                             $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia economico', null);
-                        } else if ($action === 'addDiaCumple') {
-                            $documentController->generateDiaCumple($db, $userID);
+                        } else if ($action === 'addDiaCumple' && isset($_POST['birthday'])) {
+                            $birthday = $_POST['birthday'];
+                            $documentController->generateDiaCumple($db, $userID, $birthday);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia de cumpleaños', null);
                         } else if ($action === 'addReporteIncidencia' && isset($_POST['fecha'], $_POST['incidencia'], $_POST['motivo'])) {
                             $date = $_POST['fecha'];

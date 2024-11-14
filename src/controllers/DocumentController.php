@@ -85,7 +85,7 @@ class DocumentController
         }
     }
 
-    public function generateDiaCumple($db, $userID)
+    public function generateDiaCumple($db, $userID, $birthday)
     {
         $result = $this->documentModel->countDiaCumple($userID);
 
@@ -95,7 +95,7 @@ class DocumentController
         } else {
 
             //$actualDate = sustituir por la variable birthday
-            $actualDate = date("Y-m-d");
+            $actualDate = $birthday;
             $userModel = new UserModel($db);
             $userInfo = $userModel->getUserById($userID);
             $directorName = $userModel->getDirectorName();
@@ -109,7 +109,7 @@ class DocumentController
             $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia De Cumpleaños ' . $actualDate . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
 
-            $documents = $this->documentModel->insertDocument($userID, 'Dia de cumpleaños', $pathPDF, $actualDate, 'Pendiente');
+            $documents = $this->documentModel->insertDocument($userID, '_dia_de_cumpleaños', $pathPDF, $actualDate, 'Pendiente');
 
             Session::set('document_success', 'Dia de cumpleaños generado con exito.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";

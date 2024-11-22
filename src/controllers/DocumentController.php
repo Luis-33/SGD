@@ -78,7 +78,7 @@ class DocumentController
             $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia Economico ' . $actualDate . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
 
-            $documents = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate, 'Pendiente');
+            $documents = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate, $actualDate,'Pendiente');
 
             Session::set('document_success', 'Dia economico generado con exito.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
@@ -95,7 +95,7 @@ class DocumentController
         } else {
 
             //$actualDate = sustituir por la variable birthday
-            $actualDate = $birthday;
+            $actualDate = date("Y-m-d");
             $userModel = new UserModel($db);
             $userInfo = $userModel->getUserById($userID);
             $directorName = $userModel->getDirectorName();
@@ -104,12 +104,12 @@ class DocumentController
             $pdf->AliasNbPages();
             $pdf->setHeaderTitle("FORMATO DE SOLICITUD DE DIA DE CUMPLEAÑOS");
             $pdf->AddPage();
-            $pdf->generateDiaCumple($userInfo['usuario_nombre'], $userInfo['puesto_nombre'], $userInfo['usuario_nomina'], $userInfo['sindicato_id'], $userInfo['usuario_fechaCumpleaños'], $userInfo['sindicato_jefe'], $userInfo['jefeInmediato_nombre'], $directorName['usuario_nombre']);
+            $pdf->generateDiaCumple($userInfo['usuario_nombre'], $userInfo['puesto_nombre'], $userInfo['usuario_nomina'], $userInfo['sindicato_id'], $userInfo['usuario_fechaCumpleaños'], $userInfo['sindicato_jefe'], $userInfo['jefeInmediato_nombre'], $directorName['usuario_nombre'], $birthday);
 
-            $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia De Cumpleaños ' . $actualDate . ' ' . time() . '.pdf';
+            $pathPDF = PDF_PATH . 'docs/' . str_replace(' ', '', $userInfo['usuario_nombre']) . '_dia_de_cumpleaños_' . $birthday . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
 
-            $documents = $this->documentModel->insertDocument($userID, '_dia_de_cumpleaños', $pathPDF, $actualDate, 'Pendiente');
+            $documents = $this->documentModel->insertDocument($userID, 'Dia De Cumpleaños', $pathPDF, $birthday,'Pendiente');
 
             Session::set('document_success', 'Dia de cumpleaños generado con exito.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
@@ -704,11 +704,10 @@ class PDF extends FPDF
         }
     }
 
-    public function generateDiaCumple($user_name, $user_puesto, $user_nomina, $user_sindicato, $user_cumple, $sindicato_gestor, $jefe_name, $director_name)
+    public function generateDiaCumple($user_name, $user_puesto, $user_nomina, $user_sindicato, $user_cumple, $sindicato_gestor, $jefe_name, $director_name, $fecha_ingreso)
     {
 
         $zapopan = array("Zapopan", date('d'), date('m'), date('Y'));
-        $fecha_ingreso = date('d \d\e\l m \d\e\l Y');
 
         if ($user_sindicato != 1) {
             $this->SetFont('Arial', '', 9);

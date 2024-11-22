@@ -6,22 +6,13 @@ export function addReporteIncidencia() {
         <div class="input_group checkbox">
             <label>Selecciona el tipo de incidencia</label>
             <div class="chip_container">
-                <div class="chip" data-value="salida-anticipada">
+               foreach($value as $list_incident){
+                <div class="chip" data-value="$value->id">
                     <i class="fa-solid fa-circle-dot"></i>
-                    Salida anticipada
+                    $value->name
                 </div>
-                <div class="chip" data-value="retardo">
-                    <i class="fa-solid fa-circle-dot"></i>
-                    Retardo
-                </div>
-                <div class="chip" data-value="omision-entrada">
-                    <i class="fa-solid fa-circle-dot"></i>
-                    Omision Entrada
-                </div>
-                <div class="chip" data-value="omision-salida">
-                    <i class="fa-solid fa-circle-dot"></i>
-                    Omision Salida
-                </div>
+                }
+
             </div>
         </div>
 

@@ -24,7 +24,7 @@ function generateModalEditDocument($docID)
                         <label>Estatus</label>
                         <div class=\"select_menu\" id=\"updateStatus\">
                             <div class=\"select_btn\">
-                                <span class=\"sBtn_text\">" . $document['documento_estatus'] . "</span>
+                                    <span class=\"sBtn_text\">" . $document['documento_estatus'] . "</span>
                                 <i class=\"fa-solid fa-chevron-down\"></i>
                             </div>
                             <ul class=\"options\">

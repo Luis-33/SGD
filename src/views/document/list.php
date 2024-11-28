@@ -74,7 +74,8 @@
                         <?php endif; ?>
                         <span class="row_tipo"><?php echo $document["documento_tipo"] ?></span>
                         <span class="row_fecha"><?php echo $document["documento_fechaCreacion"] ?></span>
-                        <?php
+                        <?php 
+                        $estatusClass = '';
                         switch ($document['documento_estatus']) {
                             case "Entregado":
                                 $estatusClass = 'success';

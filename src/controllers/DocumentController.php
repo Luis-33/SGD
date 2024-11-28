@@ -78,7 +78,7 @@ class DocumentController
             $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia Economico ' . $actualDate . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
 
-            $documents = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate, $actualDate,'Pendiente');
+            $documents = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate,'Pendiente');
 
             Session::set('document_success', 'Dia economico generado con exito.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";

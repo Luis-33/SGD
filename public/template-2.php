@@ -5,13 +5,7 @@
     <meta charset="UTF-8">
     <title>Mi PDF</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-            font-size: 12px;
-            line-height: 1.8;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
     </style>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
@@ -20,7 +14,7 @@
         footer { position: fixed; bottom: -80px; left: 0px; right: 0px; height: 50px; text-align: center; }
         .content { margin-top: 100px; }
 
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 4rem;
@@ -30,7 +24,7 @@
 <body>
 
 <header>
-    <img src="./header.jpg" width="100%" height="50px" alt="image_headaaer">
+    <img src="../images/header.jpg" width="100%" height="50px">
 </header>
 
 
@@ -42,14 +36,7 @@
 
 <table style="width:100%; margin-bottom: 1rem">
     <tr>
-        <td style="">DIRECTOR(A) DE UNIDAD ACADÉMICA</td>
-    </tr>
-</table>
-
-
-<table style="width:100%; margin-bottom: 1rem">
-    <tr>
-        <td>
+        <td>DIRECTOR(A) DE UNIDAD ACADÉMICA
             Álvarez Arévalo Santiago Hommar
             Ingeniero en Sistemas ZAA0256 Zapopan
             Por este medio y de la mejor manera el (la) que suscribe trabajador (a) solicitante ____________________________________
@@ -85,14 +72,7 @@
     </tr>
 </table>
 
-<table style="width:100%; margin-bottom: 3rem">
-    <tr>
-        <td>Sin otro particular, me reitero a sus órdenes.</td>
-    </tr>
-</table>
-
-
-<table style="width:100%;text-align: center; margin-bottom: 5rem">
+<table style="width:100%;text-align: center;">
     <tr>
         <td style="text-decoration: underline">Álvarez Arévalo Santiago Hommar</td>
     </tr>
@@ -104,7 +84,7 @@
     </tr>
 </table>
 
-<table style="width:100%;text-align: center; margin-bottom: 5rem">
+<table style="width:100%;text-align: center;">
     <tr>
         <td style="text-decoration: underline">Álvarez Arévalo Santiago Hommar</td>
     </tr>

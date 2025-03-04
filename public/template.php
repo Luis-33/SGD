@@ -41,21 +41,23 @@
 </table>
 
 <table style="width:100%; margin-bottom: 1rem">
-    <tr>
-        <td style="">DIRECTOR(A) DE UNIDAD ACADÉMICA</td>
-    </tr>
+
 </table>
 
 
-<table style="width:100%; margin-bottom: 1rem">
+<table style="width:100%; margin-bottom: 3rem">
     <tr>
         <td>
-            Álvarez Arévalo Santiago Hommar
-            Ingeniero en Sistemas ZAA0256 Zapopan
+            <b>DIRECTOR(A) DE UNIDAD ACADÉMICA</b><br>
+        </td>
+    </tr>
+    <tr>
+        <td>
             Por este medio y de la mejor manera el (la) que suscribe trabajador (a) solicitante ____________________________________
-            con puesto de ______________________ y número de nómina ___________, de la Unidad Académica _____________________,
+            con puesto de ______________________ y número de nómina ___________, de la Unidad Académica ___________________,
             solicito DÍA DE CUMPLEAÑOS de conformidad a la Cláusula 54, párrafo primero de las Condiciones Generales de Trabajo del
-            Instituto Tecnológico José Mario Molina Pasquel y Henríquez</td>
+            Instituto Tecnológico José Mario Molina Pasquel y Henríquez.
+        </td>
     </tr>
 </table>
 
@@ -66,13 +68,14 @@
             <label style="text-decoration: underline">1996-03-25</label>
         </td>
     </tr>
+</table>
 
+<table style="width:100%; margin-bottom: 2rem">
     <tr>
         <td>Fecha de Cumpleaños:
             <label style="text-decoration: underline">1983-04-25</label>
         </td>
     </tr>
-
 </table>
 
 

@@ -10,7 +10,7 @@ function generateModalDocument()
     <div class=\"modal documento\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Subir documento</h2>
+                <h2>Subir documentvvvvo</h2>
                 <button onclick=\"closeModal('documento')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
@@ -93,7 +93,7 @@ function generateModalDocument()
             <input type=\"hidden\" name=\"documentType\" id=\"documentType\">
             <input type=\"hidden\" name=\"status\" id=\"status\">
 
-            <button class=\"insert_documento_btn\">Subir documento</button>
+            <button class=\"insert_documento_btn\">Subir daaaocumento</button>
             </form>
         </div>
     </div>

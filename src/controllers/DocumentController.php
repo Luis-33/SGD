@@ -673,11 +673,11 @@ class PDF extends FPDF
             $this->SetFontSize(8);
             $this->Cell(0, 10, utf8_decode("(Adjuntar evidencia de correo electrónico enviado, para autorizar su regularización.)"), 0, 1);
             $this->SetFontSize(9);
-            $this->SetXY(55, 138);
+            $this->SetXY(55, 148);
             $this->Cell(0, 10, utf8_decode($fecha_ingreso));
-            $this->SetXY(63, 150);
+            $this->SetXY(63, 160);
             $this->Cell(0, 10, utf8_decode($user_puesto));
-            $this->SetXY(35, 136.5);
+            $this->SetXY(35, 146.5);
             $this->Ln(2);
             $this->Cell(0, 10, utf8_decode("Fecha de ingreso:"));
             $this->Line(45, 145, 115, 145);

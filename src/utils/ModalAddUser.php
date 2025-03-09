@@ -22,37 +22,41 @@ function generateModalAddUser()
                     
                     <div class=\"input_group\">
                         <label for=\"empleadoNombre\">Nombre</label>
-                        <input type=\"text\" name=\"empleadoNombre\" id=\"empleadoNombre\" placeholder=\"Ingresa el nombre del empleado\">
+                        <input type=\"text\" name=\"empleadoNombre\" id=\"empleadoNombre\" placeholder=\"Ingresa el nombre del empleado\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCorreo\">Correo</label>
-                        <input type=\"text\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" placeholder=\"Ingresa el correo del empleado\">
+                        <input type=\"email\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" placeholder=\"Ingresa el correo del empleado\">
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCurp\">Curp</label>
-                        <input type=\"text\" name=\"empleadoCurp\" id=\"empleadoCurp\" placeholder=\"Ingresa el curp del empleado\">
+                        <input type=\"text\" name=\"empleadoCurp\" id=\"empleadoCurp\" placeholder=\"Ingresa el curp del empleado\"  
+                        pattern=\"^[A-Z]{4}[0-9]{6}[HM]{1}[A-Z]{2}[A-Z0-9]{3}[0-9A-Z]{2}$\" 
+                        title=\"El CURP debe seguir el formato correcto (AAAA000101HDFRRL09)\" required >
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoRFC\">RFC</label>
-                        <input type=\"text\" name=\"empleadoRFC\" id=\"empleadoRFC\" placeholder=\"Ingresa el rfc del empleado\">
+                        <input type=\"text\" name=\"empleadoRFC\" id=\"empleadoRFC\" placeholder=\"Ingresa el rfc del empleado\"
+                        pattern=\"^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$\"
+                        title=\"El RFC debe seguir el formato correcto (por ejemplo, ABCD123456XYZ)\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoNomina\">Numero de nomina</label>
-                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\">
+                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\" required >
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoIngreso\">Fecha de ingreso</label>
-                        <input type=\"date\" name=\"empleadoIngreso\" id=\"empleadoIngreso\" placeholder=\"Selecciona la fecha de ingreso del empleado\">
+                        <input type=\"date\" name=\"empleadoIngreso\" id=\"empleadoIngreso\" placeholder=\"Selecciona la fecha de ingreso del empleado\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCumple\">Dia de cumpleaños</label>
-                        <input type=\"date\" name=\"empleadoCumple\" id=\"empleadoCumple\">
+                        <input type=\"date\" name=\"empleadoCumple\" id=\"empleadoCumple\" required>
                     </div>
                 
                     <div class=\"input_group\">
@@ -71,6 +75,43 @@ function generateModalAddUser()
                                 </li>
                             </ul>
                         </div>
+                        <input type=\"hidden\" id=\"selectedGenero\" name=\"empleadoGenero\" required>
+                            
+                        <script>
+                                // Función para mostrar/ocultar el dropdown
+                                function toggleDropdown() {
+                                    const menu = document.getElementById(\"empleadoGenero\");
+                                    menu.classList.toggle(\"active\");
+                                }
+
+                                // Función para manejar la selección
+                                const options = document.querySelectorAll(\".option\");
+                                options.forEach(option => {
+                                    option.addEventListener(\"click\", () => {
+                                        const selectedValue = option.getAttribute(\"data-value\");
+                                        const displayText = option.innerText;
+                                        
+                                        // Establecer el valor seleccionado en el input oculto
+                                        document.getElementById(\"selectedGenero\").value = selectedValue;
+
+                                        // Actualizar el texto en el botón
+                                        document.querySelector(\".sBtn_text\").innerText = displayText;
+                                        
+                                        // Cerrar el menú
+                                        toggleDropdown();
+                                    });
+                                });
+
+                                // Validación del formulario
+                                const form = document.querySelector(\"form\"); // Asegúrate de que esté en un formulario
+                                form.addEventListener(\"submit\", function(event) {
+                                    if (!document.getElementById(\"selectedGenero\").value) {
+                                        alert(\"Por favor, selecciona un género.\");
+                                        event.preventDefault(); // Evitar el envío del formulario
+                                    }
+                                });
+                                </script>
+
                     </div>
 
                     <div class=\"input_group\">
@@ -87,7 +128,9 @@ function generateModalAddUser()
     foreach ($rolList as $rol) {
         $modal .= "<li class=\"option\" data-value=\"" . $rol["rol_id"] . "\">
                        <span>" . $rol["rol_nombre"] . "</span>
-                   </li>";
+                   </li>
+                   
+                   ";
     }
 
 
@@ -95,6 +138,7 @@ function generateModalAddUser()
                             </ul>
 
                         </div>
+                       
 
                     </div>
                     

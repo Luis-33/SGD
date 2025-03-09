@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,11 +27,9 @@
     </style>
 </head>
 <body>
-
 <header>
-    <img src="./header.jpg" width="100%" height="50px" alt="image_headaaer">
+   <img src="headerimg.jpg" alt="">
 </header>
-
 
 <table style="width:100%; margin: 1rem; text-align: right" >
     <tr>
@@ -131,8 +128,9 @@
     </tr>
 </table>
 
+
 <footer>
-    <img src="../images/footer_3.jpg" width="100%" height="50px">
+    <p> pie de página</p>
 </footer>
 
 </body>

@@ -36,7 +36,7 @@
 
 <table style="width:100%; margin-bottom: 1rem">
     <tr>
-        <td>DIRECTOR(A) DE UNIDAD ACADÉMICA
+        <td>DIRECTOR(A) DE UNIDAD ACADÉMICa
             Álvarez Arévalo Santiago Hommar
             Ingeniero en Sistemas ZAA0256 Zapopan
             Por este medio y de la mejor manera el (la) que suscribe trabajador (a) solicitante ____________________________________

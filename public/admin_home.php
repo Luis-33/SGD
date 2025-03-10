@@ -33,7 +33,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
     <div class="container_main">
 
         <?php include VIEW_PATH . 'content/template/navbar.php'; ?>
-
         <div class="content">
 
             <?php
@@ -172,6 +171,19 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         $userController->showProfile($userID);
                     }
                     break;
+                case 'commissions':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'update_password' && isset($_POST['new_password'])) {
+                            $newPassword = $_POST['new_password'];
+                            $userController->updatePassword($userID, $newPassword);
+                        } else {
+                            $userController->showProfile($userID);
+                        }
+                        break;
+                    } else {
+                        $userController->showProfile($userID);
+                    }
+                    break;    
                 case 'configs':
                     break;
                 default:

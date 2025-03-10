@@ -30,6 +30,17 @@ class DocumentController
         require VIEW_PATH . 'document/list.php';
     }
 
+
+    public function showCommission($role, $userID)
+    {
+        $documents = $this->documentModel->getAllDocuments($role, $userID);
+        $diasEconomicos = $this->documentModel->countDiasEconomicos($userID)['diasEconomicos'];
+        $diaCumple = $this->documentModel->countDiaCumple($userID)['diaCumple'];
+        $reportesIncidencia = $this->documentModel->countReportesIncidencia($userID)['reportesIncidencia'];
+        require VIEW_PATH . 'document/commission_list.php';
+
+    }
+
     public function downloadDocument($docID)
     {
         $document = $this->documentModel->getDocumentById($docID);

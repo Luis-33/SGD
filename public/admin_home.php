@@ -172,18 +172,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'commissions':
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        if ($action === 'update_password' && isset($_POST['new_password'])) {
-                            $newPassword = $_POST['new_password'];
-                            $userController->updatePassword($userID, $newPassword);
-                        } else {
-                            $userController->showProfile($userID);
-                        }
-                        break;
-                    } else {
-                        $userController->showProfile($userID);
-                    }
-                    break;    
+                    $documentController->showCommission($userRole, $userID);
+                    break;
                 case 'configs':
                     break;
                 default:

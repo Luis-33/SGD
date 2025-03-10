@@ -24,7 +24,7 @@
                 generateSidebarItem('manage_users', 'fa-users', 'Administrar empleados');
             }
             generateSidebarItem('my_profile', 'fa-user-edit', 'Mi perfil');
-
+            generateSidebarItem('commissions', 'fas fa-money-bill', 'Comisiónes');
             ?>
         </div>
     </div>

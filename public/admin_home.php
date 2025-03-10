@@ -33,7 +33,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
     <div class="container_main">
 
         <?php include VIEW_PATH . 'content/template/navbar.php'; ?>
-
         <div class="content">
 
             <?php
@@ -171,6 +170,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     } else {
                         $userController->showProfile($userID);
                     }
+                    break;
+                case 'commissions':
+                    $documentController->showCommission($userRole, $userID);
                     break;
                 case 'configs':
                     break;

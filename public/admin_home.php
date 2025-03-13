@@ -2,6 +2,7 @@
 
 require_once '../src/config/config.php';
 require_once CONTROLLER_PATH . 'DocumentController.php';
+require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
@@ -24,6 +25,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 <head>
     <?php include VIEW_PATH . 'content/include/header.php'; ?>
+    
 </head>
 
 <body>
@@ -42,6 +44,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $userRole = Session::get('user_role');
             $userController = new UserController($db);
             $documentController = new DocumentController($db);
+            $CommissionController = new CommissionController($db);
 
             switch ($page) {
 
@@ -172,7 +175,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'commissions':
-                    $documentController->showCommission($userRole, $userID);
+                   
+                        $CommissionController->showCommission($userRole, $userID);
+                   
+                    
                     break;
                 case 'configs':
                     break;

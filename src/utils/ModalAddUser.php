@@ -14,7 +14,7 @@ function generateModalAddUser()
     <div class=\"modal addUser\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Agregar empleado</h2>
+                <h2></h2>
                 <button onclick=\"closeModal('addUser')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
@@ -46,7 +46,9 @@ function generateModalAddUser()
 
                     <div class=\"input_group\">
                         <label for=\"empleadoNomina\">Numero de nomina</label>
-                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\" required >
+                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\" 
+                        pattern=\"^[A-ZÑ&]{3}[0-9]{4}$\"
+                        title=\"El RFC debe seguir el formato correcto (por ejemplo, ABC1234 )\" required>required >
                     </div>
 
                     <div class=\"input_group\">
@@ -138,7 +140,6 @@ function generateModalAddUser()
                             </ul>
 
                         </div>
-                       
 
                     </div>
                     

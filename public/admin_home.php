@@ -175,7 +175,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'commissions':
-                    $CommissionController->showCommission($userRole, $userID);
+                   
+                        $CommissionController->showCommission($userRole, $userID);
+                   
+                    
                     break;
                 case 'configs':
                     break;

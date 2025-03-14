@@ -4,6 +4,7 @@ require_once '../src/config/config.php';
 require_once CONTROLLER_PATH . 'DocumentController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
+require_once CONTROLLER_PATH . 'RolesController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
 
@@ -17,7 +18,6 @@ if (!Session::isLoggedIn()) {
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 <head>
     <?php include VIEW_PATH . 'content/include/header.php'; ?>
-    
+
 </head>
 
 <body>
@@ -45,6 +45,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $userController = new UserController($db);
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);
+            $RolesController = new RolesController($db);
 
             switch ($page) {
 
@@ -73,7 +74,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $date = $_POST['date'];
                             $status = $_POST['status'];
                             $documentController->addDocument($user, $documentType, $date, $status);
-                        } else if ($action === 'editDocument' && isset(($_POST['docID']), $_POST['documentoEstatus'])) {
+                        } else if ($action === 'editDocument' && ($_POST['docID']) !== null && isset($_POST['documentoEstatus'])) {
                             $docID = $_POST['docID'];
                             $status = $_POST['documentoEstatus'];
                             $documentController->updateDocument($docID, $status);
@@ -175,10 +176,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'commissions':
-                   
                         $CommissionController->showCommission($userRole, $userID);
-                   
-                    
+                    break;
+                case 'roles':
+                    $RolesController->showRoles($userRole, $userID);
                     break;
                 case 'configs':
                     break;

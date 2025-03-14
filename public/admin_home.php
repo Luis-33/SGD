@@ -180,6 +180,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                    
                     
                     break;
+                case 'TimeByTime':
+                        $CommissionController->showCommission($userRole, $userID);
+                    break;
                 case 'configs':
                     break;
                 default:

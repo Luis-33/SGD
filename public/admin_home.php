@@ -2,6 +2,7 @@
 
 require_once '../src/config/config.php';
 require_once CONTROLLER_PATH . 'DocumentController.php';
+require_once CONTROLLER_PATH . 'TimeByTimeController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
@@ -46,6 +47,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
+            $TimeByTimeController = new TimeByTimeController($db);
 
             switch ($page) {
 
@@ -182,7 +184,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     $RolesController->showRoles($userRole, $userID);
                     break;
                 case 'TimeByTime':
-                        $CommissionController->showCommission($userRole, $userID);
+                        $TimeByTimeController->showTimeByTime($userRole, $userID);
                     break;
                 case 'configs':
                     break;

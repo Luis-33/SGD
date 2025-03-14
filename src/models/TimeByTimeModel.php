@@ -1,6 +1,6 @@
 <?php
 
-class CommissionsModel
+class TimeByTimeModel
 {
     private $db;
 

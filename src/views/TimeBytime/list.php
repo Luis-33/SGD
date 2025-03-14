@@ -1,12 +1,12 @@
 <?php if ($_SESSION['user_role'] == 1) : ?>
-    <link rel="stylesheet" href="assets/css/components/table.css">
+    <!-- <link rel="stylesheet" href="assets/css/components/table.css">
     <link rel="stylesheet" href="assets/css/components/modal.css">
     <link rel="stylesheet" href="assets/css/components/dropdown.css">
     <link rel="stylesheet" href="assets/css/components/chips.css">
     <link rel="stylesheet" href="assets/css/components/alerts.css">
     <link rel="stylesheet" href="assets/css/admin/dashboard.css">
     <link rel="stylesheet" href="assets/css/admin/see_user.css">
-    <link rel="stylesheet" href="assets/css/admin/manage_users.css">
+    <link rel="stylesheet" href="assets/css/admin/manage_users.css"> -->
     
 
 <script>
@@ -30,11 +30,10 @@
 
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
             <?php if ($_SESSION['user_role'] == 1) : ?>
                 <button class="btn_documento" onclick="openModal('documento')">Subir documento</button>
-                <button class="btn_documento" onclick="generarPDF(1)">PDf</button>
             <?php endif; ?>
         </div>
     </div>
@@ -48,7 +47,6 @@
             <?php if ($_SESSION['user_role'] != 3) : ?>
                 <span class="header_empleado">Empleado</span>
             <?php endif; ?>
-            <span class="header_tipo">Tipo</span>
             <span class="header_fecha">Fecha de registro</span>
             <span class="header_estatus">Estatus</span>
             <?php if ($_SESSION['user_role'] == 1) : ?>
@@ -74,7 +72,6 @@
                             </div>
                         </div>
                     <?php endif; ?>
-                    <span class="row_tipo"><?php echo $document["documento_tipo"] ?></span>
                     <span class="row_fecha"><?php echo $document["documento_fechaCreacion"] ?></span>
                     <?php 
                     $estatusClass = '';
@@ -121,7 +118,7 @@ if ($_SESSION['user_role'] == 1) {
 <?php else : ?>
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
             <div class="dias_economicos">
                 <span><?= $diasEconomicos; ?> / 8</span>
@@ -139,7 +136,7 @@ if ($_SESSION['user_role'] == 1) {
     <div class="card_table_body">
         <div class="card_table_message">
             <div class="no_result_message">
-                <span>Aun no hay Comisiones por mostrar</span>
+                <span>Aun no hay Tiempo por Tiempo por mostrar</span>
                 <i class="fa-regular fa-folder-open"></i>
             </div>
         </div>

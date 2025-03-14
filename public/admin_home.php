@@ -181,6 +181,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 case 'roles':
                     $RolesController->showRoles($userRole, $userID);
                     break;
+                case 'TimeByTime':
+                        $CommissionController->showCommission($userRole, $userID);
+                    break;
                 case 'configs':
                     break;
                 default:

@@ -74,7 +74,7 @@
                     <button onclick="closeModal('editRol')">Cerrar</button>
                 </div>
                 <div class="modal_body">
-                    <form action="index.php?page=roles&action=editRol" method="POST" id="editRolForm">
+                    <form action="admin_home.php?page=roles&action=editRol" method="POST" id="editRolForm">
                         <input type="hidden" name="rolId" value="${rolId}">
                         <div class="form_group">
                             <label for="rolNombre">Nombre del Rol</label>

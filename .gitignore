@@ -1,5 +1,9 @@
 pdf
+<<<<<<< HEAD
+./idea
+=======
 vendor
 /vendor/
 /server/
 server/
+>>>>>>> d1f64c59015f7961924ef282b6911727c9ac4721

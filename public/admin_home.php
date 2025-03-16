@@ -175,14 +175,16 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         $userController->showProfile($userID);
                     }
                     break;
-                case 'commissions':
-                        $CommissionController->showCommission($userRole, $userID);
-                    break;
+                
+
                 case 'roles':
                     $RolesController->showRoles($userRole, $userID);
                     break;
                 case 'TimeByTime':
                         $CommissionController->showCommission($userRole, $userID);
+                    break;
+                 case 'commissions':
+                    $CommissionController->showCommission($userRole, $userID);
                     break;
                 case 'configs':
                     break;

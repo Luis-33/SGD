@@ -10,7 +10,7 @@ function generateModalDocument()
     <div class=\"modal documento\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Subir documentvvvvo</h2>
+                <h2>Subir documentos</h2>
                 <button onclick=\"closeModal('documento')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">

@@ -180,18 +180,69 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 case 'roles':
                     $RolesController->showRoles($userRole, $userID);
                     break;
+
+
                 case 'TimeByTime':
-                        $CommissionController->showCommission($userRole, $userID);
-                    break;
-                 case 'commissions':
                     $CommissionController->showCommission($userRole, $userID);
                     break;
+
+
+                case 'commissions':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if (
+                            $action === 'comision'
+                            && isset($_POST['fechaElaboracion'])
+                            && isset($_POST['lugar'])
+                            && isset($_POST['asunto'])
+                            && isset($_POST['viaticos'])
+                            && isset($_POST['observaciones'])
+                            && isset($_POST['fechaSalida'])
+                            && isset($_POST['fechaRegreso'])
+                            && isset($_POST['transporte'])
+                        ) {
+                            // Campos obligatorios
+                            $usuarioId          = $_POST['user'];
+                            $lugar              = $_POST['lugar'];
+                            $asunto             = $_POST['asunto'];
+                            $viaticos           = $_POST['viaticos'];
+                            $fechaSalida = substr($_POST['fechaSalida'], 0, 10);
+                            $fechaRegreso = substr($_POST['fechaRegreso'], 0, 10);                            
+                            $transporte         = $_POST['transporte'];
+                    
+                            // Campos opcionales (se asigna null si no existen)
+                            $especificacionViaticos = isset($_POST['especificacionViaticos']) ? $_POST['especificacionViaticos'] : null;
+                            $transportePropio      = isset($_POST['transportePropio']) ? $_POST['transportePropio'] : null;
+                            $marca                 = isset($_POST['marca']) ? $_POST['marca'] : null;
+                            $modelo                = isset($_POST['modelo']) ? $_POST['modelo'] : null;
+                            $color                 = isset($_POST['color']) ? $_POST['color'] : null;
+                            $placas                = isset($_POST['placas']) ? $_POST['placas'] : null;
+                            $kilometraje           = isset($_POST['kilometraje']) ? $_POST['kilometraje'] : null;
+                            $observaciones         = isset($_POST['observaciones']) ? $_POST['observaciones'] : null;
+                
+                            // Forzar el status a "pendiente" y la fecha
+                            $status = "pendiente";
+                            $fechaElaboracion = date('Y-m-d');
+                
+                            $CommissionController->addComision(
+                                $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
+                                $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
+                                $color, $placas, $transporte, $kilometraje, $status
+                            );
+                        }
+                    }else{
+                        $CommissionController->showCommission($userRole, $userID);
+                    }
+                    break;
+
+
                 case 'configs':
                     break;
+
+
                 default:
                     include VIEW_PATH . 'content/404.php';
                     break;
-            }
+                }
             ?>
         </div>
     </div>

@@ -27,7 +27,6 @@ class CommissionController
 
     public function showCommission($role, $userID)
     {
-        //$commissions = $this->CommissionsModel->getAllCommissions($role, $userID);
         $documents = $this->CommissionsModel->getAllCommissions($role, $userID);
 //         echo "<pre>";
 // print_r($commissions);
@@ -43,40 +42,24 @@ class CommissionController
         require VIEW_PATH . 'document/list.php';
     }
 
+    public function addComision(
+        $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
+        $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
+        $color, $placas, $transporte, $kilometraje, $status
+    ) {
+        if ($this->CommissionsModel->addComision(
+            $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
+            $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
+            $color, $placas, $transporte, $kilometraje, $status
+        )) {
+            Session::set('user_success', 'Comisión registrada correctamente.');
+        } else {
+            Session::set('user_error', 'No se pudo registrar la comisión.');
+        }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=manage_commissions');</script>";
+    }
 
-    // public function addCommission()
-    // {
-    //     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //         $data = [
-    //             'fecha_elaboracion' => date("Y-m-d"),
-    //             'usuario_id' => $_POST["user"],
-    //             'lugar' => $_POST["lugar"],
-    //             'asunto' => $_POST["asunto"],
-    //             'viaticos' => $_POST["viaticos"],
-    //             'especificacion_viaticos' => $_POST["especificacion_viaticos"] ?? null,
-    //             'observaciones' => $_POST["observaciones"] ?? "",
-    //             'fecha_salida' => $_POST["fecha_salida"],
-    //             'fecha_regreso' => $_POST["fecha_regreso"],
-    //             'transporte_propio' => $_POST["transporte_propio"] ?? 'No',
-    //             'marca' => $_POST["marca"] ?? null,
-    //             'modelo' => $_POST["modelo"] ?? null,
-    //             'color' => $_POST["color"] ?? null,
-    //             'placas' => $_POST["placas"] ?? null,
-    //             'transporte' => isset($_POST["transporte"]) && $_POST["transporte"] == "Si" ? 1 : 0,
-    //             'kilometraje' => $_POST["kilometraje"] ?? null,
-    //             'status' => $_POST["status"] ?? 'Pendiente',
-    //         ];
 
-    //         if ($this->CommissionsModel->insertCommission($data)) {
-    //             Session::set('commission_success', 'Comisión guardada con éxito.');
-    //         } else {
-    //             Session::set('commission_error', 'Error al guardar la comisión.');
-    //         }
-
-    //         header("Location: admin_home.php?page=dashboard");
-    //         exit();
-    //     }
-    // }
 
 
 }    

@@ -6,7 +6,6 @@ require_once SERVER_PATH . "DB.php";
 
 function generateModalAddUser()
 {
-
     $db = new DB();
     $configModel = new ConfigModel($db);
 
@@ -18,7 +17,7 @@ function generateModalAddUser()
                 <button onclick=\"closeModal('addUser')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=manage_users&action=addUser\" method=\"POST\">
+                <form id=\"addUserForm\" action=\"admin_home.php?page=manage_users&action=addUser\" method=\"POST\">
                     
                     <div class=\"input_group\">
                         <label for=\"empleadoNombre\">Nombre</label>
@@ -27,7 +26,7 @@ function generateModalAddUser()
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCorreo\">Correo</label>
-                        <input type=\"email\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" placeholder=\"Ingresa el correo del empleado\">
+                        <input type=\"email\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" placeholder=\"Ingresa el correo del empleado\" required>
                     </div>
 
                     <div class=\"input_group\">
@@ -48,7 +47,7 @@ function generateModalAddUser()
                         <label for=\"empleadoNomina\">Numero de nomina</label>
                         <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\" 
                         pattern=\"^[A-ZÑ&]{3}[0-9]{4}$\"
-                        title=\"El RFC debe seguir el formato correcto (por ejemplo, ABC1234 )\" required>required >
+                        title=\"El número de nómina debe seguir el formato correcto (por ejemplo, ABC1234 )\" required>
                     </div>
 
                     <div class=\"input_group\">
@@ -77,43 +76,6 @@ function generateModalAddUser()
                                 </li>
                             </ul>
                         </div>
-                        <input type=\"hidden\" id=\"selectedGenero\" name=\"empleadoGenero\" required>
-                            
-                        <script>
-                                // Función para mostrar/ocultar el dropdown
-                                function toggleDropdown() {
-                                    const menu = document.getElementById(\"empleadoGenero\");
-                                    menu.classList.toggle(\"active\");
-                                }
-
-                                // Función para manejar la selección
-                                const options = document.querySelectorAll(\".option\");
-                                options.forEach(option => {
-                                    option.addEventListener(\"click\", () => {
-                                        const selectedValue = option.getAttribute(\"data-value\");
-                                        const displayText = option.innerText;
-                                        
-                                        // Establecer el valor seleccionado en el input oculto
-                                        document.getElementById(\"selectedGenero\").value = selectedValue;
-
-                                        // Actualizar el texto en el botón
-                                        document.querySelector(\".sBtn_text\").innerText = displayText;
-                                        
-                                        // Cerrar el menú
-                                        toggleDropdown();
-                                    });
-                                });
-
-                                // Validación del formulario
-                                const form = document.querySelector(\"form\"); // Asegúrate de que esté en un formulario
-                                form.addEventListener(\"submit\", function(event) {
-                                    if (!document.getElementById(\"selectedGenero\").value) {
-                                        alert(\"Por favor, selecciona un género.\");
-                                        event.preventDefault(); // Evitar el envío del formulario
-                                    }
-                                });
-                                </script>
-
                     </div>
 
                     <div class=\"input_group\">
@@ -128,23 +90,19 @@ function generateModalAddUser()
     $rolList = $configModel->getRoles();
 
     foreach ($rolList as $rol) {
-        $modal .= "<li class=\"option\" data-value=\"" . $rol["rol_id"] . "\">
-                       <span>" . $rol["rol_nombre"] . "</span>
-                   </li>
-                   
-                   ";
+        $modal .= "
+        <li class=\"option\" data-value=\"" . $rol["rol_id"] . "\">
+            <span>" . $rol["rol_nombre"] . "</span>
+        </li>";
     }
-
 
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
-                    
+                 
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Puesto</label>
+                        <label for=\"empleadoPuesto\">Puesto</label>
                         <div class=\"select_menu\" id=\"empleadoPuesto\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona el puesto del empleado</span>
@@ -155,21 +113,19 @@ function generateModalAddUser()
     $puestoList = $configModel->getPuestos();
 
     foreach ($puestoList as $puesto) {
-        $modal .= "<li class=\"option\" data-value=\"" . $puesto["puesto_id"] . "\">
-                       <span>" . $puesto["puesto_nombre"] . "</span> 
-                   </li>";
+        $modal .= "
+        <li class=\"option\" data-value=\"" . $puesto["puesto_id"] . "\">
+            <span>" . $puesto["puesto_nombre"] . "</span> 
+        </li>";
     }
-
 
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
                     
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Jefe inmediato</label>
+                        <label for=\"empleadoInmediato\">Jefe inmediato</label>
                         <div class=\"select_menu\" id=\"empleadoInmediato\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona al jefe inmediato</span>
@@ -186,19 +142,16 @@ function generateModalAddUser()
                             <h3>" . $jefe['jefeInmediato_nombre'] . "</h3>
                             <span>" . $jefe["areaAdscripcion_nombre"] . "</span> 
                         </div>
-                   </li>";
+                    </li>";
     }
-
 
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
                     
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Area de adscripción</label>
+                        <label for=\"empleadoAdscripcion\">Area de adscripción</label>
                         <div class=\"select_menu\" id=\"empleadoAdscripcion\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona el area de adscripción</span>
@@ -214,16 +167,13 @@ function generateModalAddUser()
                    </li>";
     }
 
-
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
                     
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Sindicato</label>
+                        <label for=\"empleadoSindicato\">Sindicato</label>
                         <div class=\"select_menu\" id=\"empleadoSindicato\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona el sindicato</span>
@@ -239,12 +189,9 @@ function generateModalAddUser()
                    </li>";
     }
 
-
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
 
                     <input type=\"hidden\" name=\"empleadoGenero\" id=\"genero\">
@@ -273,7 +220,7 @@ $(document).ready(function () {
         $(this).closest('.options').find('.option').removeClass('selected');
         $(this).addClass('selected');
 
-        let selectedOption = $(this).find(\"h3, span\").first().text();
+        let selectedOption = $(this).find(\"span\").first().text();
         let selectedValue = $(this).data('value');
 
         $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
@@ -291,6 +238,27 @@ $(document).ready(function () {
             $('#adscripcion').val(selectedValue);
         }else if($(this).closest('.select_menu').attr('id') === 'empleadoSindicato'){
             $('#sindicato').val(selectedValue);
+        }
+    });
+
+    $('#addUserForm').on('submit', function(event) {
+        const nombre = $('#empleadoNombre').val().trim();
+        const correo = $('#empleadoCorreo').val().trim();
+        const curp = $('#empleadoCurp').val().trim();
+        const rfc = $('#empleadoRFC').val().trim();
+        const nomina = $('#empleadoNomina').val().trim();
+        const ingreso = $('#empleadoIngreso').val().trim();
+        const cumple = $('#empleadoCumple').val().trim();
+        const genero = $('#genero').val().trim();
+        const rol = $('#rol').val().trim();
+        const puesto = $('#puesto').val().trim();
+        const jefe = $('#jefe').val().trim();
+        const adscripcion = $('#adscripcion').val().trim();
+        const sindicato = $('#sindicato').val().trim();
+
+        if (!nombre || !correo || !curp || !rfc || !nomina || !ingreso || !cumple || !genero || !rol || !puesto || !jefe || !adscripcion || !sindicato) {
+            event.preventDefault();
+            alert('Por favor, completa todos los campos antes de enviar el formulario.');
         }
     });
 

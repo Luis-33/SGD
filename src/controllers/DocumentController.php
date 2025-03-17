@@ -201,7 +201,7 @@ class DocumentController
 
                     //Recipients
                     $mail->setFrom('axelsolorzano53@gmail.com', 'Luis Antonio Muñoz Gonzáles');
-                    $mail->addAddress($userEmail);     //Add a recipient
+                    //$mail->addAddress($userEmail);     //Add a recipient
 
                     //Content
                     $mail->isHTML(true);                                  //Set email format to HTML

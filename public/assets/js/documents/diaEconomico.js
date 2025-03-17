@@ -1,7 +1,7 @@
 export function addDiaEconomico() {
     var modal = $(".addDiaEconomico");
     modal.find(".modal_body").html(`
-    <form action="admin_home.php?page=dashboard&action=addDiaEconomico" method="POST">
+    <form id="diaEconomicoForm" action="admin_home.php?page=dashboard&action=addDiaEconomico" method="POST">
         <div class="input_group checkbox">
             <label>Selecciona el tipo de permiso</label>
             <div class="chip_container">
@@ -74,6 +74,17 @@ export function addDiaEconomico() {
                 endDateInput.setAttribute('max', today);
                 endDateInput.removeAttribute('min');
             }
+        }
+    });
+
+    document.getElementById('diaEconomicoForm').addEventListener('submit', function (event) {
+        const startDateInput = document.querySelector('input[name="start-date"]');
+        const endDateInput = document.querySelector('input[name="end-date"]');
+        const permisoValue = document.querySelector('#permiso').value;
+
+        if (!startDateInput.value || !endDateInput.value || !permisoValue) {
+            event.preventDefault();
+            alert('Por favor, completa todos los campos antes de enviar el formulario.');
         }
     });
 

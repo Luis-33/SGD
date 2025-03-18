@@ -88,6 +88,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     break;
                 case 'manage_users':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        print_r("usera");
                         if (
                             $action === 'addUser'
                             && isset($_POST['empleadoNomina'])
@@ -104,6 +105,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                         ) {
+                            print_r("user");
                             $userNomina = $_POST['empleadoNomina'];
                             $userName = $_POST['empleadoNombre'];
                             $userCurp = $_POST['empleadoCurp'];
@@ -188,18 +190,11 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 
                 case 'commissions':
+                    print_r("Entro aqui");
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        if (
-                            $action === 'comision'
-                            && isset($_POST['fechaElaboracion'])
-                            && isset($_POST['lugar'])
-                            && isset($_POST['asunto'])
-                            && isset($_POST['viaticos'])
-                            && isset($_POST['observaciones'])
-                            && isset($_POST['fechaSalida'])
-                            && isset($_POST['fechaRegreso'])
-                            && isset($_POST['transporte'])
-                        ) {
+                        print_r("entro");
+                        if ( $action === 'comision') {
+                            print_r("entro1");
                             // Campos obligatorios
                             $usuarioId          = $_POST['user'];
                             $lugar              = $_POST['lugar'];
@@ -228,6 +223,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
                                 $color, $placas, $transporte, $kilometraje, $status
                             );
+                        }else{
+                            print_r("no entro");
                         }
                     }else{
                         $CommissionController->showCommission($userRole, $userID);

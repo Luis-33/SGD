@@ -15,12 +15,10 @@ use PHPMailer\PHPMailer\Exception;
 
 class CommissionController
 {
-    //private $documentModel;
     private $CommissionsModel;
 
     public function __construct($db)
     {
-        //$this->documentModel = new DocumentModel($db);
         $this->CommissionsModel = new CommissionsModel($db);
     }
 
@@ -28,10 +26,6 @@ class CommissionController
     public function showCommission($role, $userID)
     {
         $documents = $this->CommissionsModel->getAllCommissions($role, $userID);
-//         echo "<pre>";
-// print_r($commissions);
-// echo "</pre>";
-// die();
         require VIEW_PATH . 'document/commission_list.php';
 
     }
@@ -58,8 +52,5 @@ class CommissionController
         }
         echo "<script>$(location).attr('href', 'admin_home.php?page=manage_commissions');</script>";
     }
-
-
-
 
 }    

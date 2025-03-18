@@ -122,4 +122,7 @@ if (Session::exists('Commission_error')) {
     echo "<script>hideAlert('error');</script>";
     Session::delete('Commission_error');
 }
+
+// Agregar var_dump para verificar los mensajes de error
+var_dump(Session::get('Commission_error'));
 ?>

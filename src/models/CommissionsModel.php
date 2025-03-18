@@ -117,14 +117,14 @@ class CommissionsModel
         $stmt->bindParam(':kilometraje', $kilometraje, PDO::PARAM_INT);
         $stmt->bindParam(':status', $status, PDO::PARAM_STR);
     
-        $result = $stmt->execute();
-    
-        return $result;
+        try {
+            $result = $stmt->execute();
+            return $result;
+        } catch (PDOException $e) {
+            // Mostrar el error
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
     }
-    
-    
-    
-
-
 }
 ?>

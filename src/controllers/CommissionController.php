@@ -38,19 +38,26 @@ class CommissionController
 
     public function addComision(
         $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
-        $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
+        $observaciones, $fechaSalida, $fecha_regreso, $transportePropio, $marca, $modelo,
         $color, $placas, $transporte, $kilometraje, $status
     ) {
+        print_r("estos son los datos que se reciben en el controlador");
         if ($this->CommissionsModel->addComision(
             $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
-            $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
+            $observaciones, $fechaSalida, $fecha_regreso, $transportePropio, $marca, $modelo,
             $color, $placas, $transporte, $kilometraje, $status
         )) {
             Session::set('user_success', 'Comisión registrada correctamente.');
         } else {
             Session::set('user_error', 'No se pudo registrar la comisión.');
         }
-        echo "<script>$(location).attr('href', 'admin_home.php?page=manage_commissions');</script>";
+        //echo "<script>$(location).attr('href', 'admin_home.php?page=manage_commissions');</script>";
+    }
+
+    public function describeTable($name)
+    {
+        return $this->CommissionsModel->describeTable($name);
+
     }
 
 }    

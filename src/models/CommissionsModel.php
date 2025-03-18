@@ -64,7 +64,7 @@ class CommissionsModel
 
     public function addComision(
         $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
-        $observaciones, $fechaSalida, $fechaRegreso, $transportePropio, $marca, $modelo,
+        $observaciones, $fechaSalida, $fecha_regreso, $transportePropio, $marca, $modelo,
         $color, $placas, $transporte, $kilometraje, $status
     ) {
         $data = [
@@ -76,7 +76,7 @@ class CommissionsModel
             'especificacionViaticos' => $especificacionViaticos,
             'observaciones' => $observaciones,
             'fechaSalida' => $fechaSalida,
-            'fechaRegreso' => $fechaRegreso,
+            'fecha_regreso' => $fecha_regreso,
             'transportePropio' => $transportePropio,
             'marca' => $marca,
             'modelo' => $modelo,
@@ -94,7 +94,7 @@ class CommissionsModel
                   ) 
                   VALUES (
                     :usuarioId, :fechaElaboracion, :lugar, :asunto, :viaticos, :especificacionViaticos,
-                    :observaciones, :fechaSalida, :fechaRegreso, :transportePropio, :marca, :modelo,
+                    :observaciones, :fechaSalida, :fecha_regreso, :transportePropio, :marca, :modelo,
                     :color, :placas, :transporte, :kilometraje, :status
                   )";
     
@@ -107,7 +107,7 @@ class CommissionsModel
         $stmt->bindParam(':especificacionViaticos', $especificacionViaticos, PDO::PARAM_STR);
         $stmt->bindParam(':observaciones', $observaciones, PDO::PARAM_STR);
         $stmt->bindParam(':fechaSalida', $fechaSalida, PDO::PARAM_STR);
-        $stmt->bindParam(':fechaRegreso', $fechaRegreso, PDO::PARAM_STR);
+        $stmt->bindParam(':fechaRegreso', $Fecha_De_Regreso, PDO::PARAM_STR);
         $stmt->bindParam(':transportePropio', $transportePropio, PDO::PARAM_STR);
         $stmt->bindParam(':marca', $marca, PDO::PARAM_STR);
         $stmt->bindParam(':modelo', $modelo, PDO::PARAM_STR);
@@ -125,6 +125,15 @@ class CommissionsModel
             echo "Error: " . $e->getMessage();
             return false;
         }
+    }
+
+    public function describeTable($name)
+    {
+        $query = "DESCRIBE :name";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

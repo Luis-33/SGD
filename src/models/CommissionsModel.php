@@ -62,60 +62,19 @@ class CommissionsModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } 
 
-    public function addComision(
-        $usuarioId, $fechaElaboracion, $lugar, $asunto, $viaticos, $especificacionViaticos,
-        $observaciones, $fechaSalida, $fecha_regreso, $transportePropio, $marca, $modelo,
-        $color, $placas, $transporte, $kilometraje, $status
-    ) {
-        $data = [
-            'usuarioId' => $usuarioId,
-            'fechaElaboracion' => $fechaElaboracion,
-            'lugar' => $lugar,
-            'asunto' => $asunto,
-            'viaticos' => $viaticos,
-            'especificacionViaticos' => $especificacionViaticos,
-            'observaciones' => $observaciones,
-            'fechaSalida' => $fechaSalida,
-            'fecha_regreso' => $fecha_regreso,
-            'transportePropio' => $transportePropio,
-            'marca' => $marca,
-            'modelo' => $modelo,
-            'color' => $color,
-            'placas' => $placas,
-            'transporte' => $transporte,
-            'kilometraje' => $kilometraje,
-            'status' => $status
-        ];
+    public function addComision($data, $table_name) {
+        $describe = $this->describeTable($table_name);
+        $fields = array_column($describe, 'Field');
+        $data = array_map('trim', array_merge(array_fill_keys($fields, ''), $data));
+        $fieldsList = implode(', ', $fields);
 
-        $query = "INSERT INTO Comiciones (  
-                    Usuario_Id, Fecha_de_Elaboracion, Lugar, Asunto, Viaticos, Especificacion_Viaticos,
-                    Observaciones, Fecha_De_Salida, Fecha_De_Regreso, Transporte_propio, Marca, Modelo,
-                    Color, Placas, Transporte, Kilometraje, Status
-                  ) 
-                  VALUES (
-                    :usuarioId, :fechaElaboracion, :lugar, :asunto, :viaticos, :especificacionViaticos,
-                    :observaciones, :fechaSalida, :fecha_regreso, :transportePropio, :marca, :modelo,
-                    :color, :placas, :transporte, :kilometraje, :status
-                  )";
-    
+        $query = "INSERT INTO " . $table_name . " ($fieldsList) VALUES ($data)";
+
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':usuarioId', $usuarioId, PDO::PARAM_INT);
-        $stmt->bindParam(':fechaElaboracion', $fechaElaboracion, PDO::PARAM_STR);
-        $stmt->bindParam(':lugar', $lugar, PDO::PARAM_STR);
-        $stmt->bindParam(':asunto', $asunto, PDO::PARAM_STR);
-        $stmt->bindParam(':viaticos', $viaticos, PDO::PARAM_STR);
-        $stmt->bindParam(':especificacionViaticos', $especificacionViaticos, PDO::PARAM_STR);
-        $stmt->bindParam(':observaciones', $observaciones, PDO::PARAM_STR);
-        $stmt->bindParam(':fechaSalida', $fechaSalida, PDO::PARAM_STR);
-        $stmt->bindParam(':fechaRegreso', $Fecha_De_Regreso, PDO::PARAM_STR);
-        $stmt->bindParam(':transportePropio', $transportePropio, PDO::PARAM_STR);
-        $stmt->bindParam(':marca', $marca, PDO::PARAM_STR);
-        $stmt->bindParam(':modelo', $modelo, PDO::PARAM_STR);
-        $stmt->bindParam(':color', $color, PDO::PARAM_STR);
-        $stmt->bindParam(':placas', $placas, PDO::PARAM_STR);
-        $stmt->bindParam(':transporte', $transporte, PDO::PARAM_INT);
-        $stmt->bindParam(':kilometraje', $kilometraje, PDO::PARAM_INT);
-        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+
+        foreach ($fields as $field) {
+            $stmt->bindParam(":$field", $data[$field]);
+        }
     
         try {
             $result = $stmt->execute();

@@ -192,33 +192,16 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $data = $CommissionController->describeTable("comiciones");
                             if (!empty($data)) {
                                 $fields = array_column($data, 'Field');
-                            }
 
-                            foreach ($fields as $field) {
-                                $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
-                            }
-                            print_r(json_encode($return_data));
-                            if (!empty($data = $CommissionController->describeTable("comiciones"))) {
-                                foreach ($data as $key => $value) {
-
-
-                                    (isset($_GET[$key])) ? $return_data[$key] = $_GET[$key] : null;
-                                    (!isset($_GET[$key]) && isset($_POST[$key])) ? $return_data[$key] = $_POST[$key] : null;
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
+
+                                $return_data["hoy"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $CommissionController->addComision($return_data);
                             }
-
-
-
-
-                                $fields = array_column($fields, 'Field');
-
-                            foreach ($fields as $field) {
-
-                                $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
-                            }
-
-
-                       //     $CommissionController->addComision($return_data);
                         }else{
                             print_r("no entro");
                         }

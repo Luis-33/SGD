@@ -188,20 +188,35 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 case 'commissions':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ( $action === 'comision') {
-                            $return_data = array("success" => "0");
-
-                            $fields = $CommissionController->describeTable("Comisionaaes");
-
-
-                            // me retorne solo la columna Field
-
-                            //  $fields asiganlar a esta variable
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comiciones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+                            }
 
                             foreach ($fields as $field) {
                                 $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                             }
+                            print_r(json_encode($return_data));
+                            if (!empty($data = $CommissionController->describeTable("comiciones"))) {
+                                foreach ($data as $key => $value) {
 
-                            print_r($return_data);
+
+                                    (isset($_GET[$key])) ? $return_data[$key] = $_GET[$key] : null;
+                                    (!isset($_GET[$key]) && isset($_POST[$key])) ? $return_data[$key] = $_POST[$key] : null;
+                                }
+                            }
+
+
+
+
+                                $fields = array_column($fields, 'Field');
+
+                            foreach ($fields as $field) {
+
+                                $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                            }
+
 
                        //     $CommissionController->addComision($return_data);
                         }else{

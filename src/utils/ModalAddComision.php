@@ -85,13 +85,13 @@ function generateModalComision()
             </div>
 
             <div class=\"input_group\">
-                <label for=\"fechaSalida\">Fecha de Salida</label>
-                <input type=\"datetime-local\" id=\"fechaSalida\" name=\"fechaSalida\" required>
+                <label for=\"Fecha_De_Salida\">Fecha de Salida</label>
+                <input type=\"datetime-local\" id=\"Fecha_De_Salida\" name=\"Fecha_De_Salida\" required>
             </div>
 
             <div class=\"input_group\">
-                <label for=\"Fecha_De_Regreso\">Fecha de Regreso</label>
-                <input type=\"datetime-local\" id=\"Fecha_De_Regreso\" name=\"Fecha_De_Regreso\" required>
+                <label for=\"fecha_regreso\">Fecha de Regreso</label>
+                <input type=\"datetime-local\" id=\"fecha_regreso\" name=\"fecha_regreso\" required>
             </div>
 
             <div class=\"input_group\">

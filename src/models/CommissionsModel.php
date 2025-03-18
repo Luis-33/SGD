@@ -127,13 +127,18 @@ class CommissionsModel
         }
     }
 
-    public function describeTable($name)
-    {
-        $query = "DESCRIBE :name";
+    public function describeTable($name) {
+        $name = preg_replace('/[^a-zA-Z0-9_]/', '', $name);
+        $query = "DESCRIBE `$name`";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        try {
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
     }
 }
 ?>

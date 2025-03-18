@@ -184,6 +184,13 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     $RolesController->showRoles($userRole, $userID);
                     break;
                 case 'TimeByTime':
+                    if ($action === 'addDocument' && isset($_POST['user'], $_POST['documentType'], $_POST['date'], $_POST['status'])) {
+                        $user = $_POST['user'];
+                        $documentType = $_POST['documentType'];
+                        $date = $_POST['date'];
+                        $status = $_POST['status'];
+                     
+                    }
                         $TimeByTimeController->showTimeByTime($userRole, $userID);
                     break;
                 case 'configs':

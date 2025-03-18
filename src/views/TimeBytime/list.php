@@ -1,13 +1,5 @@
 <?php if ($_SESSION['user_role'] == 1) : ?>
-    <!-- <link rel="stylesheet" href="assets/css/components/table.css">
-    <link rel="stylesheet" href="assets/css/components/modal.css">
-    <link rel="stylesheet" href="assets/css/components/dropdown.css">
-    <link rel="stylesheet" href="assets/css/components/chips.css">
-    <link rel="stylesheet" href="assets/css/components/alerts.css">
-    <link rel="stylesheet" href="assets/css/admin/dashboard.css">
-    <link rel="stylesheet" href="assets/css/admin/see_user.css">
-    <link rel="stylesheet" href="assets/css/admin/manage_users.css"> -->
-    
+  
 
 <script>
     function confirmDelete(docID, docTipo, userName) {
@@ -33,7 +25,7 @@
         <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
             <?php if ($_SESSION['user_role'] == 1) : ?>
-                <button class="btn_documento" onclick="openModal('documento')">Subir documento</button>
+                <button class="btn_documento" onclick="openModal('timebytime')">Subir documento</button>
             <?php endif; ?>
         </div>
     </div>
@@ -172,7 +164,7 @@ document.querySelector('.fa-file-circle-xmark').addEventListener('click', functi
 <?php
 
 if ($_SESSION['user_role'] == 1) {
-echo generateModalDocument();
+echo generateModalDocumentForTime();
 }
 
 echo generateModal('addDiaEconomico', 'Generar dia economico', true);

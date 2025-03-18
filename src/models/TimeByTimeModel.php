@@ -9,6 +9,10 @@ class TimeByTimeModel
         $this->db = $db;
     }
 
+    public function create ($userID, $fechaF, $horaF, $fechaP, $horaP, ){
+
+    }
+
     public function getAllDocuments($role, $userID)
     {
 

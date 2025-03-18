@@ -197,15 +197,15 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
 
-                                print_r($return_data);
+                                //print_r($return_data);
 
                                 $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 
-                                //$CommissionController->addComision($return_data);
+                                $CommissionController->addComision($return_data);
                             }
                         }
-                        //$CommissionController->showCommission($userRole, $userID);
+                        $CommissionController->showCommission($userRole, $userID);
                     }else{
                         $CommissionController->showCommission($userRole, $userID);
                     }

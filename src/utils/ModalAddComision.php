@@ -17,7 +17,7 @@ function generateModalComision()
 
                 <div class=\"input_group\">
                     <label for=\"empleado\">Empleado</label>
-                    <div class=\"select_menu\" id=\"usuario_id\">
+                    <div class=\"select_menu\" id=\"usuario_id_menu\">
                         <div class=\"select_btn\">
                             <span class=\"sBtn_text\">Selecciona al empleado</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
@@ -30,7 +30,7 @@ function generateModalComision()
 
     foreach ($usersList as $usuario) {
         $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
-                       " . (empty($usuario["usuario_foto"]) ? '<img src=\"assets/images/avatar.png\">' : '<img src=\"data:image;base64,' . base64_encode($usuario['usuario_foto']) . '\" >') . "
+                       " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
                        <span>" . $usuario["usuario_nombre"] . "</span>
                    </li>";
     }
@@ -38,87 +38,35 @@ function generateModalComision()
     $modal .= "
                         </ul>
                     </div>
-            </div>
-
-            <!-- CAMPO DE UBICACIÓN CON MAPA -->
-            <div class=\"input_group\">
-                <label for=\"lugar\">lugar</label>
-                <input type=\"text\" id=\"lugar\" name=\"lugar\" required readonly>
-                <button type=\"button\" onclick=\"openMapModal()\">Seleccionar Ubicación</button>
-            </div>
-
-            <div id=\"mapModal\" class=\"modal\">
-                <div class=\"modal_content\">
-                    <div class=\"modal_header\">
-                        <h2>Seleccionar Ubicación</h2>
-                        <button onclick=\"closeMapModal()\">Cerrar</button>
-                    </div>
-                    <div id=\"map\" style=\"height: 400px; width: 100%;\"></div>
-                    <button type=\"button\" onclick=\"saveLocation()\">Guardar Ubicación</button>
+                    <input type=\"hidden\" name=\"usuario_id\" id=\"usuario_id\" required>
                 </div>
-            </div>
 
-            <div class=\"input_group\">
-                <label for=\"asunto\">asunto</label>
-                <input type=\"text\" id=\"asunto\" name=\"asunto\" required>
-            </div>
-
-            <div class=\"input_group\">
-                <label>Viáticos</label>
-                <div class=\"select_menu\" id=\"viaticos\">
-                    <div class=\"select_btn\">
-                        <span class=\"sBtn_text\">Selecciona</span>
-                        <i class=\"fa-solid fa-chevron-down\"></i>
-                    </div>
-                    <ul class=\"options\">
-                        <li class=\"option\" data-value=\"No\">No</li>
-                        <li class=\"option\" data-value=\"Si\">Sí</li>
-                    </ul>
-                </div>
-                <input type=\"hidden\" name=\"viaticos\" id=\"viaticos\" required>
-            </div>
-
-            <div class=\"input_group\" id=\"especificacion_viaticos_field\" style=\"display: none;\">
-                <label for=\"especificacion_viaticos\">Especificación de Viáticos</label>
-                <br>
-                <input type=\"text\" id=\"especificacion_viaticos\" name=\"especificacion_viaticos\">
-            </div>
-
-            <div class=\"input_group\" id=\"observaciones\" style=\"display: none;\">
-                <label for=\"observaciones\">Especificación de Viáticos</label>
-                <br>
-                <input type=\"text\" id=\"observaciones\" name=\"observaciones\">
-            </div>
-
-            <div class=\"input_group\">
-                <label for=\"fecha_salida\">Fecha de Salida</label>
-                <input type=\"datetime-local\" id=\"fecha_salida\" name=\"fecha_salida\" required>
-            </div>
-
-            <div class=\"input_group\">
-                <label for=\"fecha_regreso\">Fecha de Regreso</label>
-                <input type=\"datetime-local\" id=\"fecha_regreso\" name=\"fecha_regreso\" required>
-            </div>
-
-            <div class=\"input_group\">
-                <label>Transporte</label>
-                <div class=\"select_menu\" id=\"transporte\">
-                    <div class=\"select_btn\">
-                        <span class=\"sBtn_text\">Selecciona</span>
-                        <i class=\"fa-solid fa-chevron-down\"></i>
-                    </div>
-                    <ul class=\"options\">
-                        <li class=\"option\" data-value=\"No\">No</li>
-                        <li class=\"option\" data-value=\"Si\">Sí</li>
-                    </ul>
-                </div>
-                <input type=\"hidden\" name=\"transporte\" id=\"transporte\" required>
-            </div>
-
-            <div id=\"transporte_fields\" style=\"display: none;\">
+                <!-- CAMPO DE UBICACIÓN CON MAPA -->
                 <div class=\"input_group\">
-                    <label>Transporte Propio</label>
-                    <div class=\"select_menu\" id=\"transporte_propio\">
+                    <label for=\"lugar\">lugar</label>
+                    <input type=\"text\" id=\"lugar\" name=\"lugar\" required readonly>
+                    <button type=\"button\" onclick=\"openMapModal()\">Seleccionar Ubicación</button>
+                </div>
+
+                <div id=\"mapModal\" class=\"modal\">
+                    <div class=\"modal_content\">
+                        <div class=\"modal_header\">
+                            <h2>Seleccionar Ubicación</h2>
+                            <button onclick=\"closeMapModal()\">Cerrar</button>
+                        </div>
+                        <div id=\"map\" style=\"height: 400px; width: 100%;\"></div>
+                        <button type=\"button\" onclick=\"saveLocation()\">Guardar Ubicación</button>
+                    </div>
+                </div>
+
+                <div class=\"input_group\">
+                    <label for=\"asunto\">asunto</label>
+                    <input type=\"text\" id=\"asunto\" name=\"asunto\" required>
+                </div>
+
+                <div class=\"input_group\">
+                    <label>Viáticos</label>
+                    <div class=\"select_menu\" id=\"viaticos_menu\">
                         <div class=\"select_btn\">
                             <span class=\"sBtn_text\">Selecciona</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
@@ -128,185 +76,233 @@ function generateModalComision()
                             <li class=\"option\" data-value=\"Si\">Sí</li>
                         </ul>
                     </div>
-                    <input type=\"hidden\" name=\"transporte_propio\" id=\"transporte_propio\">
+                    <input type=\"hidden\" name=\"viaticos\" id=\"viaticos\" required>
+                </div>
+
+                <div class=\"input_group\" id=\"especificacion_viaticos_field\" style=\"display: none;\">
+                    <label for=\"especificacion_viaticos\">Especificación de Viáticos</label>
+                    <br>
+                    <input type=\"text\" id=\"especificacion_viaticos\" name=\"especificacion_viaticos\">
+                </div>
+
+                <div class=\"input_group\" id=\"observaciones\" style=\"display: none;\">
+                    <label for=\"observaciones\">Especificación de Viáticos</label>
+                    <br>
+                    <input type=\"text\" id=\"observaciones\" name=\"observaciones\">
                 </div>
 
                 <div class=\"input_group\">
-                    <label for=\"marca\">Marca</label>
-                    <input type=\"text\" id=\"marca\" name=\"marca\">
+                    <label for=\"fecha_salida\">Fecha de Salida</label>
+                    <input type=\"datetime-local\" id=\"fecha_salida\" name=\"fecha_salida\" required>
                 </div>
 
                 <div class=\"input_group\">
-                    <label for=\"modelo\">modelo</label>
-                    <input type=\"text\" id=\"modelo\" name=\"modelo\">
+                    <label for=\"fecha_regreso\">Fecha de Regreso</label>
+                    <input type=\"datetime-local\" id=\"fecha_regreso\" name=\"fecha_regreso\" required>
                 </div>
 
                 <div class=\"input_group\">
-                    <label for=\"color\">color</label>
-                    <input type=\"text\" id=\"color\" name=\"color\">
+                    <label>Transporte</label>
+                    <div class=\"select_menu\" id=\"transporte_menu\">
+                        <div class=\"select_btn\">
+                            <span class=\"sBtn_text\">Selecciona</span>
+                            <i class=\"fa-solid fa-chevron-down\"></i>
+                        </div>
+                        <ul class=\"options\">
+                            <li class=\"option\" data-value=\"No\">No</li>
+                            <li class=\"option\" data-value=\"Si\">Sí</li>
+                        </ul>
+                    </div>
+                    <input type=\"hidden\" name=\"transporte\" id=\"transporte\" required>
                 </div>
 
-                <div class=\"input_group\">
-                    <label for=\"placas\">placas</label>
-                    <input type=\"text\" id=\"placas\" name=\"placas\">
+                <div id=\"transporte_fields\" style=\"display: none;\">
+                    <div class=\"input_group\">
+                        <label>Transporte Propio</label>
+                        <div class=\"select_menu\" id=\"transporte_propio_menu\">
+                            <div class=\"select_btn\">
+                                <span class=\"sBtn_text\">Selecciona</span>
+                                <i class=\"fa-solid fa-chevron-down\"></i>
+                            </div>
+                            <ul class=\"options\">
+                                <li class=\"option\" data-value=\"No\">No</li>
+                                <li class=\"option\" data-value=\"Si\">Sí</li>
+                            </ul>
+                        </div>
+                        <input type=\"hidden\" name=\"transporte_propio\" id=\"transporte_propio\">
+                    </div>
+
+                    <div class=\"input_group\">
+                        <label for=\"marca\">Marca</label>
+                        <input type=\"text\" id=\"marca\" name=\"marca\">
+                    </div>
+
+                    <div class=\"input_group\">
+                        <label for=\"modelo\">modelo</label>
+                        <input type=\"text\" id=\"modelo\" name=\"modelo\">
+                    </div>
+
+                    <div class=\"input_group\">
+                        <label for=\"color\">color</label>
+                        <input type=\"text\" id=\"color\" name=\"color\">
+                    </div>
+
+                    <div class=\"input_group\">
+                        <label for=\"placas\">placas</label>
+                        <input type=\"text\" id=\"placas\" name=\"placas\">
+                    </div>
+
+                    <div class=\"input_group\" id=\"kilometraje_field\">
+                        <label for=\"kilometraje\">kilometraje</label><br>
+                        <input type=\"number\" id=\"kilometraje\" name=\"kilometraje\">
+                    </div>
                 </div>
 
-                <div class=\"input_group\" id=\"kilometraje\">
-                    <label for=\"kilometraje\">kilometraje</label><br>
-                    <input type=\"number\" id=\"kilometraje\" name=\"kilometraje\">
-                </div>
+                <input type=\"hidden\" name=\"status\" id=\"status\">
+
+                <button class=\"insert_comision_btn\">Crear Comision</button>
+                </form>
             </div>
-
-            <input type=\"hidden\" name=\"usuario_id\" id=\"usuario_id\">
-            <input type=\"hidden\" name=\"status\" id=\"status\">
-
-            <button class=\"insert_comision_btn\">Crear Comision</button>
-            </form>
         </div>
     </div>
-</div>
 
-<!-- Agregar Leaflet.js para el mapa -->
-<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet/dist/leaflet.css\" />
-<script src=\"https://unpkg.com/leaflet/dist/leaflet.js\"></script>
+    <!-- Agregar Leaflet.js para el mapa -->
+    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet/dist/leaflet.css\" />
+    <script src=\"https://unpkg.com/leaflet/dist/leaflet.js\"></script>
 
-<script>
-    var map;
-    var marker;
+    <script>
+        var map;
+        var marker;
 
-    function openMapModal() {
-        document.getElementById(\"mapModal\").style.display = \"block\";
+        function openMapModal() {
+            document.getElementById(\"mapModal\").style.display = \"block\";
 
-        if (!map) {
-            map = L.map('map').setView([20.6597, -103.3496], 13); // Coordenadas de CDMX
+            if (!map) {
+                map = L.map('map').setView([20.6597, -103.3496], 13); // Coordenadas de CDMX
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
 
-            map.on('click', function(e) {
-                if (marker) {
-                    map.removeLayer(marker);
-                }
-                marker = L.marker(e.latlng).addTo(map);
-            });
-        }
-    }
-
-    function closeMapModal() {
-        document.getElementById(\"mapModal\").style.display = \"none\";
-    }
-
-    function saveLocation() {
-        if (marker) {
-            var latlng = marker.getLatLng();
-            var lat = latlng.lat;
-            var lng = latlng.lng;
-
-            // Llamar a la API de Nominatim para obtener la dirección
-            var url = \"https://nominatim.openstreetmap.org/reverse?format=json&lat=\" + lat + \"&lon=\" + lng;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.display_name) {
-                        document.getElementById(\"lugar\").value = data.display_name;
-                    } else {
-                        document.getElementById(\"lugar\").value = \"Ubicación no encontrada\";
+                map.on('click', function(e) {
+                    if (marker) {
+                        map.removeLayer(marker);
                     }
-                    closeMapModal();
-                })
-                .catch(error => {
-                    console.error(\"Error obteniendo la dirección:\", error);
-                    alert(\"No se pudo obtener la dirección. Intenta de nuevo.\");
+                    marker = L.marker(e.latlng).addTo(map);
                 });
-        } else {
-            alert(\"Por favor selecciona una ubicación en el mapa.\");
+            }
         }
-    }
-    
-    function toggleTransporteFields() {
-        var transporte = document.getElementById('transporte').value;
-        var transporteFields = document.getElementById('transporte_fields');
-        transporteFields.style.display = (transporte === 'Si') ? 'block' : 'none';
-    }
 
-    function togglekilometrajeField() {
-        var transportePropio = document.getElementById('transporte_propio').value;
-        var kilometrajeField = document.getElementById('kilometraje_field');
-        kilometrajeField.style.display = (transportePropio === 'Si') ? 'none' : 'block';
-    }
-    
-    function toggleViaticosField() {
-        var viaticos = document.getElementById('viaticos').value;
-        var especificacionViaticosField = document.getElementById('especificacion_viaticos_field');
-        especificacionViaticosField.style.display = (viaticos === 'Si') ? 'block' : 'none';
-    }
+        function closeMapModal() {
+            document.getElementById(\"mapModal\").style.display = \"none\";
+        }
 
-    document.querySelector(\"form\").addEventListener(\"submit\", function (event) {
-        if (document.getElementById(\"lugar\").value.trim() === \"\") {
-            event.preventDefault();
-            alert(\"Por favor selecciona una ubicación.\");
-        }    
-    });
+        function saveLocation() {
+            if (marker) {
+                var latlng = marker.getLatLng();
+                var lat = latlng.lat;
+                var lng = latlng.lng;
 
-    $(document).ready(function () {
-        $(document).on(\"click\", \".select_menu .select_btn\", function () {
-            $(this).closest(\".select_menu\").toggleClass(\"active\");
+                // Llamar a la API de Nominatim para obtener la dirección
+                var url = \"https://nominatim.openstreetmap.org/reverse?format=json&lat=\" + lat + \"&lon=\" + lng;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.display_name) {
+                            document.getElementById(\"lugar\").value = data.display_name;
+                        } else {
+                            document.getElementById(\"lugar\").value = \"Ubicación no encontrada\";
+                        }
+                        closeMapModal();
+                    })
+                    .catch(error => {
+                        console.error(\"Error obteniendo la dirección:\", error);
+                        alert(\"No se pudo obtener la dirección. Intenta de nuevo.\");
+                    });
+            } else {
+                alert(\"Por favor selecciona una ubicación en el mapa.\");
+            }
+        }
+        
+        function toggleTransporteFields() {
+            var transporte = document.getElementById('transporte').value;
+            var transporteFields = document.getElementById('transporte_fields');
+            transporteFields.style.display = (transporte === 'Si') ? 'block' : 'none';
+        }
+
+        function togglekilometrajeField() {
+            var transportePropio = document.getElementById('transporte_propio').value;
+            var kilometrajeField = document.getElementById('kilometraje_field');
+            kilometrajeField.style.display = (transportePropio === 'Si') ? 'none' : 'block';
+        }
+        
+        function toggleViaticosField() {
+            var viaticos = document.getElementById('viaticos').value;
+            var especificacionViaticosField = document.getElementById('especificacion_viaticos_field');
+            especificacionViaticosField.style.display = (viaticos === 'Si') ? 'block' : 'none';
+        }
+
+        document.querySelector(\"form\").addEventListener(\"submit\", function (event) {
+            if (document.getElementById(\"lugar\").value.trim() === \"\") {
+                event.preventDefault();
+                alert(\"Por favor selecciona una ubicación.\");
+            }    
         });
 
-        $(document).on(\"click\", \".options .option\", function (e) {
-            e.stopPropagation();
-
-            $(this).closest('.options').find('.option').removeClass('selected');
-            $(this).addClass('selected');
-
-            // Se obtiene el texto de la opción; si no tiene <span> o <h3>, se toma el texto directo
-            let selectedOption = $(this).find(\"h3, span\").first().text();
-            if (!selectedOption) {
-                selectedOption = $(this).text().trim();
-            }
-            let selectedValue = $(this).data('value');
-
-            $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
-            $(this).closest(\".select_menu\").toggleClass(\"active\");
-
-            if ($(this).closest('.select_menu').attr('id') === 'usuario_id') {
-                $('#usuario_id').val(selectedValue); // Asigna el ID del usuario al campo oculto
-            } else if ($(this).closest('.select_menu').attr('id') === 'comisionEstatus') {
-                $('#status').val(selectedValue);
-            } else if ($(this).closest('.select_menu').attr('id') === 'updateStatus') {
-                $('#estatus').val(selectedValue);
-            } else if ($(this).closest('.select_menu').attr('id') === 'viaticos') {
-                $('#viaticos').val(selectedValue);
-                toggleViaticosField();
-            } else if ($(this).closest('.select_menu').attr('id') === 'transporte') {
-                $('#transporte').val(selectedValue);
-                toggleTransporteFields();
-            } else if ($(this).closest('.select_menu').attr('id') === 'transporte_propio') {
-                $('#transporte_propio').val(selectedValue);
-                togglekilometrajeField();
-            }
-        });
-
-        const chips = document.querySelectorAll('.chip');
-        const input = document.getElementById('documentType');
-
-        chips.forEach(chip => {
-            chip.addEventListener('click', function () {
-                chips.forEach(c => {
-                    c.classList.remove('selected');
-                });
-
-                this.classList.add('selected');
-                input.value = this.getAttribute('data-value');
+        $(document).ready(function () {
+            $(document).on(\"click\", \".select_menu .select_btn\", function () {
+                $(this).closest(\".select_menu\").toggleClass(\"active\");
             });
+
+            $(document).on(\"click\", \".options .option\", function (e) {
+                e.stopPropagation();
+
+                $(this).closest('.options').find('.option').removeClass('selected');
+                $(this).addClass('selected');
+
+                // Se obtiene el texto de la opción; si no tiene <span> o <h3>, se toma el texto directo
+                let selectedOption = $(this).find(\"h3, span\").first().text();
+                if (!selectedOption) {
+                    selectedOption = $(this).text().trim();
+                }
+                let selectedValue = $(this).data('value');
+
+                $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
+                $(this).closest(\".select_menu\").toggleClass(\"active\");
+
+                if ($(this).closest('.select_menu').attr('id') === 'usuario_id_menu') {
+                    $('#usuario_id').val(selectedValue); // Asigna el ID del usuario al campo oculto
+                } else if ($(this).closest('.select_menu').attr('id') === 'viaticos_menu') {
+                    $('#viaticos').val(selectedValue);
+                    toggleViaticosField();
+                } else if ($(this).closest('.select_menu').attr('id') === 'transporte_menu') {
+                    $('#transporte').val(selectedValue);
+                    toggleTransporteFields();
+                } else if ($(this).closest('.select_menu').attr('id') === 'transporte_propio_menu') {
+                    $('#transporte_propio').val(selectedValue);
+                    togglekilometrajeField();
+                }
+            });
+
+            const chips = document.querySelectorAll('.chip');
+            const input = document.getElementById('documentType');
+
+            chips.forEach(chip => {
+                chip.addEventListener('click', function () {
+                    chips.forEach(c => {
+                        c.classList.remove('selected');
+                    });
+
+                    this.classList.add('selected');
+                    input.value = this.getAttribute('data-value');
+                });
+            });
+
         });
 
-    });
-
-</script>
-";
+    </script>
+    ";
 
     return $modal;
 }

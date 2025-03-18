@@ -1,6 +1,6 @@
 <?php
 
-class CommissionsModel
+class ComunModel
 {
     private $db;
 
@@ -9,7 +9,7 @@ class CommissionsModel
         $this->db = $db;
     }
 
-    public function getAllCommissions($role, $userID, $table_name)
+    public function getAll($role, $userID, $table_name)
     {
         $query = "SELECT " . $table_name . ".*, usuario.* FROM " . $table_name . " LEFT JOIN usuario ON usuario.usuario_id = " . $table_name . ".Usuario_id";
 
@@ -35,7 +35,7 @@ class CommissionsModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addComision($data, $table_name) {
+    public function add($data, $table_name) {
         $describe = $this->describeTable($table_name);
         $fields = array_column($describe, 'Field');
         $data = array_map('trim', $data);

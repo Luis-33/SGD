@@ -16,7 +16,7 @@ use PHPMailer\PHPMailer\Exception;
 class CommissionController
 {
     private $CommissionsModel;
-    public  $table_name = 'comiciones';
+    public  $table_name = 'comisiones';
 
     public function __construct($db)
     {
@@ -26,15 +26,9 @@ class CommissionController
 
     public function showCommission($role, $userID)
     {
-        $documents = $this->CommissionsModel->getAllCommissions($role, $userID);
+        $documents = $this->CommissionsModel->getAllCommissions($role, $userID, $this->table_name);
         require VIEW_PATH . 'document/commission_list.php';
 
-    }
-
-    public function showAllDocuments($role, $userID)
-    {
-        $documents = $this->CommissionsModel->getAllDocuments($role, $userID);
-        require VIEW_PATH . 'document/list.php';
     }
 
     public function addComision($data) {
@@ -43,7 +37,6 @@ class CommissionController
         } else {
             Session::set('user_error', 'No se pudo registrar la comisión.');
         }
-        //echo "<script>$(location).attr('href', 'admin_home.php?page=manage_commissions');</script>";
     }
 
     public function describeTable($name)

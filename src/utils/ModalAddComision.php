@@ -17,7 +17,7 @@ function generateModalComision()
 
                 <div class=\"input_group\">
                     <label for=\"empleado\">Empleado</label>
-                    <div class=\"select_menu\" id=\"empleado\">
+                    <div class=\"select_menu\" id=\"usuario_id\">
                         <div class=\"select_btn\">
                             <span class=\"sBtn_text\">Selecciona al empleado</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
@@ -30,7 +30,7 @@ function generateModalComision()
 
     foreach ($usersList as $usuario) {
         $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
-                       " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
+                       " . (empty($usuario["usuario_foto"]) ? '<img src=\"assets/images/avatar.png\">' : '<img src=\"data:image;base64,' . base64_encode($usuario['usuario_foto']) . '\" >') . "
                        <span>" . $usuario["usuario_nombre"] . "</span>
                    </li>";
     }
@@ -42,7 +42,7 @@ function generateModalComision()
 
             <!-- CAMPO DE UBICACIÓN CON MAPA -->
             <div class=\"input_group\">
-                <label for=\"lugar\">Lugar</label>
+                <label for=\"lugar\">lugar</label>
                 <input type=\"text\" id=\"lugar\" name=\"lugar\" required readonly>
                 <button type=\"button\" onclick=\"openMapModal()\">Seleccionar Ubicación</button>
             </div>
@@ -54,12 +54,12 @@ function generateModalComision()
                         <button onclick=\"closeMapModal()\">Cerrar</button>
                     </div>
                     <div id=\"map\" style=\"height: 400px; width: 100%;\"></div>
-                    <button onclick=\"saveLocation()\">Guardar Ubicación</button>
+                    <button type=\"button\" onclick=\"saveLocation()\">Guardar Ubicación</button>
                 </div>
             </div>
 
             <div class=\"input_group\">
-                <label for=\"asunto\">Asunto</label>
+                <label for=\"asunto\">asunto</label>
                 <input type=\"text\" id=\"asunto\" name=\"asunto\" required>
             </div>
 
@@ -75,7 +75,7 @@ function generateModalComision()
                         <li class=\"option\" data-value=\"Si\">Sí</li>
                     </ul>
                 </div>
-                <input type=\"hidden\" name=\"viaticos\" id=\"viaticos_input\" required>
+                <input type=\"hidden\" name=\"viaticos\" id=\"viaticos\" required>
             </div>
 
             <div class=\"input_group\" id=\"especificacion_viaticos_field\" style=\"display: none;\">
@@ -84,9 +84,15 @@ function generateModalComision()
                 <input type=\"text\" id=\"especificacion_viaticos\" name=\"especificacion_viaticos\">
             </div>
 
+            <div class=\"input_group\" id=\"observaciones\" style=\"display: none;\">
+                <label for=\"observaciones\">Especificación de Viáticos</label>
+                <br>
+                <input type=\"text\" id=\"observaciones\" name=\"observaciones\">
+            </div>
+
             <div class=\"input_group\">
-                <label for=\"Fecha_De_Salida\">Fecha de Salida</label>
-                <input type=\"datetime-local\" id=\"Fecha_De_Salida\" name=\"Fecha_De_Salida\" required>
+                <label for=\"fecha_salida\">Fecha de Salida</label>
+                <input type=\"datetime-local\" id=\"fecha_salida\" name=\"fecha_salida\" required>
             </div>
 
             <div class=\"input_group\">
@@ -106,7 +112,7 @@ function generateModalComision()
                         <li class=\"option\" data-value=\"Si\">Sí</li>
                     </ul>
                 </div>
-                <input type=\"hidden\" name=\"transporte\" id=\"transporte_input\" required>
+                <input type=\"hidden\" name=\"transporte\" id=\"transporte\" required>
             </div>
 
             <div id=\"transporte_fields\" style=\"display: none;\">
@@ -122,7 +128,7 @@ function generateModalComision()
                             <li class=\"option\" data-value=\"Si\">Sí</li>
                         </ul>
                     </div>
-                    <input type=\"hidden\" name=\"transporte_propio\" id=\"transporte_propio_input\">
+                    <input type=\"hidden\" name=\"transporte_propio\" id=\"transporte_propio\">
                 </div>
 
                 <div class=\"input_group\">
@@ -131,27 +137,27 @@ function generateModalComision()
                 </div>
 
                 <div class=\"input_group\">
-                    <label for=\"modelo\">Modelo</label>
+                    <label for=\"modelo\">modelo</label>
                     <input type=\"text\" id=\"modelo\" name=\"modelo\">
                 </div>
 
                 <div class=\"input_group\">
-                    <label for=\"color\">Color</label>
+                    <label for=\"color\">color</label>
                     <input type=\"text\" id=\"color\" name=\"color\">
                 </div>
 
                 <div class=\"input_group\">
-                    <label for=\"placas\">Placas</label>
+                    <label for=\"placas\">placas</label>
                     <input type=\"text\" id=\"placas\" name=\"placas\">
                 </div>
 
-                <div class=\"input_group\" id=\"kilometraje_field\">
-                    <label for=\"kilometraje\">Kilometraje</label><br>
+                <div class=\"input_group\" id=\"kilometraje\">
+                    <label for=\"kilometraje\">kilometraje</label><br>
                     <input type=\"number\" id=\"kilometraje\" name=\"kilometraje\">
                 </div>
             </div>
 
-            <input type=\"hidden\" name=\"user\" id=\"user\">
+            <input type=\"hidden\" name=\"usuario_id\" id=\"usuario_id\">
             <input type=\"hidden\" name=\"status\" id=\"status\">
 
             <button class=\"insert_comision_btn\">Crear Comision</button>
@@ -200,7 +206,6 @@ function generateModalComision()
             // Llamar a la API de Nominatim para obtener la dirección
             var url = \"https://nominatim.openstreetmap.org/reverse?format=json&lat=\" + lat + \"&lon=\" + lng;
 
-
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -221,30 +226,30 @@ function generateModalComision()
     }
     
     function toggleTransporteFields() {
-        var transporte = document.getElementById('transporte_input').value;
+        var transporte = document.getElementById('transporte').value;
         var transporteFields = document.getElementById('transporte_fields');
         transporteFields.style.display = (transporte === 'Si') ? 'block' : 'none';
     }
 
-    function toggleKilometrajeField() {
-        var transportePropio = document.getElementById('transporte_propio_input').value;
+    function togglekilometrajeField() {
+        var transportePropio = document.getElementById('transporte_propio').value;
         var kilometrajeField = document.getElementById('kilometraje_field');
         kilometrajeField.style.display = (transportePropio === 'Si') ? 'none' : 'block';
     }
     
     function toggleViaticosField() {
-        var viaticos = document.getElementById('viaticos_input').value;
+        var viaticos = document.getElementById('viaticos').value;
         var especificacionViaticosField = document.getElementById('especificacion_viaticos_field');
         especificacionViaticosField.style.display = (viaticos === 'Si') ? 'block' : 'none';
     }
 
-    
-document.querySelector(\"form\").addEventListener(\"submit\", function (event) {
-    if (document.getElementById(\"lugar\").value.trim() === \"\") {
-        event.preventDefault();
-        alert(\"Por favor selecciona una ubicación.\");
-    }    
-});
+    document.querySelector(\"form\").addEventListener(\"submit\", function (event) {
+        if (document.getElementById(\"lugar\").value.trim() === \"\") {
+            event.preventDefault();
+            alert(\"Por favor selecciona una ubicación.\");
+        }    
+    });
+
     $(document).ready(function () {
         $(document).on(\"click\", \".select_menu .select_btn\", function () {
             $(this).closest(\".select_menu\").toggleClass(\"active\");
@@ -266,21 +271,21 @@ document.querySelector(\"form\").addEventListener(\"submit\", function (event) {
             $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
             $(this).closest(\".select_menu\").toggleClass(\"active\");
 
-            if ($(this).closest('.select_menu').attr('id') === 'empleado') {
-                $('#user').val(selectedValue);
+            if ($(this).closest('.select_menu').attr('id') === 'usuario_id') {
+                $('#usuario_id').val(selectedValue); // Asigna el ID del usuario al campo oculto
             } else if ($(this).closest('.select_menu').attr('id') === 'comisionEstatus') {
                 $('#status').val(selectedValue);
             } else if ($(this).closest('.select_menu').attr('id') === 'updateStatus') {
                 $('#estatus').val(selectedValue);
             } else if ($(this).closest('.select_menu').attr('id') === 'viaticos') {
-                $('#viaticos_input').val(selectedValue);
+                $('#viaticos').val(selectedValue);
                 toggleViaticosField();
             } else if ($(this).closest('.select_menu').attr('id') === 'transporte') {
-                $('#transporte_input').val(selectedValue);
+                $('#transporte').val(selectedValue);
                 toggleTransporteFields();
             } else if ($(this).closest('.select_menu').attr('id') === 'transporte_propio') {
-                $('#transporte_propio_input').val(selectedValue);
-                toggleKilometrajeField();
+                $('#transporte_propio').val(selectedValue);
+                togglekilometrajeField();
             }
         });
 

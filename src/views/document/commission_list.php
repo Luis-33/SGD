@@ -29,7 +29,7 @@
                 <?php foreach ($documents as $Commission) : ?>
                     <div class="table_body_item">
                         <span class="row_pdf" title="Descargar Comisión">
-                            <a href="download.php?docID=<?php echo $Commission['ID']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                            <a href="download.php?docID=<?php echo $Commission['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>
                             <div class="row_user_info">
@@ -45,10 +45,10 @@
                             </div>
                         <?php endif; ?>
                         
-                        <span class="row_fecha"><?php echo $Commission["Fecha_de_Elaboracion"]; ?></span>
+                        <span class="row_fecha"><?php echo $Commission["fecha_elaboracion"]; ?></span>
                         <?php 
                         $estatusClass = '';
-                        switch ($Commission['Status']) {
+                        switch ($Commission['status']) {
                             case "Entregado":
                                 $estatusClass = 'success';
                                 break;
@@ -59,13 +59,13 @@
                                 $estatusClass = 'danger';
                                 break;
                         }
-                        echo "<span class=\"row_estatus {$estatusClass}\">{$Commission['Status']}</span>"; ?>
+                        echo "<span class=\"row_estatus {$estatusClass}\">{$Commission['status']}</span>"; ?>
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
                                 <i class="fa-solid fa-pen-to-square" 
-                                    title="Modificar Comisión de <?= $Commission["usuario_nombre"]; ?>" 
-                                    data-id="<?php echo $Commission['ID']; ?>" 
-                                    onclick="openModal('editCommission', <?php echo $Commission['ID']; ?>)">
+                                    title="Modificar Comisión de <?= $Commission["usuario_id"]; ?>" 
+                                    data-id="<?php echo $Commission['id']; ?>" 
+                                    onclick="openModal('editCommission', <?php echo $Commission['id']; ?>)">
                                 </i>        
                             </div>
                         <?php endif; ?>
@@ -122,7 +122,4 @@ if (Session::exists('Commission_error')) {
     echo "<script>hideAlert('error');</script>";
     Session::delete('Commission_error');
 }
-
-// Agregar var_dump para verificar los mensajes de error
-var_dump(Session::get('Commission_error'));
 ?>

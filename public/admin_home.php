@@ -189,7 +189,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ( $action === 'comision') {
                             $return_data = array("success" => "0"); $fields = array();
-                            $data = $CommissionController->describeTable("comiciones");
+                            $data = $CommissionController->describeTable("comisiones");
                             if (!empty($data)) {
                                 $fields = array_column($data, 'Field');
 
@@ -197,14 +197,15 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
 
-                                $return_data["hoy"] = date("Y-m-d");
+                                print_r($return_data);
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 
-                                $CommissionController->addComision($return_data);
+                                //$CommissionController->addComision($return_data);
                             }
-                        }else{
-                            print_r("no entro");
                         }
+                        //$CommissionController->showCommission($userRole, $userID);
                     }else{
                         $CommissionController->showCommission($userRole, $userID);
                     }

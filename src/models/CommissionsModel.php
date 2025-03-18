@@ -9,12 +9,12 @@ class CommissionsModel
         $this->db = $db;
     }
 
-    public function getAllCommissions($role, $userID)
+    public function getAllCommissions($role, $userID, $table_name)
     {
-        $query = "SELECT comiciones.*, usuario.* FROM comiciones LEFT JOIN usuario ON usuario.usuario_id = comiciones.Usuario_id";
+        $query = "SELECT " . $table_name . ".*, usuario.* FROM " . $table_name . " LEFT JOIN usuario ON usuario.usuario_id = " . $table_name . ".Usuario_id";
 
         if ($role == 3) { 
-            $query .= " WHERE comiciones.Usuario_id = :userID";
+            $query .= " WHERE " . $table_name . ".Usuario_id = :userID";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         } else if ($role == 4) { 
@@ -35,45 +35,28 @@ class CommissionsModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllDocuments($role, $userID)
-    {
-
-        $query = "SELECT documento.*, usuario.* FROM documento LEFT JOIN usuario ON usuario.usuario_id = documento.usuario_id";
-
-        if ($role == 3) {
-            $query .= " WHERE documento.usuario_id = :userID";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-        } else if ($role == 4) {
-            $area_adscripcion = $_SESSION['user_area'];
-            $query .= " WHERE usuario.areaAdscripcion_id = :areaAdscripcion";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':areaAdscripcion', $area_adscripcion, PDO::PARAM_INT);
-        } else if ($role == 5) {
-            $user_sindicato = $_SESSION['user_union'];
-            $query .= " WHERE usuario.sindicato_id = :userSindicato";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':userSindicato', $user_sindicato, PDO::PARAM_STR);
-        } else {
-            $stmt = $this->db->prepare($query);
-        }
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } 
-
     public function addComision($data, $table_name) {
         $describe = $this->describeTable($table_name);
         $fields = array_column($describe, 'Field');
-        $data = array_map('trim', array_merge(array_fill_keys($fields, ''), $data));
-        $fieldsList = implode(', ', $fields);
+        $data = array_map('trim', $data);
+        
+        // Filtrar campos que no existen en la tabla
+        $data = array_intersect_key($data, array_flip($fields));
+        
+        // Eliminar campos vacíos para evitar errores de inserción
+        $data = array_filter($data, function($value) {
+            return $value !== '';
+        });
 
-        $query = "INSERT INTO " . $table_name . " ($fieldsList) VALUES ($data)";
+        $fieldsList = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
+
+        $query = "INSERT INTO " . $table_name . " ($fieldsList) VALUES ($placeholders)";
 
         $stmt = $this->db->prepare($query);
 
-        foreach ($fields as $field) {
-            $stmt->bindParam(":$field", $data[$field]);
+        foreach ($data as $field => $value) {
+            $stmt->bindValue(":$field", $value);
         }
     
         try {

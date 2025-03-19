@@ -204,8 +204,25 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
                                 $CommissionController->addComision($return_data);
                             }
+                        } else if($action === 'editCommissions'){
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+
+                                print_r($return_data);
+                                
+
+                            //$CommissionController->updateDocument($docID, $status);
+                            }
                         }
-                        $CommissionController->showCommission($userRole, $userID);
+                        //$CommissionController->showCommission($userRole, $userID);
                     }else{
                         $CommissionController->showCommission($userRole, $userID);
                     }

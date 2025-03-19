@@ -54,6 +54,21 @@ class UserModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // public function getUsersList($jefeInmediato_id = null)
+    // {
+    //     $query = "SELECT * FROM usuario";
+    //     if ($jefeInmediato_id !== null) {
+    //         $query .= " WHERE jefeInmediato_id = :jefeInmediato_id";
+    //     }
+
+    //     $stmt = $this->db->prepare($query);
+    //     if ($jefeInmediato_id !== null) {
+    //         $stmt->bindParam(':jefeInmediato_id', $jefeInmediato_id, PDO::PARAM_INT);
+    //     }
+    //     $stmt->execute();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
     public function getUsersList()
     {
         $query = "SELECT * FROM usuario ORDER BY usuario_nombre";

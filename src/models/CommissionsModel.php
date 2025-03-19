@@ -80,5 +80,14 @@ class CommissionsModel
             return false;
         }
     }
+
+    public function getCommissionsById($docID)
+    {
+        $query = "SELECT * FROM comisiones WHERE id = :docID";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 ?>

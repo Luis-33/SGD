@@ -28,6 +28,8 @@ function generateModalComision()
     $userModel = new UserModel($db);
     $usersList = $userModel->getUsersList();
 
+    
+
     foreach ($usersList as $usuario) {
         $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
                        " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "

@@ -3,7 +3,7 @@
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
             <div class="card_header_actions">
-                <?php if ($_SESSION['user_role'] == 1) : ?>
+                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
                     <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
@@ -63,12 +63,13 @@
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
                                 <i class="fa-solid fa-pen-to-square" 
-                                    title="Modificar Comisión de <?= $Commission["usuario_id"]; ?>" 
+                                    title="Modificar Comisión de <?= $Commission["id"]; ?>" 
                                     data-id="<?php echo $Commission['id']; ?>" 
-                                    onclick="openModal('editCommission', <?php echo $Commission['id']; ?>)">
+                                    onclick="openModal('editCommissions', <?php echo $Commission['id']; ?>)">
                                 </i>        
                             </div>
                         <?php endif; ?>
+                        <?php echo generateModalEditComision($Commission["id"]); ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -81,10 +82,10 @@
 <?php else : ?>
     <div class="card_table">
         <div class="card_table_header">
-            <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
+            <h2><?php echo ($_SESSION['user_role'] == 3 || $_SESSION['user_role'] == 4) ? "Mis Comisiones" : "Comisiones"; ?></h2>
             <div class="card_header_actions">
-                <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
+                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
+                    <button class="btn_documento" onclick="openModal('editCommissions')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -102,9 +103,9 @@
 <script src="assets/js/modal.js"></script>
 
 <?php
-
-if ($_SESSION['user_role'] == 1) {
+if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) {
     echo generateModalComision();
+    echo generateModalEditComision($Commission["id"]);
 }
 
 if (Session::exists('Commission_success')) {

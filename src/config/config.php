@@ -17,6 +17,7 @@ define('VIEW_PATH', BASE_PATH . '/src/views/');
 
 require_once UTIL_PATH . 'Modal.php';
 require_once UTIL_PATH . 'ModalAddDocumento.php';
+require_once UTIL_PATH . 'ModalEditCommissions.php';
 require_once UTIL_PATH . 'ModalAddComision.php';
 require_once UTIL_PATH . 'ModalEditDocumento.php';
 require_once UTIL_PATH . 'ModalAddUser.php';

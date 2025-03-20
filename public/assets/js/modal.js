@@ -10,3 +10,4 @@ generarPDF = function (id) {
 function closeModal(modalClass) {
     $('.' + modalClass).css('display', 'none');
 }
+

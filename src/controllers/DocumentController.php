@@ -73,7 +73,18 @@ class DocumentController
             $pdf->AliasNbPages();
             $pdf->setHeaderTitle("FORMATO DE SOLICITUD DE DIA ECONÓMICO");
             $pdf->AddPage();
-            $pdf->generateDiaEconomico($userInfo['usuario_nombre'], $userInfo['puesto_nombre'], $userInfo['usuario_nomina'], $userInfo['sindicato_id'], $startDate, $endDate, $permiso, $userInfo['sindicato_jefe'], $userInfo['jefeInmediato_nombre'], $directorName['usuario_nombre']);
+            $pdf->generateDiaEconomico(
+                $userInfo['usuario_nombre'], 
+                $userInfo['puesto_nombre'], 
+                $userInfo['usuario_nomina'], 
+                $userInfo['sindicato_id'], 
+                $startDate, 
+                $endDate, 
+                $permiso, 
+                $userInfo['sindicato_jefe'],
+                $userInfo['jefeInmediato_nombre'], 
+                $directorName['usuario_nombre'],
+            );
 
             $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia Economico ' . $actualDate . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
@@ -85,7 +96,7 @@ class DocumentController
         }
     }
 
-    public function generateDiaCumple($db, $userID, $birthday)
+    public function generateDiaCumple($db, $userID,$fecha_ingreso)
     {
         $result = $this->documentModel->countDiaCumple($userID);
 
@@ -104,7 +115,17 @@ class DocumentController
             $pdf->AliasNbPages();
             $pdf->setHeaderTitle("FORMATO DE SOLICITUD DE DIA DE CUMPLEAÑOS");
             $pdf->AddPage();
-            $pdf->generateDiaCumple($userInfo['usuario_nombre'], $userInfo['puesto_nombre'], $userInfo['usuario_nomina'], $userInfo['sindicato_id'], $userInfo['usuario_fechaCumpleaños'], $userInfo['sindicato_jefe'], $userInfo['jefeInmediato_nombre'], $directorName['usuario_nombre'], $birthday);
+            $pdf->generateDiaCumple(
+                $userInfo['usuario_nombre'],
+                $userInfo['puesto_nombre'], 
+                $userInfo['usuario_nomina'], 
+                $userInfo['sindicato_id'], 
+                $userInfo['usuario_fechaCumpleaños'], 
+                $userInfo['sindicato_jefe'], 
+                $userInfo['jefeInmediato_nombre'], 
+                $directorName['usuario_nombre'], 
+                $fecha_ingreso
+            );
 
             $pathPDF = PDF_PATH . 'docs/' . str_replace(' ', '', $userInfo['usuario_nombre']) . '_dia_de_cumpleaños_' . $birthday . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
@@ -371,7 +392,7 @@ class DocumentController
 
             //Recipients
             $mail->setFrom('axelsolorzano53@gmail.com', 'Luis Antonio Muñoz Gonzáles');
-            $mail->addAddress($userEmail);     //Add a recipient
+           // $mail->addAddress($userEmail);     //Add a recipient
 
             //Content
             $mail->isHTML(true);                                  //Set email format to HTML

@@ -1,4 +1,7 @@
-<?php if ($_SESSION['user_role'] == 1) : ?>
+
+<?php
+include_once UTIL_PATH . 'ModalEditDocumento.php';
+ if ($_SESSION['user_role'] == 1) : ?>
 
     <script>
         function confirmDelete(docID, docTipo, userName) {
@@ -55,6 +58,7 @@
                 <?php endif; ?>
             </div>
             <div class="table_body" id="tableContainer">
+                
                 <?php foreach ($documents as $document) : ?>
                     <div class="table_body_item">
                         <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
@@ -75,7 +79,7 @@
                         <?php endif; ?>
                         <span class="row_tipo"><?php echo $document["documento_tipo"] ?></span>
                         <span class="row_fecha"><?php echo $document["documento_fechaCreacion"] ?></span>
-                        <?php 
+                        <?php
                         $estatusClass = '';
                         switch ($document['documento_estatus']) {
                             case "Entregado":
@@ -91,7 +95,7 @@
                         echo "<span class=\"row_estatus {$estatusClass}\">{$document['documento_estatus']}</span>"; ?>
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
-                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument')"></i>
+                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?> con ID  <?php echo $document['documento_id']; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument')"></i>
                                 <i class="fa-solid fa-trash-can" title="Eliminar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['documento_id']; ?>, '<?= $document['documento_tipo']; ?>', '<?= $document['usuario_nombre']; ?>')"></i>
                             </div>
                         <?php endif; ?>

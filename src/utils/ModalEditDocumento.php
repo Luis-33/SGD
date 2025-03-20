@@ -3,8 +3,12 @@
 require_once MODEL_PATH . "DocumentModel.php";
 require_once SERVER_PATH . "DB.php";
 
+
+
+
 function generateModalEditDocument($docID)
 {
+    print_r($docID);
     $db = new DB();
     $documentModel = new DocumentModel($db);
     $document = $documentModel->getDocumentById($docID);
@@ -18,7 +22,15 @@ function generateModalEditDocument($docID)
             </div>
             <div class=\"modal_body\">
                 <form action=\"admin_home.php?page=dashboard&action=editDocument\" method=\"POST\">
+                <div class=\"input_group\">
+                <label>Adjuntar documento</label>
+                    <input type=\"file\" name=\"documento\">
+                </div>
+                
                     <input type=\"hidden\" name=\"docID\" value=\"{$document['documento_id']}\">
+                    <p>ID del documento: {$document['documento_id']}</p>
+                    <p>ID que llega de parametro: {$docID}</p>
+
 
                     <div class=\"input_group\">
                         <label>Estatus</label>
@@ -27,6 +39,7 @@ function generateModalEditDocument($docID)
                                     <span class=\"sBtn_text\">" . $document['documento_estatus'] . "</span>
                                 <i class=\"fa-solid fa-chevron-down\"></i>
                             </div>
+                            
                             <ul class=\"options\">
                                 <li class=\"option\" data-value=\"Entregado\">
                                     <span>Entregado</span>
@@ -51,4 +64,8 @@ function generateModalEditDocument($docID)
 ";
 
     return $modal;
+    // Solo ejecuta la función si `docID` está presente
+if (isset($_GET['docID'])) {
+    echo generateModalEditDocument($_GET['docID']);
+}
 }

@@ -38,6 +38,7 @@ class DocumentModel
 
     public function getDocumentById($docID)
     {
+        
         $query = "SELECT * FROM documento WHERE documento_id = :docID";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
@@ -48,7 +49,7 @@ class DocumentModel
     public function insertDocument($user, $tipo, $pathPDF, $actualDate, $status)
     {
         $query = "INSERT INTO documento (usuario_id, documento_tipo, documento_file, documento_fechaCreacion, documento_estatus) 
-                  VALUES (:userID, :tipo, :pathPDF, :actualDate, :status)";
+                    VALUES (:userID, :tipo, :pathPDF, :actualDate, :status)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':userID', $user, PDO::PARAM_INT);
         $stmt->bindParam(':tipo', $tipo, PDO::PARAM_STR);

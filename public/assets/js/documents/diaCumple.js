@@ -12,7 +12,7 @@ export function addDiaCumple() {
                 </div>
             </div>
 
-            <button type="submit">Generar dia de cumpleaños</button>
+            <button type="submit" name="birthday">Generar dia de cumpleaños</button>
         </form>`
     );
 

@@ -8,17 +8,18 @@ require_once SERVER_PATH . "DB.php";
 
 function generateModalEditDocument($docID)
 {
-    print_r($docID);
     $db = new DB();
     $documentModel = new DocumentModel($db);
     $document = $documentModel->getDocumentById($docID);
 
     $modal = "
-    <div class=\"modal editDocument\">
+        <div class=\"modal editDocument{$docID}\" >
         <div class=\"modal_content\">
             <div class=\"modal_header\">
                 <h2>Actualizar documento</h2>
-                <button onclick=\"closeModal('editDocument')\">Cerrar</button>
+                <button onclick=\"closeModal('editDocument{$document['documento_id']}')\">
+                    Cerrar <i class=\"fa-solid fa-xmark\"></i>
+                </button>
             </div>
             <div class=\"modal_body\">
                 <form action=\"admin_home.php?page=dashboard&action=editDocument\" method=\"POST\">
@@ -64,8 +65,4 @@ function generateModalEditDocument($docID)
 ";
 
     return $modal;
-    // Solo ejecuta la función si `docID` está presente
-if (isset($_GET['docID'])) {
-    echo generateModalEditDocument($_GET['docID']);
-}
 }

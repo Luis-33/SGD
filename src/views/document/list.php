@@ -58,8 +58,9 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                 <?php endif; ?>
             </div>
             <div class="table_body" id="tableContainer">
-                
+
                 <?php foreach ($documents as $document) : ?>
+                <?php   echo generateModalEditDocument($document["documento_id"]); ?>
                     <div class="table_body_item">
                         <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
                             <a href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
@@ -95,7 +96,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                         echo "<span class=\"row_estatus {$estatusClass}\">{$document['documento_estatus']}</span>"; ?>
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
-                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?> con ID  <?php echo $document['documento_id']; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument')"></i>
+                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?> con ID  <?php echo $document['documento_id']; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument<?php echo $document['documento_id']; ?>')"></i>
                                 <i class="fa-solid fa-trash-can" title="Eliminar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['documento_id']; ?>, '<?= $document['documento_tipo']; ?>', '<?= $document['usuario_nombre']; ?>')"></i>
                             </div>
                         <?php endif; ?>
@@ -108,17 +109,6 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
             </div>
         </div>
     </div>
-
-    <?php
-
-    if ($_SESSION['user_role'] == 1) {
-        echo generateModalEditDocument($document["documento_id"]);
-        echo generateModal('deleteDocument', 'Eliminar documento', true);
-    }
-
-    ?>
-
-
     <script src="assets/js/search_document.js"></script>
 
 <?php else : ?>

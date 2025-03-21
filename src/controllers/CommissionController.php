@@ -39,6 +39,14 @@ class CommissionController
         }
     }
 
+    public function updateCommission($data) {
+        if ($this->CommissionsModel->updateComision($data, $this->table_name)) {
+            Session::set('user_success', 'Comisión registrada correctamente.');
+        } else {
+            Session::set('user_error', 'No se pudo registrar la comisión.');
+        }
+    }
+
     public function describeTable($name)
     {
         return $this->CommissionsModel->describeTable($name);

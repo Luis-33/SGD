@@ -197,8 +197,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
 
-                                //print_r($return_data);
-
                                 $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 
@@ -215,14 +213,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 }
 
                                 $return_data["status"] = "Entregado";
-
-                                print_r($return_data);
-                                
-
-                            //$CommissionController->updateDocument($docID, $status);
+                                $CommissionController->updateCommission($return_data);
                             }
                         }
-                        //$CommissionController->showCommission($userRole, $userID);
+                        $CommissionController->showCommission($userRole, $userID);
                     }else{
                         $CommissionController->showCommission($userRole, $userID);
                     }

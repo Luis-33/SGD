@@ -1,4 +1,5 @@
 function openModal(modalClass) {
+    console.log("open modalClass", modalClass);
     $('.' + modalClass).css('display', 'block');
 }
 
@@ -8,6 +9,6 @@ generarPDF = function (id) {
 }
 
 function closeModal(modalClass) {
+    console.log("close modalClass", modalClass);
     $('.' + modalClass).css('display', 'none');
 }
-

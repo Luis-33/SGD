@@ -80,5 +80,47 @@ class ComunModel
             return false;
         }
     }
+
+    public function update($data, $table_name) {
+        $describe = $this->describeTable($table_name);
+        $fields = array_column($describe, 'Field');
+        $data = array_map('trim', $data);
+        
+        $data = array_intersect_key($data, array_flip($fields));
+        
+        $data = array_filter($data, function($value) {
+            return $value !== '';
+        });
+
+        if (!isset($data['id'])) {
+            echo "Error: ID no proporcionado.";
+            return false;
+        }
+
+        $id = $data['id'];
+        unset($data['id']);
+
+        $setList = implode(', ', array_map(function($field) {
+            return "$field = :$field";
+        }, array_keys($data)));
+
+        $query = "UPDATE " . $table_name . " SET $setList WHERE id = :id";
+
+        $stmt = $this->db->prepare($query);
+
+        foreach ($data as $field => $value) {
+            $stmt->bindValue(":$field", $value);
+        }
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+
+        try {
+            $result = $stmt->execute();
+            return $result;
+        } catch (PDOException $e) {
+            // Mostrar el error
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
+    }
 }
 ?>

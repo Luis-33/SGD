@@ -62,10 +62,11 @@
                         echo "<span class=\"row_estatus {$estatusClass}\">{$Commission['status']}</span>"; ?>
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
+                                
                                 <i class="fa-solid fa-pen-to-square" 
-                                    title="Modificar Comisión de <?= $Commission["id"]; ?>" 
+                                    title="Modificar Comisión de <?= $Commission["usuario_nombre"]; ?> " 
                                     data-id="<?php echo $Commission['id']; ?>" 
-                                    onclick="openModal('editCommissions', <?php echo $Commission['id']; ?>)">
+                                    onclick="openModal('editCommissions<?php echo $Commission['id']; ?>')">
                                 </i>        
                             </div>
                         <?php endif; ?>
@@ -105,7 +106,6 @@
 <?php
 if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) {
     echo generateModalComision();
-    echo generateModalEditComision($Commission["id"]);
 }
 
 if (Session::exists('Commission_success')) {

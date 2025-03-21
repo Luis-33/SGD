@@ -96,7 +96,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                         echo "<span class=\"row_estatus {$estatusClass}\">{$document['documento_estatus']}</span>"; ?>
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
-                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?> con ID  <?php echo $document['documento_id']; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument<?php echo $document['documento_id']; ?>')"></i>
+                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument<?php echo $document['documento_id']; ?>')"></i>
                                 <i class="fa-solid fa-trash-can" title="Eliminar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['documento_id']; ?>, '<?= $document['documento_tipo']; ?>', '<?= $document['usuario_nombre']; ?>')"></i>
                             </div>
                         <?php endif; ?>

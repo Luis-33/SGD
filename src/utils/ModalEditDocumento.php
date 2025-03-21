@@ -8,6 +8,39 @@ if (isset($_GET['action']) && $_GET['action'] === 'editDocument') {
         $docID = $_POST['docID'];
         $estatus = $_POST['documentoEstatus'];
 
+        // Manejar la subida del archivo
+        $documentoFile = null;
+        if (isset($_FILES['documento']) && $_FILES['documento']['error'] === UPLOAD_ERR_OK) {
+            $fileType = mime_content_type($_FILES['documento']['tmp_name']); // Obtiene el tipo MIME del archivo
+            $allowedTypes = ['application/pdf']; // Tipos MIME permitidos
+
+            // Validar el tipo MIME
+            if (!in_array($fileType, $allowedTypes)) {
+                header("Location: admin_home.php?page=dashboard&status=invalid_file");
+                exit();
+            }
+
+            // Validar la extensión del archivo
+            $fileExtension = pathinfo($_FILES['documento']['name'], PATHINFO_EXTENSION);
+            if (strtolower($fileExtension) !== 'pdf') {
+                header("Location: admin_home.php?page=dashboard&status=invalid_file");
+                exit();
+            }
+
+            $uploadDir = 'uploads/documents/'; // Directorio donde se guardarán los archivos
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true); // Crear el directorio si no existe
+            }
+
+            $fileName = basename($_FILES['documento']['name']);
+            $filePath = $uploadDir . $fileName;
+
+            // Mover el archivo subido al directorio de destino
+            if (move_uploaded_file($_FILES['documento']['tmp_name'], $filePath)) {
+                $documentoFile = $filePath; // Ruta del archivo guardado
+            }
+        }
+
         // Conexión a la base de datos
         require_once MODEL_PATH . "DocumentModel.php";
         require_once SERVER_PATH . "DB.php";
@@ -15,10 +48,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'editDocument') {
         $db = new DB();
         $documentModel = new DocumentModel($db);
 
-        // Actualizar el estatus del documento
-        $query = "UPDATE documento SET documento_estatus = :estatus WHERE documento_id = :docID";
+        // Actualizar el estatus y el archivo en la base de datos
+        $query = "UPDATE documento SET documento_estatus = :estatus, documento_file = :documentoFile WHERE documento_id = :docID";
         $stmt = $db->prepare($query);
         $stmt->bindParam(':estatus', $estatus, PDO::PARAM_STR);
+        $stmt->bindParam(':documentoFile', $documentoFile, PDO::PARAM_STR);
         $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
@@ -44,32 +78,26 @@ function generateModalEditDocument($docID)
             <div class=\"modal_header\">
                 <h2>Actualizar documento</h2>
                 <button onclick=\"closeModal('editDocument{$document['documento_id']}')\">
-                    Cerrar <i class=\"fa-solid fa-xmark\"></i>
+                Cerrar<i class=\"fa-solid fa-xmark\"></i>
                 </button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=dashboard&action=editDocument\" method=\"POST\">
-                <div class=\"input_group\">
-                <label>Adjuntar documento</label>
-                    <input type=\"file\" name=\"documento\">
-                </div>
-                
-                    <input type=\"hidden\" name=\"docID\" value=\"{$document['documento_id']}\">
-
-
+                <form action=\"admin_home.php?page=dashboard&action=editDocument\" method=\"POST\" enctype=\"multipart/form-data\">
+                    <div class=\"input_group\">
+                        <label>Adjuntar documento</label>
+                        <input type=\"file\" accept=\".pdf\"  name=\"documento\" required>
+                    </div>
+                    <input type=\"hidden\" name=\"docID\" value=\"{$document['documento_id']}\" >
                     <div class=\"input_group\">
                         <label>Estatus</label>
-                        <span class=\"sBtn_text\">" . $document['documento_estatus'] . "</span>
                         <select name=\"documentoEstatus\" id=\"documentoEstatus\">
                             <option value=\"Entregado\" " . ($document['documento_estatus'] === 'Entregado' ? 'selected' : '') . ">Entregado</option>
                             <option value=\"Pendiente\" " . ($document['documento_estatus'] === 'Pendiente' ? 'selected' : '') . ">Pendiente</option>
                             <option value=\"Sin Entregar\" " . ($document['documento_estatus'] === 'Sin Entregar' ? 'selected' : '') . ">Sin Entregar</option>
                         </select>
                     </div>
-
                     <button type=\"submit\">Actualizar documento</button>
                 </form>
-               
             </div>
         </div>
     </div>

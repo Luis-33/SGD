@@ -89,14 +89,14 @@ class DocumentController
             $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia Economico ' . $actualDate . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
 
-            $documents = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate,'Pendiente');
+            $response = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate, '','Pendiente');
 
-            Session::set('document_success', 'Dia economico generado con exito.');
+            Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Dia economico generado con exito.' : 'No se pudo generar el dia economico.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
         }
     }
 
-    public function generateDiaCumple($db, $userID,$fecha_ingreso)
+    public function generateDiaCumple($db, $userID,$dayOption)
     {
         $result = $this->documentModel->countDiaCumple($userID);
 
@@ -117,22 +117,23 @@ class DocumentController
             $pdf->AddPage();
             $pdf->generateDiaCumple(
                 $userInfo['usuario_nombre'],
-                $userInfo['puesto_nombre'], 
-                $userInfo['usuario_nomina'], 
-                $userInfo['sindicato_id'], 
-                $userInfo['usuario_fechaCumpleaños'], 
-                $userInfo['sindicato_jefe'], 
-                $userInfo['jefeInmediato_nombre'], 
-                $directorName['usuario_nombre'], 
-                $fecha_ingreso
+                $userInfo['puesto_nombre'],
+                $userInfo['usuario_nomina'],
+                $userInfo['sindicato_id'],
+                $userInfo['usuario_fechaCumpleaños'],
+                $userInfo['sindicato_jefe'],
+                $userInfo['jefeInmediato_nombre'],
+                $directorName['usuario_nombre'],
+                $userInfo['usuario_fechaIngreso']
             );
 
-            $pathPDF = PDF_PATH . 'docs/' . str_replace(' ', '', $userInfo['usuario_nombre']) . '_dia_de_cumpleaños_' . $birthday . ' ' . time() . '.pdf';
+
+            $pathPDF = PDF_PATH . 'docs/' . str_replace(' ', '', $userInfo['usuario_nombre']) . '_dia_de_cumpleaños_' . $actualDate . ' ' . time() . '.pdf';
             $pdf->Output('F', $pathPDF, true);
 
-            $documents = $this->documentModel->insertDocument($userID, 'Dia De Cumpleaños', $pathPDF, $birthday,'Pendiente');
+            $response = $this->documentModel->insertDocument($userID, 'Dia De Cumpleaños', $pathPDF, $actualDate, $dayOption,'Pendiente');
 
-            Session::set('document_success', 'Dia de cumpleaños generado con exito.');
+            Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Dia de cumpleaños generado con exito.' : 'No se pudo generar el dia de cumpleaños.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
         }
     }
@@ -153,33 +154,29 @@ class DocumentController
         $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Reporte De Incidencia ' . $actualDate . ' ' . time() . '.pdf';
         $pdf->Output('F', $pathPDF, true);
 
-        $documents = $this->documentModel->insertDocument($userID, 'Reporte de incidencia', $pathPDF, $actualDate, 'Pendiente');
+        $response = $this->documentModel->insertDocument($userID, 'Reporte de incidencia', $pathPDF, $actualDate, '','Pendiente');
 
-        Session::set('document_success', 'Reporte de inicidencia generado con exito.');
+        Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Reporte de inicidencia generado con exito.' : 'No se pudo generar el reporte de incidencia.');
         echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
     }
 
     public function addDocument($user, $documentType, $date, $status)
     {
-        if (isset($_FILES['documento']) && $_FILES['documento']['error'] == 0) {
-
-            $file = $_FILES['documento'];
-            $fileName = $file['name'];
-            $fileTmpName = $file['tmp_name'];
-
-            $fileDestination = PDF_PATH . 'docs/' . basename($fileName);
-
-            if (move_uploaded_file($fileTmpName, $fileDestination)) {
-                if ($this->documentModel->insertDocument($user, $documentType, $fileDestination, $date, $status)) {
-                    Session::set('document_success', 'Documento subido con éxito.');
-                } else {
-                    Session::set('document_error', 'No se pudo subir el documento.');
-                }
-            } else {
-                Session::set('document_error', 'Error al subir el documento.');
-            }
-        } else {
+        if (!isset($_FILES['documento']) && $_FILES['documento']['error'] == 0) {
             Session::set('document_error', 'No se seleccionó ningún documento.');
+        }
+
+        $file = $_FILES['documento'];
+        $fileName = $file['name'];
+        $fileTmpName = $file['tmp_name'];
+
+        $fileDestination = PDF_PATH . 'docs/' . basename($fileName);
+
+        if (move_uploaded_file($fileTmpName, $fileDestination)) {
+            $response = $this->documentModel->insertDocument($user, $documentType, $fileDestination, $date, '',$status);
+            Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Documento subido con éxito.' : 'No se pudo guardar el archivo (DB).');
+        } else {
+            Session::set('document_error', 'Error al subir el documento.');
         }
 
         echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";

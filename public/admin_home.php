@@ -55,9 +55,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $endDate = $_POST['end-date'];
                             $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia economico', null);
-                        } else if ($action === 'addDiaCumple' && isset($_POST['birthday'])) {
-                            $birthday = $_POST['birthday'];
-                            $documentController->generateDiaCumple($db, $userID, $birthday);
+                        } else if ($action === 'addDiaCumple' && isset($_POST['dayOption'])) {
+                            $dayOption = $_POST['dayOption'];
+                            $documentController->generateDiaCumple($db, $userID, $dayOption);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia de cumpleaños', null);
                         } else if ($action === 'addReporteIncidencia' && isset($_POST['fecha'], $_POST['incidencia'], $_POST['motivo'])) {
                             $date = $_POST['fecha'];
@@ -71,7 +71,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $date = $_POST['date'];
                             $status = $_POST['status'];
                             $documentController->addDocument($user, $documentType, $date, $status);
-                        } else if ($action === 'editDocument' && isset(($_POST['docID']), $_POST['documentoEstatus'])) {
+                        } else if ($action === 'editDocument' && ($_POST['docID']) !== null && isset($_POST['documentoEstatus'])) {
                             $docID = $_POST['docID'];
                             $status = $_POST['documentoEstatus'];
                             $documentController->updateDocument($docID, $status);

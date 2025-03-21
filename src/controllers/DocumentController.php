@@ -124,7 +124,8 @@ class DocumentController
                 $userInfo['sindicato_jefe'],
                 $userInfo['jefeInmediato_nombre'],
                 $directorName['usuario_nombre'],
-                $userInfo['usuario_fechaIngreso']
+                $userInfo['usuario_fechaIngreso'],
+                $dayOption
             );
 
 
@@ -722,7 +723,7 @@ class PDF extends FPDF
         }
     }
 
-    public function generateDiaCumple($user_name, $user_puesto, $user_nomina, $user_sindicato, $user_cumple, $sindicato_gestor, $jefe_name, $director_name, $fecha_ingreso)
+    public function generateDiaCumple($user_name, $user_puesto, $user_nomina, $user_sindicato, $user_cumple, $sindicato_gestor, $jefe_name, $director_name, $fecha_ingreso, $dayOption)
     {
 
         $zapopan = array("Zapopan", date('d'), date('m'), date('Y'));
@@ -769,7 +770,8 @@ class PDF extends FPDF
             $this->Line(50, 131, 120, 131);
             $this->Ln(13);
             $this->SetXY(10, 140);
-            $this->MultiCell(0, 8, utf8_decode("OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil\n siguiente      _______      día hábil anterior _______."), 1);
+            $this->MultiCell(0, 8, utf8_decode("OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil\n siguiente" . (($dayOption === "before") ? '____X____' : '_________')  .  " día hábil anterior " . (($dayOption === "after") ? '____X____' : '_________')), 1);
+            $this->Ln(1);
             $this->Ln(1);
             $this->SetFontSize(9);
             $this->Cell(0, 5, utf8_decode("Sin otro particular, me reitero a sus órdenes."));

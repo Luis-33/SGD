@@ -99,13 +99,15 @@
             </div>
         </div>
     </div>
-<?php endif; ?>
+    
+<?php endif; //print_r($_SESSION['user_area']); 
+?>
 
 <script src="assets/js/modal.js"></script>
 
 <?php
 if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) {
-    echo generateModalComision();
+    echo generateModalComision($_SESSION['user_area']);
 }
 
 if (Session::exists('Commission_success')) {

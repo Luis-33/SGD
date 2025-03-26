@@ -3,7 +3,8 @@
 require_once MODEL_PATH . "UserModel.php";
 require_once SERVER_PATH . "DB.php";
 
-function generateModalComision()
+function generateModalComision($areaAdscripcion_id)
+
 {
     $modal = "
     <div class=\"modal comision\">
@@ -19,14 +20,27 @@ function generateModalComision()
                     <label for=\"empleado\">Empleado</label>
                     <div class=\"select_menu\" id=\"usuario_id_menu\">
                         <div class=\"select_btn\">
+                        
+                        
                             <span class=\"sBtn_text\">Selecciona al empleado</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
                         </div>
                         <ul class=\"options\">";
+                        
 
     $db = new DB();
     $userModel = new UserModel($db);
-    $usersList = $userModel->getUsersList();
+    $jefeInmediato = $userModel->getJefeInmediato($areaAdscripcion_id);
+    $jefeInmediatoId = is_array($jefeInmediato) && isset($jefeInmediato[0]) ? $jefeInmediato[0] : null;
+    // var_dump($jefeInmediatoId);
+    // echo $jefeInmediatoId;
+    if($jefeInmediatoId == 0){
+        $usersList = $userModel->getUsersList1();
+    }else{
+        $usersList = $userModel->getUsersList($jefeInmediatoId);
+    }
+    
+
 
     
 

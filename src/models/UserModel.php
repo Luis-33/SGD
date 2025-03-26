@@ -54,22 +54,37 @@ class UserModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // public function getUsersList($jefeInmediato_id = null)
-    // {
-    //     $query = "SELECT * FROM usuario";
-    //     if ($jefeInmediato_id !== null) {
-    //         $query .= " WHERE jefeInmediato_id = :jefeInmediato_id";
-    //     }
+    public function getJefeInmediato($areaAdscripcion_id)
+    {
+        $query = "SELECT jefeInmediato_id FROM jefeinmediato";
+        if ($areaAdscripcion_id !== null) {
+            $query .= " WHERE areaAdscripcion_id = :areaAdscripcion_id";
+        }
 
-    //     $stmt = $this->db->prepare($query);
-    //     if ($jefeInmediato_id !== null) {
-    //         $stmt->bindParam(':jefeInmediato_id', $jefeInmediato_id, PDO::PARAM_INT);
-    //     }
-    //     $stmt->execute();
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
+        $stmt = $this->db->prepare($query);
+        if ($areaAdscripcion_id !== null) {
+            $stmt->bindParam(':areaAdscripcion_id', $areaAdscripcion_id, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
 
-    public function getUsersList()
+    public function getUsersList($jefeInmediato_id)
+    {
+        $query = "SELECT * FROM usuario";
+        if ($jefeInmediato_id !== null) {
+            $query .= " WHERE jefeInmediato_id = :jefeInmediato_id";
+        }
+
+        $stmt = $this->db->prepare($query);
+        if ($jefeInmediato_id !== null) {
+            $stmt->bindParam(':jefeInmediato_id', $jefeInmediato_id, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getUsersList1()
     {
         $query = "SELECT * FROM usuario ORDER BY usuario_nombre";
         $stmt = $this->db->prepare($query);

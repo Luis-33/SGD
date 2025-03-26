@@ -42,6 +42,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $db = new DB();
             $userID = Session::get('user_id');
             $userRole = Session::get('user_role');
+            $areaAdscripcion_id = Session::get('areaAdscripcion_id');
             $userController = new UserController($db);
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);
@@ -219,7 +220,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         $CommissionController->showCommission($userRole, $userID);
                     }else{
                         $CommissionController->showCommission($userRole, $userID);
+                        
                     }
+                   
+                   // print_r("usuario: ". $_SESSION['user_area']);
                     break;
                 case 'configs':
                     break;

@@ -22,7 +22,7 @@
 
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Tiempo por Tiempo"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
             <?php if ($_SESSION['user_role'] == 1) : ?>
                 <button class="btn_documento" onclick="openModal('timebytime')">Subir documento</button>
@@ -48,8 +48,8 @@
         <div class="table_body" id="tableContainer">
             <?php foreach ($documents as $document) : ?>
                 <div class="table_body_item">
-                    <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
-                        <a href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                    <span class="row_pdf" title="Descargar <?php echo $document['id']; ?>">
+                        <a href="download.php?docID=<?php echo $document['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                     </span>
                     <?php if ($_SESSION['user_role'] != 3) : ?>
                         <div class="row_user_info">
@@ -64,10 +64,10 @@
                             </div>
                         </div>
                     <?php endif; ?>
-                    <span class="row_fecha"><?php echo $document["documento_fechaCreacion"] ?></span>
+                    <span class="row_fecha"><?php echo $document["fechaR"] ?></span>
                     <?php 
                     $estatusClass = '';
-                    switch ($document['documento_estatus']) {
+                    switch ($document['estatus']) {
                         case "Entregado":
                             $estatusClass = 'success';
                             break;
@@ -78,11 +78,11 @@
                             $estatusClass = 'danger';
                             break;
                     }
-                    echo "<span class=\"row_estatus {$estatusClass}\">{$document['documento_estatus']}</span>"; ?>
+                    echo "<span class=\"row_estatus {$estatusClass}\">{$document['estatus']}</span>"; ?>
                     <?php if ($_SESSION['user_role'] == 1) : ?>
                         <div class="row_actions">
-                            <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument')"></i>
-                            <i class="fa-solid fa-trash-can" title="Eliminar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['documento_id']; ?>, '<?= $document['documento_tipo']; ?>', '<?= $document['usuario_nombre']; ?>')"></i>
+                            <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['id']; ?>" onclick="openModal('editDocument')"></i>
+                            <i class="fa-solid fa-trash-can" title="Eliminar de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['id']; ?>, '<?= $document['usuario_nombre']; ?>')"></i>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -98,7 +98,7 @@
 <?php
 
 if ($_SESSION['user_role'] == 1) {
-    echo generateModalEditDocument($document["documento_id"]);
+    echo generateModalEditTimeByTime($document["id"]);
     echo generateModal('deleteDocument', 'Eliminar documento', true);
 }
 
@@ -110,7 +110,7 @@ if ($_SESSION['user_role'] == 1) {
 <?php else : ?>
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Tiempo por Tiempo"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
             <div class="dias_economicos">
                 <span><?= $diasEconomicos; ?> / 8</span>
@@ -121,7 +121,7 @@ if ($_SESSION['user_role'] == 1) {
                 <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
             </div>
             <?php if ($_SESSION['user_role'] == 1) : ?>
-                <button class="btn_documento" onclick="openModal('documento')">Subir documento</button>
+                <button class="btn_documento" onclick="openModal('timebytime')">Subir documento</button>
             <?php endif; ?>
         </div>
     </div>

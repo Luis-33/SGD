@@ -21,15 +21,51 @@ class TimeByTimeController
         $this->TimeByTimeModel = new TimeByTimeModel($db);
     }
 
-    public function generarRegistro($userID, $fechaF, $horaF, $fechaP, $horaP)
-    {
-        if ($this->TimeByTimeModel->create($userID, $fechaF, $horaF, $fechaP, $horaP)) {
-            Session::set('document_success', 'Documento creado correctamente.');
-        } else {
-            Session::set('document_error', 'No se pudo crear el documento.');
+    public function generarRegistro($data) {
+        $user_ID = intval($data["usuario_id"]);
+        $num_registros = intval($data["num_registros"]);
+        $folio = $data["folio"];
+        $fechaR = $data["fechaR"];
+        $fechasF = $data["fechaF"];
+        $horasF = $data["horasF"];
+        $fechasP = $data["fechaP"];
+        $horasP = $data["horasP"];
+        $estatus = 'pendiente';
+        $estatusP = 0;
+    
+        // Validación de campos obligatorios
+        $campos_obligatorios = [
+            "user_ID" => $user_ID,
+            "num_registros" => $num_registros,
+            "folio" => $folio,
+            "fechaR" => $fechaR,
+            "fechasF" => $fechasF,
+            "horasF" => $horasF,
+            "fechasP" => $fechasP,
+            "horasP" => $horasP
+        ];
+    
+        foreach ($campos_obligatorios as $campo => $valor) {
+            if (empty($valor) && $valor !== 0) {
+                Session::set('registro_warning', 'Error al generar el registro, no puede omitir ningun campo.');
+                return;
+            }
         }
-        echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+    
+        // Intentar generar el registro
+        $result = $this->TimeByTimeModel->generarRegistro(
+            $user_ID, $folio, $fechaR, $num_registros, $fechasF, $horasF, $fechasP, $horasP, $estatus, $estatusP
+        );
+    
+        if ($result) {
+            Session::set('registro_success', 'Registro generado correctamente.');
+        } else {
+            Session::set('registro_warning', 'Error al generar el registro, por favor intente nuevamente.');
+        }
+    
+        require VIEW_PATH . 'TimeByTime/list.php';
     }
+    
     
     public function showTimeByTime($role, $userID)
     {

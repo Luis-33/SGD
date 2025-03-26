@@ -1,9 +1,12 @@
+
 <?php
+
 require_once MODEL_PATH . "UserModel.php";
 require_once SERVER_PATH . "DB.php";
 
 function generateModalDocumentForTime()
 {
+
     $modal = "
     <div class=\"modal timebytime\">
         <div class=\"modal_content\">
@@ -12,7 +15,7 @@ function generateModalDocumentForTime()
                 <button onclick=\"closeModal('timebytime')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=TimeByTime&action=addDocument\" method=\"POST\" enctype=\"multipart/form-data\">
+                <form action=\"admin_home.php?page=TimeByTime&action=timebytime\" method=\"POST\" enctype=\"multipart/form-data\">
                 <div class=\"input_group\">
                     <label for=\"empleado\">Empleado</label>
                     <div class=\"select_menu\" id=\"empleado\">
@@ -36,66 +39,148 @@ function generateModalDocumentForTime()
     $modal .= "
                         </ul>
                     </div>
-                </div>
-                <div class=\"input_group\">
-                    <label for=\"num_registros\">Cantidad de registros a ingresar</label>
-                    <input type=\"number\" id=\"num_registros\" name=\"num_registros\" min=\"1\" max=\"10\" onchange=\"generateFields(this.value)\">
-                </div>
-                <div id=\"dynamic_fields\"></div>
-                <button type=\"submit\">Guardar</button>
-           
             </div>
+
+            <div class=\"input_group\">
+                <label for=\"fechaR\">Selecciona una fecha:</label>
+                <input type=\"date\" id=\"fechaR\" name=\"fechaR\">
+            </div>
+
+            <div class=\"input_group\">
+                <label for=\"folio\">Folio:</label>
+                <input type=\"text\" id=\"folio\" name=\"folio\">
+            </div>
+
+            <div class=\"input_group\">
+                <label for=\"num_registros\">Cantidad de registros a ingresar</label>
+                <input type=\"number\" id=\"num_registros\" name=\"num_registros\" min=\"1\" max=\"10\" onchange=\"generateFields(this.value)\">
+            </div>
+            
+            <div id=\"dynamic_fields\"></div>
+                        
+            <input type=\"hidden\" name=\"usuario_id\" id=\"user\">
+            <button class=\"insert_documento_btn\">Subir documento</button>
+            </form>
         </div>
-    </div>";
-
-    echo $modal;
-}
-
-?>
+    </div>
+</div>
 
 <script>
 function generateFields(num) {
-    const container = document.getElementById('dynamic_fields');
-    container.innerHTML = '';
+    let container = document.getElementById('dynamic_fields');
+    container.innerHTML = ''; // Limpiar contenido previo
+    
     for (let i = 0; i < num; i++) {
-        const fieldSet = document.createElement('div');
-        fieldSet.className = 'input_group';
-        fieldSet.innerHTML = `
-            <table>
-                <tr>
-                    <td>
-                        <label for=\"fecha_falta_${i}\">Fecha de falta</label>
-                        <input type=\"date\" id=\"fecha_falta_${i}\" name=\"fecha_falta_${i}\">
-                        <label for=\"horas_falta_${i}\">Cantidad de horas de falta</label>
-                        <input type=\"number\" id=\"horas_falta_${i}\" name=\"horas_falta_${i}\" step=\"0.01\">
-                    </td>
-                    <td>
-                        <div id=\"pagos_${i}\">
-                            <label for=\"fecha_pago_${i}_0\">Fecha de pago</label>
-                            <input type=\"date\" id=\"fecha_pago_${i}_0\" name=\"fecha_pago_${i}[]\">
-                            <label for=\"horas_pago_${i}_0\">Cantidad de horas a pagar</label>
-                            <input type=\"number\" id=\"horas_pago_${i}_0\" name=\"horas_pago_${i}[]\" step=\"0.01\">
-                            <button type=\"button\" onclick=\"addPaymentField(${i})\">Agregar pago</button>
-                        </div>
-                    </td>
-                </tr>
-                </form>
-            </table>
+        let row = document.createElement('div');
+        row.classList.add('record_row');
+        
+        row.innerHTML = `
+            <div class=\"input_group\">
+                <label>Fecha de falta</label>
+                <input type=\"date\" name=\"fechaF[]\" required>
+            </div>
+            <div class=\"input_group\">
+                <label>Horas de falta</label>
+                <input type=\"number\" name=\"horasF[]\" min=\"1\" required>
+            </div>
+            <div class=\"pagos_container\">
+                <div class=\"pago_fields\">
+                    <div class=\"input_group\">
+                        <label>Fecha de pago</label>
+                        <input type=\"date\" name=\"fechaP[]\" required>
+                    </div>
+                    <div class=\"input_group\">
+                        <label>Horas de pago</label>
+                        <input type=\"number\" name=\"horasP[]\" min=\"1\"required>
+                    </div>
+                </div>
+                <button type=\"button\" class=\"add_pago_btn\" data-index=\"\">Agregar Pago</button>
+            </div>
         `;
-        container.appendChild(fieldSet);
+        container.appendChild(row);
     }
 }
 
-function addPaymentField(index) {
-    const pagosContainer = document.getElementById(`pagos_${index}`);
-    const numPagos = pagosContainer.querySelectorAll('input[type="date"]').length;
-    const newPaymentField = document.createElement('div');
-    newPaymentField.innerHTML = `
-        <label for=\"fecha_pago_${index}_${numPagos}\">Fecha de pago</label>
-        <input type=\"date\" id=\"fecha_pago_${index}_${numPagos}\" name=\"fecha_pago_${index}[]\">
-        <label for=\"horas_pago_${index}_${numPagos}\">Cantidad de horas a pagar</label>
-        <input type=\"number\" id=\"horas_pago_${index}_${numPagos}\" name=\"horas_pago_${index}[]\" step=\"0.01\">
-    `;
-    pagosContainer.appendChild(newPaymentField);
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('add_pago_btn')) {
+        let index = event.target.getAttribute('data-index');
+        let pagosContainer = event.target.previousElementSibling;
+        let pagoFields = document.createElement('div');
+        pagoFields.classList.add('pago_fields');
+        
+        pagoFields.innerHTML = `
+            <div class=\"input_group\">
+                <label>Fecha de pago</label>
+                <input type=\"date\" name=\"fechaP[]\"required>
+            </div>
+            <div class=\"input_group\">
+                <label>Horas de pago</label>
+                <input type=\"number\" name=\"horasP[]\" min=\"1\"required>
+            </div>
+        `;
+        pagosContainer.appendChild(pagoFields);
+    }
+});
+
+//Menu desplegable para usuarios
+$(document).ready(function () {
+    $(document).on(\"click\", \".select_menu .select_btn\", function () {
+        $(this).closest(\".select_menu\").toggleClass(\"active\");
+    });
+
+    $(document).on(\"click\", \".options .option\", function (e) {
+        e.stopPropagation();
+
+        $(this).closest('.options').find('.option').removeClass('selected');
+        $(this).addClass('selected');
+
+        let selectedOption = $(this).find(\"h3, span\").first().text();
+        let selectedValue = $(this).data('value');
+
+        $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
+        $(this).closest(\".select_menu\").toggleClass(\"active\");
+
+        if ($(this).closest('.select_menu').attr('id') === 'empleado') {
+            $('#user').val(selectedValue);
+        }
+    });
+});
+
+function resetModal() {
+    // Limpiar campos de entrada
+    document.querySelector('form').reset();
+
+    // Eliminar campos dinámicos
+    document.getElementById('dynamic_fields').innerHTML = '';
+
+    // Resetear el texto del select de empleado
+    document.getElementById('empleado').querySelector('.sBtn_text').textContent = 'Selecciona al empleado';
+
+    // Eliminar selección previa
+    const selectedOption = document.querySelector('#user .option.selected');
+    if (selectedOption) {
+        selectedOption.classList.remove('selected');
+    }
+
+    // Limpiar campos
+    document.getElementById('fechaR').value = '';
+    document.getElementById('folio').value = '';
+    document.getElementById('num_registros').value = '';
+
+    // Limpiar el valor oculto
+    document.getElementById('user').value = '';
+}
+function closeModal(modalId) {
+    // Llamar a la función para resetear el modal
+    resetModal();
+
+    // Cerrar el modal
+    const modal = document.querySelector(`.timebytime`);
+    modal.style.display = 'none';
 }
 </script>
+
+";
+
+    return $modal;
+}

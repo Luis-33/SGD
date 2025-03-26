@@ -184,14 +184,17 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     $RolesController->showRoles($userRole, $userID);
                     break;
                 case 'TimeByTime':
-                    if ($action === 'addDocument' && isset($_POST['user'], $_POST['documentType'], $_POST['date'], $_POST['status'])) {
-                        $user = $_POST['user'];
-                        $documentType = $_POST['documentType'];
-                        $date = $_POST['date'];
-                        $status = $_POST['status'];
-                     
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'timebytime') {
+                        //print_r($_POST);
+                        // Enviar los datos al controlador para procesarlos
+                        $TimeByTimeController->generarRegistro($_POST); 
+                        }else{
+                            $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        }
+                    }else{
+                    $TimeByTimeController->showTimeByTime($userRole, $userID);
                     }
-                        $TimeByTimeController->showTimeByTime($userRole, $userID);
                     break;
                 case 'configs':
                     break;

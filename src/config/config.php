@@ -22,5 +22,6 @@ require_once UTIL_PATH . 'ModalAddUser.php';
 require_once UTIL_PATH . 'ModalEditUser.php';
 require_once UTIL_PATH . 'Alert.php';
 require_once UTIL_PATH . 'ModalAddTimeByTime.php';
+require_once UTIL_PATH . 'ModalEditTimeByTime.php';
 
 define('APP_NAME', 'SGDRH');

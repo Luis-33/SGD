@@ -37,7 +37,7 @@ function generateModalComision($areaAdscripcion_id)
     if($jefeInmediatoId == 0){
         $usersList = $userModel->getUsersList1();
     }else{
-        $usersList = $userModel->getUsersList($jefeInmediatoId);
+        $usersList = $userModel->getUsersListJefeInmediato($jefeInmediatoId);
     }
     
 

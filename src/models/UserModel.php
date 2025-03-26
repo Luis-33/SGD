@@ -69,7 +69,7 @@ class UserModel
         return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
-    public function getUsersList($jefeInmediato_id)
+    public function getUsersListJefeInmediato($jefeInmediato_id)
     {
         $query = "SELECT * FROM usuario";
         if ($jefeInmediato_id !== null) {
@@ -85,6 +85,14 @@ class UserModel
     }
 
     public function getUsersList1()
+    {
+        $query = "SELECT * FROM usuario ORDER BY usuario_nombre";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getUsersList()
     {
         $query = "SELECT * FROM usuario ORDER BY usuario_nombre";
         $stmt = $this->db->prepare($query);

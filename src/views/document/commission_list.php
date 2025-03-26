@@ -4,13 +4,15 @@
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
             <div class="card_header_actions">
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
+                    <button class="btn_entregadoo" data-status="Entregado" onclick="filterCommissions('Entregado')">Entregados</button>
+                    <button class="btn_Pendiente" data-status="Pendiente" onclick="filterCommissions('Pendiente')">Pendientes</button>
                     <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
         </div>
         <div class="card_table_body">
             <div class="search_input" id="searchForm">
-                <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar Documento por Tipo - Fecha - Estatus" : "Buscar Documento por Empleado " ?>">
+                <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar comision por Empleado - Fecha " : "Buscar comision por Empleado - Fecha " ?>">
                 <i class="fa-solid fa-xmark" id="clear_input"></i>
             </div>
             <div class="table_header">
@@ -27,7 +29,7 @@
             </div>
             <div class="table_body" id="tableContainer">
                 <?php foreach ($documents as $Commission) : ?>
-                    <div class="table_body_item">
+                    <div class="table_body_item" data-status="<?php echo $Commission['status']; ?>">
                         <span class="row_pdf" title="Descargar Comisión">
                             <a href="download.php?docID=<?php echo $Commission['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                         </span>
@@ -60,7 +62,7 @@
                                 break;
                         }
                         echo "<span class=\"row_estatus {$estatusClass}\">{$Commission['status']}</span>"; ?>
-                        <?php if ($_SESSION['user_role'] == 1) : ?>
+                        <?php if ($_SESSION['user_role'] == 1 && $Commission['status'] != 'Entregado') : ?>
                             <div class="row_actions">
                                 
                                 <i class="fa-solid fa-pen-to-square" 
@@ -100,10 +102,49 @@
         </div>
     </div>
     
-<?php endif; //print_r($_SESSION['user_area']); 
+<?php endif;  
 ?>
 
 <script src="assets/js/modal.js"></script>
+<script>
+let currentStatusFilter = 'Pendiente';
+
+function filterCommissions(status) {
+    currentStatusFilter = status;
+    const items = document.querySelectorAll('.table_body_item');
+    items.forEach(item => {
+        if (status === 'Entregado') {
+            item.style.display = item.getAttribute('data-status') === 'Entregado' ? '' : 'none';
+        } else if (status === 'Pendiente') {
+            item.style.display = item.getAttribute('data-status') !== 'Entregado' ? '' : 'none';
+        }
+    });
+    filterSearch();
+}
+
+function filterSearch() {
+    const filter = document.getElementById('searchInput').value.toLowerCase();
+    const items = document.querySelectorAll('.table_body_item');
+    items.forEach(item => {
+        const userName = item.querySelector('.user_name') ? item.querySelector('.user_name').textContent.toLowerCase() : '';
+        const fechaElaboracion = item.querySelector('.row_fecha').textContent.toLowerCase();
+        const matchesFilter = userName.includes(filter) || fechaElaboracion.includes(filter);
+        const matchesStatus = currentStatusFilter === 'Entregado' ? item.getAttribute('data-status') === 'Entregado' : item.getAttribute('data-status') !== 'Entregado';
+        if (matchesFilter && matchesStatus) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    filterCommissions('Pendiente');
+    
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', filterSearch);
+});
+</script>
 
 <?php
 if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) {

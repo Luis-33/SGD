@@ -42,7 +42,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $db = new DB();
             $userID = Session::get('user_id');
             $userRole = Session::get('user_role');
-            $areaAdscripcion_id = Session::get('areaAdscripcion_id');
             $userController = new UserController($db);
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);

@@ -35,7 +35,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                     <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
                 </div>
                 <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <button class="btn_documento" onclick="openModal('documento')">Subir documento</button>
+                 
                     <button class="btn_documento" onclick="generarPDF(1)">PDf prueba</button>
                 <?php endif; ?>
             </div>
@@ -125,9 +125,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                     <span><?= $reportesIncidencia; ?></span>
                     <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
                 </div>
-                <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <button class="btn_documento" onclick="openModal('documento')">Subir documentssso</button>
-                <?php endif; ?>
+             
             </div>
         </div>
         <div class="card_table_body">

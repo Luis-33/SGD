@@ -30,6 +30,9 @@ class DocumentController
         require VIEW_PATH . 'document/list.php';
     }
 
+
+
+
     public function downloadDocument($docID)
     {
         $document = $this->documentModel->getDocumentById($docID);

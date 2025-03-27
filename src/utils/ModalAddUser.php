@@ -6,7 +6,6 @@ require_once SERVER_PATH . "DB.php";
 
 function generateModalAddUser()
 {
-
     $db = new DB();
     $configModel = new ConfigModel($db);
 
@@ -14,45 +13,51 @@ function generateModalAddUser()
     <div class=\"modal addUser\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Agregar empleado</h2>
+                <h2></h2>
                 <button onclick=\"closeModal('addUser')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=manage_users&action=addUser\" method=\"POST\">
+                <form id=\"addUserForm\" action=\"admin_home.php?page=manage_users&action=addUser\" method=\"POST\">
                     
                     <div class=\"input_group\">
                         <label for=\"empleadoNombre\">Nombre</label>
-                        <input type=\"text\" name=\"empleadoNombre\" id=\"empleadoNombre\" placeholder=\"Ingresa el nombre del empleado\">
+                        <input type=\"text\" name=\"empleadoNombre\" id=\"empleadoNombre\" placeholder=\"Ingresa el nombre del empleado\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCorreo\">Correo</label>
-                        <input type=\"text\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" placeholder=\"Ingresa el correo del empleado\">
+                        <input type=\"email\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" placeholder=\"Ingresa el correo del empleado\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCurp\">Curp</label>
-                        <input type=\"text\" name=\"empleadoCurp\" id=\"empleadoCurp\" placeholder=\"Ingresa el curp del empleado\">
+                        <input type=\"text\" name=\"empleadoCurp\" id=\"empleadoCurp\" placeholder=\"Ingresa el curp del empleado\"  
+                        pattern=\"^[A-Z]{4}[0-9]{6}[HM]{1}[A-Z]{2}[A-Z0-9]{3}[0-9A-Z]{2}$\" 
+                        title=\"El CURP debe seguir el formato correcto (AAAA000101HDFRRL09)\" required >
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoRFC\">RFC</label>
-                        <input type=\"text\" name=\"empleadoRFC\" id=\"empleadoRFC\" placeholder=\"Ingresa el rfc del empleado\">
+                        <input type=\"text\" name=\"empleadoRFC\" id=\"empleadoRFC\" placeholder=\"Ingresa el rfc del empleado\"
+                        pattern=\"^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$\"
+                        title=\"El RFC debe seguir el formato correcto (por ejemplo, ABCD123456XYZ)\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoNomina\">Numero de nomina</label>
-                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\">
+                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" placeholder=\"Ingresa el numero de nomina del empleado\" 
+                        pattern=\"^[A-ZÑ&]{3}[0-9]{4}$\"
+                        title=\"El número de nómina debe seguir el formato correcto (por ejemplo, ABC1234 )\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoIngreso\">Fecha de ingreso</label>
-                        <input type=\"date\" name=\"empleadoIngreso\" id=\"empleadoIngreso\" placeholder=\"Selecciona la fecha de ingreso del empleado\">
+                        <input type=\"date\" name=\"empleadoIngreso\" id=\"empleadoIngreso\" placeholder=\"Selecciona la fecha de ingreso del empleado\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCumple\">Dia de cumpleaños</label>
-                        <input type=\"date\" name=\"empleadoCumple\" id=\"empleadoCumple\">
+                        <input type=\"date\" name=\"empleadoCumple\" id=\"empleadoCumple\" required>
                     </div>
                 
                     <div class=\"input_group\">
@@ -85,21 +90,19 @@ function generateModalAddUser()
     $rolList = $configModel->getRoles();
 
     foreach ($rolList as $rol) {
-        $modal .= "<li class=\"option\" data-value=\"" . $rol["rol_id"] . "\">
-                       <span>" . $rol["rol_nombre"] . "</span>
-                   </li>";
+        $modal .= "
+        <li class=\"option\" data-value=\"" . $rol["rol_id"] . "\">
+            <span>" . $rol["rol_nombre"] . "</span>
+        </li>";
     }
-
 
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
-                    
+                 
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Puesto</label>
+                        <label for=\"empleadoPuesto\">Puesto</label>
                         <div class=\"select_menu\" id=\"empleadoPuesto\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona el puesto del empleado</span>
@@ -110,21 +113,19 @@ function generateModalAddUser()
     $puestoList = $configModel->getPuestos();
 
     foreach ($puestoList as $puesto) {
-        $modal .= "<li class=\"option\" data-value=\"" . $puesto["puesto_id"] . "\">
-                       <span>" . $puesto["puesto_nombre"] . "</span> 
-                   </li>";
+        $modal .= "
+        <li class=\"option\" data-value=\"" . $puesto["puesto_id"] . "\">
+            <span>" . $puesto["puesto_nombre"] . "</span> 
+        </li>";
     }
-
 
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
                     
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Jefe inmediato</label>
+                        <label for=\"empleadoInmediato\">Jefe inmediato</label>
                         <div class=\"select_menu\" id=\"empleadoInmediato\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona al jefe inmediato</span>
@@ -141,19 +142,16 @@ function generateModalAddUser()
                             <h3>" . $jefe['jefeInmediato_nombre'] . "</h3>
                             <span>" . $jefe["areaAdscripcion_nombre"] . "</span> 
                         </div>
-                   </li>";
+                    </li>";
     }
-
 
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
                     
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Area de adscripción</label>
+                        <label for=\"empleadoAdscripcion\">Area de adscripción</label>
                         <div class=\"select_menu\" id=\"empleadoAdscripcion\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona el area de adscripción</span>
@@ -169,16 +167,13 @@ function generateModalAddUser()
                    </li>";
     }
 
-
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
                     
                     <div class=\"input_group\">
-                        <label for=\"empleadoRol\">Sindicato</label>
+                        <label for=\"empleadoSindicato\">Sindicato</label>
                         <div class=\"select_menu\" id=\"empleadoSindicato\">
                             <div class=\"select_btn\">
                                 <span class=\"sBtn_text\">Selecciona el sindicato</span>
@@ -194,12 +189,9 @@ function generateModalAddUser()
                    </li>";
     }
 
-
     $modal .= "
                             </ul>
-
                         </div>
-
                     </div>
 
                     <input type=\"hidden\" name=\"empleadoGenero\" id=\"genero\">
@@ -228,7 +220,7 @@ $(document).ready(function () {
         $(this).closest('.options').find('.option').removeClass('selected');
         $(this).addClass('selected');
 
-        let selectedOption = $(this).find(\"h3, span\").first().text();
+        let selectedOption = $(this).find(\"span\").first().text();
         let selectedValue = $(this).data('value');
 
         $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
@@ -246,6 +238,27 @@ $(document).ready(function () {
             $('#adscripcion').val(selectedValue);
         }else if($(this).closest('.select_menu').attr('id') === 'empleadoSindicato'){
             $('#sindicato').val(selectedValue);
+        }
+    });
+
+    $('#addUserForm').on('submit', function(event) {
+        const nombre = $('#empleadoNombre').val().trim();
+        const correo = $('#empleadoCorreo').val().trim();
+        const curp = $('#empleadoCurp').val().trim();
+        const rfc = $('#empleadoRFC').val().trim();
+        const nomina = $('#empleadoNomina').val().trim();
+        const ingreso = $('#empleadoIngreso').val().trim();
+        const cumple = $('#empleadoCumple').val().trim();
+        const genero = $('#genero').val().trim();
+        const rol = $('#rol').val().trim();
+        const puesto = $('#puesto').val().trim();
+        const jefe = $('#jefe').val().trim();
+        const adscripcion = $('#adscripcion').val().trim();
+        const sindicato = $('#sindicato').val().trim();
+
+        if (!nombre || !correo || !curp || !rfc || !nomina || !ingreso || !cumple || !genero || !rol || !puesto || !jefe || !adscripcion || !sindicato) {
+            event.preventDefault();
+            alert('Por favor, completa todos los campos antes de enviar el formulario.');
         }
     });
 

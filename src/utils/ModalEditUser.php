@@ -32,7 +32,7 @@ function generateModalEditUser($userID)
                 <button onclick=\"closeModal('editUser')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=manage_users&action=editUser\" method=\"POST\">
+                <form id=\"editUserForm\" action=\"admin_home.php?page=manage_users&action=editUser\" method=\"POST\">
                     <input type=\"hidden\" name=\"empleadoID\" value=\"{$user['usuario_id']}\">
                     
                     <div class=\"input_group\">
@@ -42,22 +42,28 @@ function generateModalEditUser($userID)
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCorreo\">Correo</label>
-                        <input type=\"text\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" value=\"{$user['usuario_email']}\" placeholder=\"Ingresa el correo del empleado\">
+                        <input type=\"email\" name=\"empleadoCorreo\" id=\"empleadoCorreo\" value=\"{$user['usuario_email']}\" placeholder=\"Ingresa el correo del empleado\">
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoCurp\">Curp</label>
-                        <input type=\"text\" name=\"empleadoCurp\" id=\"empleadoCurp\" value=\"{$user['usuario_curp']}\" placeholder=\"Ingresa el curp del empleado\">
+                        <input type=\"text\" name=\"empleadoCurp\" id=\"empleadoCurp\" value=\"{$user['usuario_curp']}\" placeholder=\"Ingresa el curp del empleado\"
+                        pattern=\"^[A-Z]{4}[0-9]{6}[HM]{1}[A-Z]{2}[A-Z0-9]{3}[0-9A-Z]{2}$\" 
+                        title=\"El CURP debe seguir el formato correcto (AAAA000101HDFRRL09)\" required >
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoRFC\">RFC</label>
-                        <input type=\"text\" name=\"empleadoRFC\" id=\"empleadoRFC\" value=\"{$user['usuario_rfc']}\" placeholder=\"Ingresa el rfc del empleado\">
+                        <input type=\"text\" name=\"empleadoRFC\" id=\"empleadoRFC\" value=\"{$user['usuario_rfc']}\" placeholder=\"Ingresa el rfc del empleado\"
+                        pattern=\"^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$\"
+                        title=\"El RFC debe seguir el formato correcto (por ejemplo, ABCD123456XYZ)\" required>
                     </div>
 
                     <div class=\"input_group\">
                         <label for=\"empleadoNomina\">Numero de nomina</label>
-                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" value=\"{$user['usuario_nomina']}\" placeholder=\"Ingresa el numero de nomina del empleado\">
+                        <input type=\"text\" name=\"empleadoNomina\" id=\"empleadoNomina\" value=\"{$user['usuario_nomina']}\" placeholder=\"Ingresa el numero de nomina del empleado\"
+                        pattern=\"^[A-ZÑ&]{3}[0-9]{4}$\"
+                        title=\"El número de nómina debe seguir el formato correcto (por ejemplo, ABC1234 )\" required>
                     </div>";
 
     $rolList = $configModel->getRoles();
@@ -230,6 +236,25 @@ $(document).ready(function () {
             $('#estatus').val(selectedValue);
         }
 
+    });
+
+    $('#editUserForm').on('submit', function(event) {
+        const nombre = $('#empleadoNombre').val().trim();
+        const correo = $('#empleadoCorreo').val().trim();
+        const curp = $('#empleadoCurp').val().trim();
+        const rfc = $('#empleadoRFC').val().trim();
+        const nomina = $('#empleadoNomina').val().trim();
+        const rol = $('#rol').val().trim();
+        const puesto = $('#puesto').val().trim();
+        const jefe = $('#jefe').val().trim();
+        const adscripcion = $('#adscripcion').val().trim();
+        const sindicato = $('#sindicato').val().trim();
+        const estatus = $('#estatus').val().trim();
+
+        if (!nombre || !correo || !curp || !rfc || !nomina || !rol || !puesto || !jefe || !adscripcion || !sindicato || !estatus) {
+            event.preventDefault();
+            alert('Por favor, completa todos los campos antes de enviar el formulario.');
+        }
     });
 
 });

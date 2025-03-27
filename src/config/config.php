@@ -14,6 +14,8 @@ define('PDF_PATH', BASE_PATH . '/pdf/');
 define('SERVER_PATH', BASE_PATH . '/server/');
 define('UTIL_PATH', BASE_PATH . '/src/utils/');
 define('VIEW_PATH', BASE_PATH . '/src/views/');
+define('VIEW_LIST', BASE_PATH . '/src/views/document/');
+
 
 require_once UTIL_PATH . 'Modal.php';
 require_once UTIL_PATH . 'ModalAddDocumento.php';

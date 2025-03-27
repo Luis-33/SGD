@@ -1,7 +1,7 @@
 export function addReporteIncidencia() {
     var modal = $(".addIncidencia");
     modal.find(".modal_body").html(`
-    <form action="admin_home.php?page=dashboard&action=addReporteIncidencia" method="POST">
+    <form id="reporteIncidenciaForm" action="admin_home.php?page=dashboard&action=addReporteIncidencia" method="POST">
 
         <div class="input_group checkbox">
             <label>Selecciona el tipo de incidencia</label>
@@ -37,7 +37,7 @@ export function addReporteIncidencia() {
 
         <input type="hidden" name="incidencia" id="incidencia">
 
-        <button type="submit">Generar reporte de inicdencia</button>
+        <button type="submit">Generar reporte de incidencia</button>
 
     </form>
     `);
@@ -50,7 +50,6 @@ export function addReporteIncidencia() {
 
         const minFecha = `${añoActual}-01-01`;
         const maxFecha = `${añoActual}-12-31`;
-
 
         $inputFecha.attr('min', minFecha);
         $inputFecha.attr('max', maxFecha);
@@ -70,4 +69,14 @@ export function addReporteIncidencia() {
         });
     });
 
+    document.getElementById('reporteIncidenciaForm').addEventListener('submit', function (event) {
+        const fecha = document.getElementById('fecha').value;
+        const motivo = document.getElementById('motivo').value;
+        const incidencia = document.getElementById('incidencia').value;
+
+        if (!fecha || !motivo || !incidencia) {
+            event.preventDefault();
+            alert('Por favor, completa todos los campos antes de enviar el formulario.');
+        }
+    });
 }

@@ -1,9 +1,7 @@
 pdf
-<<<<<<< HEAD
 ./idea
-=======
 vendor
 /vendor/
+public/uploads
 /server/
 server/
->>>>>>> d1f64c59015f7961924ef282b6911727c9ac4721

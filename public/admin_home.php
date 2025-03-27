@@ -5,6 +5,7 @@ require_once CONTROLLER_PATH . 'DocumentController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
+require_once CONTROLLER_PATH . 'ImssController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
 
@@ -46,6 +47,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
+            $ImssController= new ImssController($db);
 
             switch ($page) {
 
@@ -185,6 +187,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     break;
                  case 'commissions':
                     $CommissionController->showCommission($userRole, $userID);
+                    break;
+                case 'imss':
+                    $ImssController->showImss($userRole, $userID);
                     break;
                 case 'configs':
                     break;

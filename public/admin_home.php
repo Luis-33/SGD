@@ -50,7 +50,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             switch ($page) {
 
                 case 'dashboard':
-
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
                             $permiso = $_POST['permiso'];
@@ -178,7 +177,23 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 
 
                 case 'roles':
-                    $RolesController->showRoles($userRole, $userID);
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'save' && isset($_POST['rolNombre'])) {
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->addRole($rolNombre);
+                        } else if ($action === 'delete' && isset($_POST['rolId'])) {
+                            $rolId = $_POST['rolId'];
+                            $RolesController->deleteRole($rolId);
+                        } else if ($action === 'editRol' && isset($_POST['rolId'], $_POST['rolNombre'])) {
+                            $rolId = $_POST['rolId'];
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->updateRole($rolId, $rolNombre);
+                        } else {
+                            $RolesController->showRoles($userRole, $userID);
+                        }
+                    } else {
+                        $RolesController->showRoles($userRole, $userID);
+                    }
                     break;
                 case 'TimeByTime':
                         $CommissionController->showCommission($userRole, $userID);

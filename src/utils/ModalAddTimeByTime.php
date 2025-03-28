@@ -146,38 +146,7 @@ $(document).ready(function () {
     });
 });
 
-function resetModal() {
-    // Limpiar campos de entrada
-    document.querySelector('form').reset();
 
-    // Eliminar campos dinámicos
-    document.getElementById('dynamic_fields').innerHTML = '';
-
-    // Resetear el texto del select de empleado
-    document.getElementById('empleado').querySelector('.sBtn_text').textContent = 'Selecciona al empleado';
-
-    // Eliminar selección previa
-    const selectedOption = document.querySelector('#user .option.selected');
-    if (selectedOption) {
-        selectedOption.classList.remove('selected');
-    }
-
-    // Limpiar campos
-    document.getElementById('fechaR').value = '';
-    document.getElementById('folio').value = '';
-    document.getElementById('num_registros').value = '';
-
-    // Limpiar el valor oculto
-    document.getElementById('user').value = '';
-}
-function closeModal(modalId) {
-    // Llamar a la función para resetear el modal
-    resetModal();
-
-    // Cerrar el modal
-    const modal = document.querySelector(`.timebytime`);
-    modal.style.display = 'none';
-}
 </script>
 
 ";

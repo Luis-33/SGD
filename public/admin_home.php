@@ -186,14 +186,18 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 case 'TimeByTime':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'timebytime') {
-                        //print_r($_POST);
-                        // Enviar los datos al controlador para procesarlos
+                        //Enviar los datos al controlador para procesarlos
                         $TimeByTimeController->generarRegistro($_POST); 
+                        }else if ($action === 'timebytimeEdit') 
+                        {
+                            //Enviar los datos al controlador para procesarlos
+                            $TimeByTimeController->updateTimebyTimePagos($_POST);
                         }else{
+                            
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
                         }
                     }else{
-                    $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        $TimeByTimeController->showTimeByTime($userRole, $userID);
                     }
                     break;
                 case 'configs':

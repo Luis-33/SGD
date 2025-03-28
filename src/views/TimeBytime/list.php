@@ -1,33 +1,14 @@
-<?php if ($_SESSION['user_role'] == 1) : ?>
-  
 
-<script>
-    function confirmDelete(docID, docTipo, userName) {
-        openModal('deleteDocument');
-        var message = `¿Estás seguro de que deseas eliminar el documento de tipo "${docTipo}" de "${userName}"?`;
-        var modal = $(".deleteDocument");
-        modal.find(".modal_body").html(`<span>${message}</span><button onclick="deleteDocument(${docID})">Eliminar</button>`);
-    }
-
-    function deleteDocument(docID) {
-        window.location.href = `deleteDocument.php?docID=${docID}`;
-    }
-</script>
-
-<?php endif; ?>
-
-
-
-<?php if (!empty($documents)) : ?>
+<?php if (!empty($registros)) : ?>
 
 <div class="card_table">
     <div class="card_table_header">
         <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
             <?php if ($_SESSION['user_role'] == 1) : ?>
-                <button class="btn_documento" onclick="openModal('timebytime')">Subir documento</button>
+                <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
-        </div>
+        </div>  
     </div>
     <div class="card_table_body">
         <div class="search_input" id="searchForm">
@@ -39,6 +20,7 @@
             <?php if ($_SESSION['user_role'] != 3) : ?>
                 <span class="header_empleado">Empleado</span>
             <?php endif; ?>
+            <span class="header_folio">Folio</span>
             <span class="header_fecha">Fecha de registro</span>
             <span class="header_estatus">Estatus</span>
             <?php if ($_SESSION['user_role'] == 1) : ?>
@@ -46,28 +28,29 @@
             <?php endif; ?>
         </div>
         <div class="table_body" id="tableContainer">
-            <?php foreach ($documents as $document) : ?>
+            <?php foreach ($registros as $registro) : ?>
                 <div class="table_body_item">
-                    <span class="row_pdf" title="Descargar <?php echo $document['id']; ?>">
-                        <a href="download.php?docID=<?php echo $document['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                    <span class="row_pdf" title="Descargar <?php echo $registro['id']; ?>">
+                        <a href="download.php?docID=<?php echo $registro['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                     </span>
                     <?php if ($_SESSION['user_role'] != 3) : ?>
                         <div class="row_user_info">
-                            <?php if ($document['usuario_genero'] === 'H') {
+                            <?php if ($registro['usuario_genero'] === 'H') {
                                 echo '<img src="assets/images/hombre.png">';
                             } else {
                                 echo '<img src="assets/images/mujer.png">';
                             } ?>
                             <div class="info">
-                                <span class="user_name"><?php echo $document["usuario_nombre"]; ?></span>
-                                <span><?php echo $document["usuario_email"] ?></span>
+                                <span class="user_name"><?php echo $registro["usuario_nombre"]; ?></span>
+                                <span><?php echo $registro["usuario_email"] ?></span>
                             </div>
                         </div>
                     <?php endif; ?>
-                    <span class="row_fecha"><?php echo $document["fechaR"] ?></span>
+                    <span class="row_folio"><?php echo $registro["folio"] ?></span>
+                    <span class="row_fecha"><?php echo $registro["fechaR"] ?></span>
                     <?php 
                     $estatusClass = '';
-                    switch ($document['estatus']) {
+                    switch ($registro['estatus']) {
                         case "Entregado":
                             $estatusClass = 'success';
                             break;
@@ -78,14 +61,15 @@
                             $estatusClass = 'danger';
                             break;
                     }
-                    echo "<span class=\"row_estatus {$estatusClass}\">{$document['estatus']}</span>"; ?>
+                    echo "<span class=\"row_estatus {$estatusClass}\">{$registro['estatus']}</span>"; ?>
                     <?php if ($_SESSION['user_role'] == 1) : ?>
                         <div class="row_actions">
-                            <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['id']; ?>" onclick="openModal('editDocument')"></i>
-                            <i class="fa-solid fa-trash-can" title="Eliminar de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['id']; ?>, '<?= $document['usuario_nombre']; ?>')"></i>
+                            <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $registro["usuario_nombre"]; ?>" data-id="<?php echo $registro['id']; ?>" onclick="openModal('timebytimeEdit<?php echo $registro['id']; ?>')"></i>
+                            <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"]);?>
                         </div>
                     <?php endif; ?>
                 </div>
+                
             <?php endforeach; ?>
         </div>
         <div class="no_result_message" id="noResultsMessage" style="display: none;">
@@ -95,16 +79,6 @@
     </div>
 </div>
 
-<?php
-
-if ($_SESSION['user_role'] == 1) {
-    echo generateModalEditTimeByTime($document["id"]);
-    echo generateModal('deleteDocument', 'Eliminar documento', true);
-}
-
-?>
-
-
 <script src="assets/js/search_document.js"></script>
 
 <?php else : ?>
@@ -112,16 +86,8 @@ if ($_SESSION['user_role'] == 1) {
     <div class="card_table_header">
         <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <div class="dias_economicos">
-                <span><?= $diasEconomicos; ?> / 8</span>
-                <i class="fa-solid fa-file-lines" title="Dia economico"></i>
-                <span><?= $diaCumple; ?> / 1</span>
-                <i class="fa-solid fa-birthday-cake" title="Dia de cumpleaños"></i>
-                <span><?= $reportesIncidencia; ?></span>
-                <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
-            </div>
             <?php if ($_SESSION['user_role'] == 1) : ?>
-                <button class="btn_documento" onclick="openModal('timebytime')">Subir documento</button>
+                <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
         </div>
     </div>
@@ -139,48 +105,24 @@ if ($_SESSION['user_role'] == 1) {
 <script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>
 
-<script type="module">
-import {
-    addDiaEconomico
-} from './assets/js/documents/diaEconomico.js';
-import {
-    addDiaCumple
-} from './assets/js/documents/diaCumple.js';
-import {
-    addReporteIncidencia
-} from './assets/js/documents/reporteIncidencia.js';
-
-document.querySelector('.fa-file-lines').addEventListener('click', function() {
-    addDiaEconomico();
-});
-document.querySelector('.fa-birthday-cake').addEventListener('click', function() {
-    addDiaCumple();
-});
-document.querySelector('.fa-file-circle-xmark').addEventListener('click', function() {
-    addReporteIncidencia();
-});
-</script>
-
 <?php
-
+//generar modal para subir documentos
 if ($_SESSION['user_role'] == 1) {
 echo generateModalDocumentForTime();
 }
-
-echo generateModal('addDiaEconomico', 'Generar dia economico', true);
-echo generateModal('addDiaCumple', 'Generar dia de cumpleaños', true);
-echo generateModal('addIncidencia', 'Generar reporte de incidencia', true);
 
 if (Session::exists('document_success')) {
 echo showAlert('success', Session::get('document_success'));
 echo "<script>hideAlert('success');</script>";
 Session::delete('document_success');
 }
+
 if (Session::exists('document_warning')) {
 echo showAlert('warning', Session::get('document_warning'));
 echo "<script>hideAlert('warning');</script>";
 Session::delete('document_warning');
 }
+
 if (Session::exists('document_error')) {
 echo showAlert('error', Session::get('document_error'));
 echo "<script>hideAlert('error');</script>";

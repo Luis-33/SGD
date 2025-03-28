@@ -3,28 +3,29 @@
 require_once MODEL_PATH . "TimebyTimeModel.php";
 require_once SERVER_PATH . "DB.php";
 
-function generateModalEditTimeByTime($docID)
+function generateModalEditTimeByTime($docID, $folio)
 {
     $db = new DB();
     $TimebyTimeModel = new TimebyTimeModel($db);
-    $document = $TimebyTimeModel->getDocumentById($docID);
+    $resultados = $TimebyTimeModel->ValidarTimebyTimePagos($docID);
 
+    print_r($resultados);
     $modal = "
-    <div class=\"modal editDocument\">
+    <div class=\"modal timebytimeEdit{$docID}\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Actualizar documento</h2>
-                <button onclick=\"closeModal('editDocument')\">Cerrar</button>
+                <h2>Validar Registro Folio - {$folio}</h2>
+                <button onclick=\"closeModal('timebytimeEdit{$docID}')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=dashboard&action=editDocument\" method=\"POST\">
-                    <input type=\"hidden\" name=\"docID\" value=\"{$document['id']}\">
+                <form action=\"admin_home.php?page=TimeByTime&action=timebytimeEdit\" method=\"POST\">
+                    
 
                     <div class=\"input_group\">
                         <label>Estatus</label>
                         <div class=\"select_menu\" id=\"updateStatus\">
                             <div class=\"select_btn\">
-                                    <span class=\"sBtn_text\">" . $document['estatus'] . "</span>
+                                    
                                 <i class=\"fa-solid fa-chevron-down\"></i>
                             </div>
                             <ul class=\"options\">
@@ -41,7 +42,7 @@ function generateModalEditTimeByTime($docID)
                         </div>
                     </div>
 
-                    <input type=\"hidden\" name=\"documentoEstatus\" id=\"estatus\" value=\"{$document['estatus']}\">
+                    
 
                     <button type=\"submit\">Actualizar documento</button>
                 </form>

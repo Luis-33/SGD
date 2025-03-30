@@ -19,5 +19,6 @@ CREATE TABLE comisiones (
     placas VARCHAR(15) NULL,
     kilometraje INT NULL,
     status VARCHAR(50),
-    pdf varchar(100) NULL
+    pdf varchar(100) NULL,
+     FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -5,7 +5,7 @@ function openModal(modalClass) {
 
 generarPDF = function (id) {
     console.log(id);
-    window.open('generar_pdf.php', '_blank');
+    window.open('generar_pdf.php?id=' + id, '_blank');
 }
 
 function closeModal(modalClass) {

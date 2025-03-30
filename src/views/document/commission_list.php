@@ -6,6 +6,7 @@
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
                     <button class="btn_entregadoo" data-status="Entregado" onclick="filterCommissions('Entregado')">Entregados</button>
                     <button class="btn_Pendiente" data-status="Pendiente" onclick="filterCommissions('Pendiente')">Pendientes</button>
+                    <button class="btn_documento" onclick="generarPDF(3)">PDf prueba</button>
                     <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
@@ -88,7 +89,7 @@
             <h2><?php echo ($_SESSION['user_role'] == 3 || $_SESSION['user_role'] == 4) ? "Mis Comisiones" : "Comisiones"; ?></h2>
             <div class="card_header_actions">
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
-                    <button class="btn_documento" onclick="openModal('editCommissions')">Crear Comisión</button>
+                    <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -139,10 +140,10 @@ function filterSearch() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    filterCommissions('Pendiente');
-    
     const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', filterSearch);
+    if (searchInput) { 
+        searchInput.addEventListener('input', filterSearch);
+    }
 });
 </script>
 

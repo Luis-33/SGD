@@ -32,8 +32,6 @@ function generateModalComision($areaAdscripcion_id)
     $userModel = new UserModel($db);
     $jefeInmediato = $userModel->getJefeInmediato($areaAdscripcion_id);
     $jefeInmediatoId = is_array($jefeInmediato) && isset($jefeInmediato[0]) ? $jefeInmediato[0] : null;
-    // var_dump($jefeInmediatoId);
-    // echo $jefeInmediatoId;
     if($jefeInmediatoId == 0){
         $usersList = $userModel->getUsersList1();
     }else{
@@ -59,9 +57,9 @@ function generateModalComision($areaAdscripcion_id)
 
                 <!-- CAMPO DE UBICACIÓN CON MAPA -->
                 <div class=\"input_group\">
-                    <label for=\"lugar\">lugar</label>
-                    <input type=\"text\" id=\"lugar\" name=\"lugar\" required readonly>
-                    <button type=\"button\" onclick=\"openMapModal()\">Seleccionar Ubicación</button>
+                    <label for=\"lugar\">Lugar</label>
+                    <input type=\"text\" id=\"lugar\" name=\"lugar\" required>
+                    <button type=\"button\" onclick=\"openMapModal()\">Seleccionar Ubicación en el Mapa</button>
                 </div>
 
                 <div id=\"mapModal\" class=\"modal\">
@@ -258,13 +256,6 @@ function generateModalComision($areaAdscripcion_id)
             var especificacionViaticosField = document.getElementById('especificacion_viaticos_field');
             especificacionViaticosField.style.display = (viaticos === 'Si') ? 'block' : 'none';
         }
-
-        document.querySelector(\"form\").addEventListener(\"submit\", function (event) {
-            if (document.getElementById(\"lugar\").value.trim() === \"\") {
-                event.preventDefault();
-                alert(\"Por favor selecciona una ubicación.\");
-            }    
-        });
 
         $(document).ready(function () {
             $(document).on(\"click\", \".select_menu .select_btn\", function () {

@@ -1,92 +1,110 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Mi PDF</title>
+    <title>Formato Comisión</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-    </style>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        @page { margin: 100px 50px; }
-        header { position: fixed; top: -80px; left: 0px; right: 0px; height: 50px; text-align: center; }
-        footer { position: fixed; bottom: -80px; left: 0px; right: 0px; height: 50px; text-align: center; }
-        .content { margin-top: 100px; }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 4rem;
-        }
+        body { font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 0; text-align: center; }
+        .container { width: 90%; margin: auto; border: 2px solid black; padding: 20px; text-align: left; }
+        .header, .footer { width: 100%; margin-bottom: 10px; text-align: center; }
+        .table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .table th, .table td { border: 1px solid black; padding: 6px; }
+        .table th { background-color: #f2f2f2; text-align: left; }
+        .center { text-align: center; font-weight: bold; }
+        .note { font-size: 10px; }
     </style>
 </head>
 <body>
+<?php
+include "./header.jpg";
+$nombreImagen = "./header.jpg";
+$imagenBase64 = "data:image/png;base64," . base64_encode(file_get_contents($nombreImagen));
+?>
 
-<header>
-    <img src="../images/header.jpg" width="100%" height="50px">
-</header>
+    <div class="header">
+        <img src="./header.jpg" width="100%" height="50px">
+        <!-- <img src="{{ url('./header.jpg') }}" width="100%" height="50px" /> -->
+        <!-- <img src="<?php echo $imagenBase64 ?>" /> -->
+    </div>
 
+    <div class="container">
+        <h2 class="center">TECNOLÓGICO SUPERIOR DE JALISCO ZAPOPAN</h2>
+        <h3 class="center">COMISIÓN</h3>
 
-<table style="width:100%; margin: 1rem; text-align: right" >
-    <tr>
-        <td>_______________, Jalisco a ____ de ______ del _______.</td>
-    </tr>
-</table>
+        <table class="table">
+            <tr>
+                <th>Nombre:</th><td>&lt;&lt;nombre&gt;&gt;</td>
+                <th>Fecha de elaboración:</th><td>&lt;&lt;fecha&gt;&gt;</td>
+            </tr>
+            <tr>
+                <th>Cargo:</th><td>&lt;&lt;cargo&gt;&gt;</td>
+                <th>Folio:</th><td><span style="color: red;">&lt;&lt;folio&gt;&gt;</span></td>
+            </tr>
+            <tr>
+                <th>Departamento:</th><td>&lt;&lt;area&gt;&gt;</td>
+                <th>Nómina:</th><td>&lt;&lt;nomina&gt;&gt;</td>
+            </tr>
+        </table>
 
-<table style="width:100%; margin-bottom: 1rem">
-    <tr>
-        <td>DIRECTOR(A) DE UNIDAD ACADÉMICa perros
-            Álvarez Arévalo Santiago Hommar
-            Ingeniero en Sistemas ZAA0256 Zapopan
-            Por este medio y de la mejor manera el (la) que suscribe trabajador (a) solicitante ____________________________________
-            con puesto de ______________________ y número de nómina ___________, de la Unidad Académica _____________________,
-            solicito DÍA DE CUMPLEAÑOS de conformidad a la Cláusula 54, párrafo primero de las Condiciones Generales de Trabajo del
-            Instituto Tecnológico José Mario Molina Pasquel y Henríquez</td>
-    </tr>
-</table>
+        <table class="table">
+            <tr>
+                <th>LUGAR(ES):</th><td colspan="3">&lt;&lt;lugar&gt;&gt;</td>
+            </tr>
+            <tr>
+                <th>ASUNTO:</th><td colspan="3">&lt;&lt;asunto&gt;&gt;</td>
+            </tr>
+            <tr>
+                <th>Requiere Transporte:</th><td>&lt;&lt;transporte&gt;&gt;</td>
+                <th>Requiere viáticos:</th><td>&lt;&lt;viaticos&gt;&gt;</td>
+            </tr>
+            <tr>
+                <th>Especifique viáticos:</th><td colspan="3"><span style="color: red;">&lt;&lt;Eviaticos&gt;&gt;</span></td>
+            </tr>
+        </table>
 
+        <h3 class="center">Fechas y Horarios</h3>
+        <table class="table">
+            <tr>
+                <th>Fecha de Salida</th><th>Hora</th>
+                <th>Fecha de Regreso</th><th>Hora</th>
+            </tr>
+            <tr>
+                <td>&lt;&lt;salida&gt;&gt;</td><td>&lt;&lt;horas&gt;&gt;</td>
+                <td>&lt;&lt;regreso&gt;&gt;</td><td>&lt;&lt;horar&gt;&gt;</td>
+            </tr>
+        </table>
 
-<table style="width:100%; margin-bottom: 1rem">
-    <tr>
-        <td>Fecha de ingreso:
-            <label style="text-decoration: underline">1996-03-25</label>
-        </td>
-    </tr>
+        <h3 class="center">Observaciones</h3>
+        <table class="table">
+            <tr>
+                <td colspan="4">&lt;&lt;obs&gt;&gt;</td>
+            </tr>
+        </table>
 
-    <tr>
-        <td>Fecha de Cumpleaños:
-            <label style="text-decoration: underline">1983-04-25</label>
-        </td>
-    </tr>
+        <h3 class="center">Aprobaciones</h3>
+        <table class="table">
+            <tr>
+                <th>Jefe Inmediato</th><td>&lt;&lt;Jefe Inmediato&gt;&gt;</td>
+            </tr>
+            <tr>
+                <th>Puesto del Jefe</th><td>&lt;&lt;Puesto del Jefe&gt;&gt;</td>
+            </tr>
+            <tr>
+                <th>Área de Adscripción</th><td>&lt;&lt;Area de Adscripcion&gt;&gt;</td>
+            </tr>
+        </table>
 
-</table>
+        <p class="center">Unidad Académica Zapopan del <a href="#">ITJMMPyH</a></p>
+        <p class="center"><strong>Cinthia Lizeth Ramos Osuna</strong><br>Directora de la Unidad Académica Zapopan del ITJMMPyH</p>
 
+        <p class="note">
+            <strong>Nota:</strong> Se le recuerda que tiene 2 días naturales después de su regreso indicado, para entregar esta comisión SELLADA Y FIRMADA en el Depto. de Recursos Humanos.
+        </p>
+    </div>
 
-<table style="width:100%; margin-bottom: 1rem; border: solid 1px black;">
-    <tr>
-        <td>OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil</td>
-    </tr>
-    <tr>
-        <td>siguiente ___________ día hábil anterior  __________</td>
-    </tr>
-</table>
-
-<table style="width:100%;text-align: center;">
-    <tr>
-        <td style="text-decoration: underline">Álvarez Arévalo Santiago Hommar</td>
-    </tr>
-    <tr>
-        <td>Nombre y Firma</td>
-    </tr>
-    <tr>
-        <td>Solicitante</td>
-    </tr>
-</table>
-
-<footer>
-    <img src="../images/footer_3.jpg" width="100%" height="50px">
-</footer>
+    <div class="footer">
+        <img src="./header.jpg" width="100%" height="50px">
+    </div>
 
 </body>
 </html>

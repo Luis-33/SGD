@@ -7,8 +7,9 @@ use Dompdf\Options;
 $options = new Options();
 $options->set('defaultFont', 'Arial');
 $options->set('isHtml5ParserEnabled', true);
+$options->set('isRemoteEnabled', true);
+$options->setChroot(__DIR__);
 $dompdf = new Dompdf($options);
-
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
@@ -28,6 +29,7 @@ if (isset($_GET['id'])) {
         $path_template = __DIR__ . '/template.php';
     }
 } else {
+    
     $path_template = __DIR__ . '/template.php';
 }
 

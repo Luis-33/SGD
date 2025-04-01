@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) { 
         searchInput.addEventListener('input', filterSearch);
     }
+    filterCommissions('Pendiente');
 });
 </script>
 

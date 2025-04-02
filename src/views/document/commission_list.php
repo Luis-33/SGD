@@ -6,7 +6,7 @@
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
                     <button class="btn_entregadoo" data-status="Entregado" onclick="filterCommissions('Entregado')">Entregados</button>
                     <button class="btn_Pendiente" data-status="Pendiente" onclick="filterCommissions('Pendiente')">Pendientes</button>
-                    <button class="btn_documento" onclick="generarPDF(3)">PDf prueba</button>
+                    <!-- <button class="btn_documento" onclick="generarPDF(3)">PDf prueba</button> -->
                     <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
@@ -32,7 +32,8 @@
                 <?php foreach ($documents as $Commission) : ?>
                     <div class="table_body_item" data-status="<?php echo $Commission['status']; ?>">
                         <span class="row_pdf" title="Descargar Comisión">
-                            <a href="download.php?docID=<?php echo $Commission['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                            <!-- <a href="download.php?docID=<?php echo $Commission['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a> -->
+                            <a class="btn_documento" onclick="generarPDF(3)"<?php echo $Commission['id']; ?>><i class="fa-solid fa-file-pdf"></i></a>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>
                             <div class="row_user_info">

@@ -29,11 +29,11 @@
             margin-bottom: 10px;
         }
         .table th, .table td {
-            border: 1px solid black;
+            border: 1px ;
             padding: 6px;
         }
         .table th {
-            background-color: #f2f2f2;
+            background-color:rgb(255, 255, 255);
             text-align: left;
         }
         .center {
@@ -85,6 +85,8 @@
             </tr>
         </table>
 
+        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
+        
         <table class="table">
             <tr>
                 <th>LUGAR(ES):</th><td colspan="3">&lt;&lt;lugar&gt;&gt;</td>
@@ -102,6 +104,8 @@
             </tr>
         </table>
 
+        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
+        
         <h3 class="center">Observaciones</h3>
         <table class="table">
             <tr>
@@ -109,44 +113,46 @@
             </tr>
         </table>
 
+        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
+
         <table class="table">
             <tr>
                 <th>Fecha de Salida</th><th>Hora</th>
-                <th>Fecha de Regreso</th><th>Hora</th>
             </tr>
+
             <tr>
-                <td>&lt;&lt;salida&gt;&gt;</td><td>&lt;&lt;horas&gt;&gt;</td>
-                <td>&lt;&lt;regreso&gt;&gt;</td><td>&lt;&lt;horar&gt;&gt;</td>
+            <td>&lt;&lt;salida&gt;&gt;</td><td>&lt;&lt;horas&gt;&gt;</td>
             </tr>
+
+            <tr>
+            <th>Fecha de Regreso</th><th>Hora</th>
+            </tr>
+
+            <tr>
+            <td>&lt;&lt;regreso&gt;&gt;</td><td>&lt;&lt;horar&gt;&gt;</td>
+            </tr>
+            
         </table>
 
         <table class="table">
             <tr>
-                <th>Jefe Inmediato</th><td>&lt;&lt;Jefe Inmediato&gt;&gt;</td>
+                <th>Jefe Inmediato</th>
+                <th>Cinthia Lizbeth Ramos Osuna</th>
             </tr>
             <tr>
                 <th>Puesto del Jefe</th><td>&lt;&lt;Puesto del Jefe&gt;&gt;</td>
+                <th>Puesto</th>
+                <td>Directora</td>
+                
             </tr>
             <tr>
                 <th>Área de Adscripción</th><td>&lt;&lt;Area de Adscripcion&gt;&gt;</td>
-            </tr>
-        </table>
-
-        <table class="table">
-            <tr>
+                
                 <th>Unidad Académica</th>
-                <td>Zapopan del <strong>ITJMMPyH</strong></td>
-            </tr>
-            <tr>
-                <th>Nombre del Director</th>
-                <td>Cinthia Lizbeth Ramos Osuna</td>
-            </tr>
-            <tr>
-                <th>Puesto</th>
-                <td>Directora de la Unidad Académica Zapopan del ITJMMPyH</td>
+                <td> de la Unidad Académica Zapopan del <strong>ITJMMPyH</strong></td>
             </tr>
         </table>
-
+        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
         <p class="note">
             <strong>Nota:</strong> Se le recuerda que tiene 2 días naturales después de su regreso indicado, para entregar esta comisión SELLADA Y FIRMADA como a continuación se detalla: En el Depto. de Recursos Humanos: Comisión en original, ficha informativa y copia del reporte de incidencias.
         </p>

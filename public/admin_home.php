@@ -187,7 +187,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     break;
                 case 'commissions':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        if ( $action === 'comision') {
+                        if ($action === 'comision') {
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $CommissionController->describeTable("comisiones");
                             if (!empty($data)) {
@@ -202,7 +202,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
                                 $CommissionController->addComision($return_data);
                             }
-                        } else if($action === 'editCommissions'){
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        } else if ($action === 'editCommissions') {
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $CommissionController->describeTable("comisiones");
                             if (!empty($data)) {
@@ -215,14 +218,15 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 $return_data["status"] = "Entregado";
                                 $CommissionController->updateCommission($return_data);
                             }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
                         }
                         $CommissionController->showCommission($userRole, $userID);
-                    }else{
+                    } else {
                         $CommissionController->showCommission($userRole, $userID);
                         
                     }
                    
-                   // print_r("usuario: ". $_SESSION['user_area']);
                     break;
                 case 'configs':
                     break;

@@ -47,6 +47,13 @@ switch ($page) {
     case 'configs':
         $page_title = "Configuraciónes";
         break;
+    case 'commissions':
+        $page_title = "Comisiones";
+        $css_file[] = "components/dropdown.css";
+        $css_file[] = "components/table.css";
+        $css_file[] = "components/modal.css";
+        $css_file[] = "admin/dashboard.css";
+        break;          
     default:
         $page_title = "Error 404";
         break;

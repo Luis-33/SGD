@@ -1,4 +1,7 @@
-<?php if ($_SESSION['user_role'] == 1) : ?>
+
+<?php
+include_once UTIL_PATH . 'ModalEditDocumento.php';
+ if ($_SESSION['user_role'] == 1) : ?>
 
     <script>
         function confirmDelete(docID, docTipo, userName) {
@@ -32,7 +35,7 @@
                     <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
                 </div>
                 <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <button class="btn_documento" onclick="openModal('documento')">Subir documenaaaaatowww</button>
+                 
                     <button class="btn_documento" onclick="generarPDF(1)">PDf prueba</button>
                 <?php endif; ?>
             </div>
@@ -55,7 +58,9 @@
                 <?php endif; ?>
             </div>
             <div class="table_body" id="tableContainer">
+
                 <?php foreach ($documents as $document) : ?>
+                    <?php   echo generateModalEditDocument($document["documento_id"]); ?>
                     <div class="table_body_item">
                         <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
                             <a href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
@@ -75,7 +80,7 @@
                         <?php endif; ?>
                         <span class="row_tipo"><?php echo $document["documento_tipo"] ?></span>
                         <span class="row_fecha"><?php echo $document["documento_fechaCreacion"] ?></span>
-                        <?php 
+                        <?php
                         $estatusClass = '';
                         switch ($document['documento_estatus']) {
                             case "Entregado":
@@ -91,12 +96,13 @@
                         echo "<span class=\"row_estatus {$estatusClass}\">{$document['documento_estatus']}</span>"; ?>
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
-                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument')"></i>
+                                <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument<?php echo $document['documento_id']; ?>')"></i>
                                 <i class="fa-solid fa-trash-can" title="Eliminar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['documento_id']; ?>, '<?= $document['documento_tipo']; ?>', '<?= $document['usuario_nombre']; ?>')"></i>
                             </div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
+                <?php echo generateModal('deleteDocument', 'Eliminar documento', true); ?>
             </div>
             <div class="no_result_message" id="noResultsMessage" style="display: none;">
                 <span>No se encontraron coincidencias.</span>
@@ -104,17 +110,6 @@
             </div>
         </div>
     </div>
-
-    <?php
-
-    if ($_SESSION['user_role'] == 1) {
-        echo generateModalEditDocument($document["documento_id"]);
-        echo generateModal('deleteDocument', 'Eliminar documento', true);
-    }
-
-    ?>
-
-
     <script src="assets/js/search_document.js"></script>
 
 <?php else : ?>
@@ -130,9 +125,7 @@
                     <span><?= $reportesIncidencia; ?></span>
                     <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
                 </div>
-                <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <button class="btn_documento" onclick="openModal('documento')">Subir documentssso</button>
-                <?php endif; ?>
+             
             </div>
         </div>
         <div class="card_table_body">

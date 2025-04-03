@@ -1,3 +1,32 @@
+feature/time_by_time
+Cambios para modulo tiempoXtiempo
+CREATE TABLE timebytime (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT,
+    folio varchar(10),
+    archivo LONGBLOB,
+    estatus ENUM('pendiente', 'entregado') NOT NULL DEFAULT 'pendiente';
+    fechaR DATE DEFAULT (CURRENT_DATE),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE
+);
+
+CREATE TABLE timebytimefaltas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    timebytime_id INT,
+    fechaF DATE,
+    horasF INT,
+    FOREIGN KEY (timebytime_id) REFERENCES TimeByTime(id) ON DELETE CASCADE
+);
+
+CREATE TABLE timebytimepagos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    timebytime_id INT,
+    fechaP DATE,
+    horaP INT,
+    estatusP TINYINT NOT NULL DEFAULT 1,
+    FOREIGN KEY (timebytime_id) REFERENCES TimeByTime(id) ON DELETE CASCADE
+);
+
 Modificacion Para El Modulo De Comiciones
 
 CREATE TABLE Transporte (
@@ -28,3 +57,4 @@ CREATE TABLE Comiciones (
     kilometraje INT NULL,
     Status VARCHAR(50)
 );
+

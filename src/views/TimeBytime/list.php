@@ -5,7 +5,7 @@
     <div class="card_table_header">
         <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <?php if ($_SESSION['user_role'] == 1) : ?>
+            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 5 ) : ?>
                 <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
         </div>  
@@ -29,7 +29,11 @@
         </div>
         <div class="table_body" id="tableContainer">
             <?php foreach ($registros as $registro) : ?>
-                <div class="table_body_item">
+                <?php 
+                // Agregar clase si tiene pago pendiente
+                $rowClass = ($registro['tiene_pago_pendiente'] > 0) ? 'row_pendiente' : ''; 
+                ?>
+                <div class="table_body_item <?php echo $rowClass;?>">
                     <span class="row_pdf" title="Descargar <?php echo $registro['id']; ?>">
                         <a href="download.php?docID=<?php echo $registro['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                     </span>
@@ -51,10 +55,10 @@
                     <?php 
                     $estatusClass = '';
                     switch ($registro['estatus']) {
-                        case "Entregado":
+                        case "entregado":
                             $estatusClass = 'success';
                             break;
-                        case "Pendiente":
+                        case "pendiente":
                             $estatusClass = 'warning';
                             break;
                         case "Sin Entregar":
@@ -86,7 +90,7 @@
     <div class="card_table_header">
         <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <?php if ($_SESSION['user_role'] == 1) : ?>
+            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 5 ) : ?>
                 <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
         </div>

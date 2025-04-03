@@ -42,21 +42,33 @@ function generateModalDocumentForTime()
             </div>
 
             <div class=\"input_group\">
-                <label for=\"fechaR\">Selecciona una fecha:</label>
-                <input type=\"date\" id=\"fechaR\" name=\"fechaR\">
+                <label for=\"fechaR\">Fecha de registro:</label>
+                <input type=\"date\" id=\"fechaR\" name=\"fechaR\" required>
             </div>
 
             <div class=\"input_group\">
                 <label for=\"folio\">Folio:</label>
-                <input type=\"text\" id=\"folio\" name=\"folio\">
+                <input type=\"text\" id=\"folio\" name=\"folio\" required pattern=\"[0-9]+\" 
+                oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\">
+
             </div>
 
             <div class=\"input_group\">
-                <label for=\"num_registros\">Cantidad de registros a ingresar</label>
-                <input type=\"number\" id=\"num_registros\" name=\"num_registros\" min=\"1\" max=\"10\" onchange=\"generateFields(this.value)\">
+                <label for=\"num_registros\">Faltas a registrar</label>
+                <input type=\"number\" id=\"num_registros\" name=\"num_registros\" min=\"1\" onchange=\"generateFaltas(this.value)\" 
+                required pattern=\"[0-9]+\" oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\"> 
             </div>
             
-            <div id=\"dynamic_fields\"></div>
+            <div id=\"Falatas\"></div>
+
+            <div class=\"input_group\">
+                <label for=\"num_registros\">Dias a pagar </label>
+                <input type=\"number\" id=\"num_registros\" min=\"1\" onchange=\"generatePagos(this.value)\" 
+                required pattern=\"[0-9]+\" oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\"> 
+            </div>
+
+            <div id=\"Pagos\"></div>
+           
                         
             <input type=\"hidden\" name=\"usuario_id\" id=\"user\">
             <button class=\"insert_documento_btn\">Subir documento</button>
@@ -66,14 +78,13 @@ function generateModalDocumentForTime()
 </div>
 
 <script>
-function generateFields(num) {
-    let container = document.getElementById('dynamic_fields');
+function generateFaltas(num) {
+    let container = document.getElementById('Falatas');
     container.innerHTML = ''; // Limpiar contenido previo
     
     for (let i = 0; i < num; i++) {
         let row = document.createElement('div');
         row.classList.add('record_row');
-        
         row.innerHTML = `
             <div class=\"input_group\">
                 <label>Fecha de falta</label>
@@ -81,46 +92,36 @@ function generateFields(num) {
             </div>
             <div class=\"input_group\">
                 <label>Horas de falta</label>
-                <input type=\"number\" name=\"horasF[]\" min=\"1\" required>
-            </div>
-            <div class=\"pagos_container\">
-                <div class=\"pago_fields\">
-                    <div class=\"input_group\">
-                        <label>Fecha de pago</label>
-                        <input type=\"date\" name=\"fechaP[]\" required>
-                    </div>
-                    <div class=\"input_group\">
-                        <label>Horas de pago</label>
-                        <input type=\"number\" name=\"horasP[]\" min=\"1\"required>
-                    </div>
-                </div>
-                <button type=\"button\" class=\"add_pago_btn\" data-index=\"\">Agregar Pago</button>
+                <input type=\"number\" name=\"horasF[]\" min=\"1\" required pattern=\"[0-9]+\" 
+                oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\">
             </div>
         `;
         container.appendChild(row);
     }
 }
 
-document.addEventListener('click', function (event) {
-    if (event.target.classList.contains('add_pago_btn')) {
-        let index = event.target.getAttribute('data-index');
-        let pagosContainer = event.target.previousElementSibling;
-        let pagoFields = document.createElement('div');
-        pagoFields.classList.add('pago_fields');
-        
-        pagoFields.innerHTML = `
+function generatePagos(num) {
+    let container = document.getElementById('Pagos');
+    container.innerHTML = ''; // Limpiar contenido previo
+    
+    for (let i = 0; i < num; i++) {
+        let row = document.createElement('div');
+        row.classList.add('record_row');
+        row.innerHTML = `
             <div class=\"input_group\">
-                <label>Fecha de pago</label>
-                <input type=\"date\" name=\"fechaP[]\"required>
+                <label>Fecha de falta</label>
+                <input type=\"date\" name=\"fechaP[]\" required>
             </div>
             <div class=\"input_group\">
-                <label>Horas de pago</label>
-                <input type=\"number\" name=\"horasP[]\" min=\"1\"required>
+                <label>Horas de falta</label>
+                <input type=\"number\" name=\"horasP[]\" min=\"1\" required pattern=\"[0-9]+\" 
+                oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\">
             </div>
         `;
-        pagosContainer.appendChild(pagoFields);
+        container.appendChild(row);
     }
-});
+}
+
 
 //Menu desplegable para usuarios
 $(document).ready(function () {

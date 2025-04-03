@@ -12,7 +12,12 @@ class TimeByTimeModel
     public function getAllDocuments($role, $userID)
     {
 
-        $query = "SELECT timebytime.*, usuario.* FROM timebytime LEFT JOIN usuario ON usuario.usuario_id = timebytime.usuario_id";
+        $query = "SELECT 
+        timebytime.*, 
+        usuario.*,
+        (SELECT COUNT(*) FROM timebytimepagos WHERE timebytimepagos.timebytime_id = timebytime.id AND estatusP = 0) AS tiene_pago_pendiente
+      FROM timebytime 
+      LEFT JOIN usuario ON usuario.usuario_id = timebytime.usuario_id";
 
         if ($role == 3) {
             $query .= " WHERE timebytime.usuario_id = :userID";
@@ -98,22 +103,52 @@ class TimeByTimeModel
 
     public function ValidarTimebyTimePagos($docID)
     {
-        $query = "SELECT timebytimefaltas.*, timebytimepagos.* 
-        FROM timebytimefaltas
-        LEFT JOIN timebytimepagos ON timebytimefaltas.timebytime_id = timebytimepagos.timebytime_id
-        WHERE timebytimefaltas.timebytime_id = :docID";
+        $queryFaltas = "SELECT id, timebytime_id, fechaF, horasF 
+        FROM timebytimefaltas 
+        WHERE timebytime_id = :docID";
 
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmtFaltas = $this->db->prepare($queryFaltas);
+        $stmtFaltas->bindParam(':docID', $docID, PDO::PARAM_INT);
+        $stmtFaltas->execute();
+        $faltas = $stmtFaltas->fetchAll(PDO::FETCH_ASSOC);
 
-        // Obtener los resultados
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $queryPagos = "SELECT id, timebytime_id, fechaP, horaP, estatusP 
+               FROM timebytimepagos 
+               WHERE timebytime_id = :docID";
+
+        $stmtPagos = $this->db->prepare($queryPagos);
+        $stmtPagos->bindParam(':docID', $docID, PDO::PARAM_INT);
+        $stmtPagos->execute();
+        $pagos = $stmtPagos->fetchAll(PDO::FETCH_ASSOC);
+        
+        $resultadoFinal = [
+            'faltas' => $faltas,
+            'pagos' => $pagos
+        ];
+        
+        return $resultadoFinal;
+        
+
     }
 
-    public function updateTimebyTimePagos()
+    public function updateTimebyTimePagos($docID, $estatusFields)
     {
-   
+        $query = "UPDATE timebytimePagos 
+        SET estatusP = :estatus 
+        WHERE timebytime_id = :docID AND id = :pagoID";
+
+        $stmt = $this->db->prepare($query);
+
+        foreach ($estatusFields as $pagoID => $estatus) {
+        $stmt->bindParam(':estatus', $estatus, PDO::PARAM_INT);
+        $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
+        $stmt->bindParam(':pagoID', $pagoID, PDO::PARAM_INT);
+        
+        if (!$stmt->execute()) {
+            return false; // Si alguna falla, devuelve false
+        }
+        }
+        return true; // Retorna true si todo se actualiza correctamente
     }
 
 }

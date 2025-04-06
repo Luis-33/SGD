@@ -123,13 +123,22 @@ class CommissionsModel
         }
     }
 
-    public function getCommissionsById($docID)
+    public function getCommissionsById($id)
     {
-        $query = "SELECT * FROM comisiones WHERE id = :docID";
+        $query = "SELECT * FROM comisiones WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateCommissionPdf($id, $pdfContent)
+    {
+        $query = "UPDATE comisiones SET pdf = :pdf WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':pdf', $pdfContent, PDO::PARAM_LOB);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }
 ?>

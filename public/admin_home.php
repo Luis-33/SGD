@@ -221,7 +221,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
                             exit;
                         }
-                        $CommissionController->showCommission($userRole, $userID);
                     } else {
                         $CommissionController->showCommission($userRole, $userID);
                         

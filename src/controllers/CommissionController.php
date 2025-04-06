@@ -9,6 +9,7 @@ require_once EMAIL_PATH . 'SMTP.PHP';
 require_once PDF_PATH . 'library/fpdf.php';
 require_once UTIL_PATH . 'Session.php';
 
+use FontLib\Table\Type\head;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -53,4 +54,21 @@ class CommissionController
 
     }
 
-}    
+    public function downloadDCommission($id)
+    {
+        $Commision = $this->CommissionsModel->getCommissionsById($id);
+
+        if ($Commision && isset($Commision['pdf'])) {
+            $pdfContent = $Commision['pdf']; 
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="documento.pdf"');
+            header('Content-Length: ' . strlen($pdfContent));
+            echo $pdfContent;
+            exit;
+        } else {
+            echo '<h1>Error</h1>';
+            echo '<p>No se encontró la comisión solicitada o el archivo PDF.</p>';
+            exit;
+        }
+    }
+}

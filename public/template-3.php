@@ -89,10 +89,20 @@
         
         <table class="table">
             <tr>
-                <th>LUGAR(ES):</th><td colspan="3">&lt;&lt;lugar&gt;&gt;</td>
+                <th>LUGAR(ES):</th>
+                
+                
+                <td colspan="3">&lt;&lt;lugar&gt;&gt;</td>
+
+
             </tr>
             <tr>
-                <th>ASUNTO:</th><td colspan="3">&lt;&lt;asunto&gt;&gt;</td>
+                <th>ASUNTO:</th>
+                
+                
+                <td colspan="3">&lt;&lt;asunto&gt;&gt;</td>
+
+
             </tr>
             <tr>
                 <th>Requiere Transporte:</th><td colspan="3">&lt;&lt;transporte&gt;&gt;</td>

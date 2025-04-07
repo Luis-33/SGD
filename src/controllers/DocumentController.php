@@ -947,7 +947,7 @@ class PDF extends FPDF
         $this->SetXY(10, 145);
         $this->Cell(0, 5, utf8_decode('El día: _____ de _______ del año ________  '), 0, 1);
         $this->Ln(13);
-        $this->Cell(0, 5, utf8_decode('Motivo:'), 0, 1);
+        $this->Cell(0, 5, utf8_decode('Motivo: ' . $incidencia), 0, 1);
         $this->SetFont("Arial", "", 11);
         $this->SetXY(15, 205);
         $this->Cell(0, 5, utf8_decode($user_name), 0, 1);

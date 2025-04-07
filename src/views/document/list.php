@@ -63,7 +63,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                     <?php   echo generateModalEditDocument($document["documento_id"]); ?>
                     <div class="table_body_item">
                         <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
-                            <a href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                            <a target="_blank"  href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>
                             <div class="row_user_info">

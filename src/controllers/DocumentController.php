@@ -335,7 +335,13 @@ class DocumentController
                     $mail->send();
                     echo 'Message has been sent';
                 } catch (Exception $e) {
-                    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    
+                    echo "<div style='padding: 20px; border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; border-radius: 5px; margin: 20px auto; width: 50%; text-align: center;'>
+                    <p><strong>Error:</strong> Documento eliminado pero no se pudo enviar el correo. Detalles: {$mail->ErrorInfo}</p>
+                    <a href='admin_home.php' style='display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;'>Regresar a la página principal</a>
+                  </div>";
+                   
+                  
                 }
             } else {
                 Session::set('document_error', 'No se pudo eliminar el documento.');
@@ -514,6 +520,7 @@ class DocumentController
             echo 'Message has been sent';
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            header("Location: admin_home.php?page=dashboard&status=error");
         }
     }
 }

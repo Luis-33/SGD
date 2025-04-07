@@ -36,7 +36,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                 </div>
                 <?php if ($_SESSION['user_role'] == 1) : ?>
                  
-                    <button class="btn_documento" onclick="generarPDF(1)">PDf prueba</button>
+                    <!-- <button class="btn_documento" onclick="generarPDF(1)">PDf prueba</button> -->
                 <?php endif; ?>
             </div>
         </div>

@@ -104,7 +104,7 @@
     <div class="card_table_header">
         <h2>IMSS</h2>
         <div class="card_header_actions">
-            <button class="btn_documento" onclick="addRol()">Agregar rol</button>
+            <button class="btn_documento" onclick="addRol()">Agregar</button>
         </div>
     </div>
     <div class="card_table_body">
@@ -118,7 +118,7 @@
             <span class="header_actions">Acciones</span>
         </div>
         <div class="table_body" id="tableContainer">
-            <?php foreach ($roles as $rol) : ?>
+            <!-- <?php foreach ($roles as $rol) : ?>
                 <div class="table_body_item">
                     <span class="row_tipo"><?php echo $rol["rol_id"] ?></span>
                     <span class="row_fecha"><?php echo $rol["rol_nombre"] ?></span>
@@ -129,7 +129,7 @@
                         </div>
                     <?php endif; ?>
                 </div>
-            <?php endforeach; ?>
+            <?php endforeach; ?> -->
         </div>
 
         <div class="no_result_message" id="noResultsMessage" style="display: none;">

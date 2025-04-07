@@ -21,7 +21,7 @@ class TimeByTimeController
 
     public function generarRegistro($data)
     {
-     
+
         $user_ID = isset($data["usuario_id"]) ? intval($data["usuario_id"]) : null;
         $num_registros = isset($data["num_registros"]) ?  intval($data["num_registros"]): null;
         $folio = isset($data["folio"]) ? trim($data["folio"]) : null;
@@ -181,6 +181,59 @@ class TimeByTimeController
             Session::set('document_warning', 'Error al modificar el registro, por favor intente nuevamente.');
         }
 
+        echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+    }
+
+    public function uploadFile($data, $dataFile)
+    {
+        $docID = isset($data['docID']) ? intval($data['docID']) : null; 
+        $file = isset($dataFile['archivo']) && !empty($dataFile['archivo']['tmp_name']) ? $dataFile['archivo'] : null;
+        $estatus = 'entregado';
+
+        if ($docID === null || $file === null) {
+            Session::set('document_warning', 'Error al subir el archivo. No se ha subido ningun archivo.');
+            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+            exit;
+        }
+
+
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);  
+        $mimeType = finfo_file($fileInfo, $file['tmp_name']);
+        finfo_close($fileInfo);
+        // Validar que sea un archivo PDF
+        if ($extension !== 'pdf' || $mimeType !== 'application/pdf') {
+            Session::set('document_warning', 'Error: el archivo no es un PDF válido.');
+            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+            exit;
+        } else{
+            $fileData = file_get_contents($file['tmp_name']);
+            if ($fileData === false) {
+                Session::set('document_warning', 'Error al leer el archivo.');
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }
+        }
+        //var_dump($file); exit;
+        //var_dump($docID); exit;
+        if ($this->TimeByTimeModel->uploadFile($docID, $fileData, $estatus)) {
+            Session::set('document_success', 'Archivo subido correctamente.');
+        } else {
+            Session::set('document_warning', 'Error al subir el archivo, por favor intente nuevamente.');
+        }
+
+        echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+    } 
+    public function downloadDocument($docID)
+    {   
+        if ($archivo = $this->TimeByTimeModel->downloadDocument($docID)) {
+            // Establecer encabezados para la descarga
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="documento.pdf"');
+            echo $archivo;
+        } else {
+            Session::set('document_warning', 'Archivo no encontrado.');
+        }
         echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
     }
 }

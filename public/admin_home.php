@@ -208,8 +208,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             //print_r($_POST);
                             //Enviar los datos al controlador para procesarlos
                             $TimeByTimeController->updateTimebyTimePagos($_POST);
+                        }elseif ($action === 'timebytimeUploadFile') {
+                            //print_r($_POST);
+                            //print_r($_FILES);
+                            //Enviar los datos al controlador para procesarlos
+                            $TimeByTimeController->uploadFile($_POST, $_FILES);
                         }else{
-                            
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
                         }
                     }else{

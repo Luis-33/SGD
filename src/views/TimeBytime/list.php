@@ -1,4 +1,3 @@
-
 <?php if (!empty($registros)) : ?>
 
 <div class="card_table">
@@ -29,13 +28,20 @@
         </div>
         <div class="table_body" id="tableContainer">
             <?php foreach ($registros as $registro) : ?>
-                <?php 
-                // Agregar clase si tiene pago pendiente
-                $rowClass = ($registro['tiene_pago_pendiente'] > 0) ? 'row_pendiente' : ''; 
-                ?>
+                <?php $rowClass = ($registro['tiene_pago_pendiente'] > 0) ? 'row_pendiente' : ''; ?>
                 <div class="table_body_item <?php echo $rowClass;?>">
                     <span class="row_pdf" title="Descargar <?php echo $registro['id']; ?>">
-                        <a href="download.php?docID=<?php echo $registro['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                        <form id="form-pdf-<?php echo $registro['id']; ?>" method="POST" action="generar_pdf.php" style="display:none;" target="_blank">
+                            <input type="hidden" name="docID" value="<?php echo $registro['id']; ?>">
+                            <input type="hidden" name="template" value="4">
+                        </form>
+                        <?php if ($registro['estatus'] === 'pendiente') : ?>
+                            <a href="#" onclick="enviarFormulario(<?php echo $registro['id']; ?>)" title="Generar PDF"><i class="fa-solid fa-file-pdf"></i></a>
+                        <?php elseif ($registro['estatus'] === 'entregado') : ?>
+                            <!-- Descargar archivo si ya fue entregado -->
+                            <a href="download.php?docID_timebytime=<?php echo $registro['id']; ?>?>" target="_blank" title="Descargar PDF"><i class="fa-solid fa-file-arrow-down"></i></a>
+                        <?php endif; ?>
+                        <script>function enviarFormulario(id) {document.getElementById('form-pdf-' + id).submit();}</script>
                     </span>
                     <?php if ($_SESSION['user_role'] != 3) : ?>
                         <div class="row_user_info">
@@ -69,7 +75,9 @@
                     <?php if ($_SESSION['user_role'] == 1) : ?>
                         <div class="row_actions">
                             <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $registro["usuario_nombre"]; ?>" data-id="<?php echo $registro['id']; ?>" onclick="openModal('timebytimeEdit<?php echo $registro['id']; ?>')"></i>
-                            <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"]);?>
+                            <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"]);?>  
+                            <i class="fa-solid fa-upload" title="Subir archivo" onclick="openModal('timebytimeUploadFile<?php echo $registro['id']; ?>')"></i>
+                            <?php echo generateModalUploadFile($registro['id']); ?>
                         </div>
                     <?php endif; ?>
                 </div>

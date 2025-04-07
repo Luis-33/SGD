@@ -11,13 +11,12 @@ class TimeByTimeModel
 
     public function getAllDocuments($role, $userID)
     {
-
         $query = "SELECT 
         timebytime.*, 
         usuario.*,
         (SELECT COUNT(*) FROM timebytimepagos WHERE timebytimepagos.timebytime_id = timebytime.id AND estatusP = 0) AS tiene_pago_pendiente
-      FROM timebytime 
-      LEFT JOIN usuario ON usuario.usuario_id = timebytime.usuario_id";
+        FROM timebytime 
+        LEFT JOIN usuario ON usuario.usuario_id = timebytime.usuario_id";
 
         if ($role == 3) {
             $query .= " WHERE timebytime.usuario_id = :userID";
@@ -92,6 +91,7 @@ class TimeByTimeModel
     }
     
     public function existeFolio($folio) {
+        
         $sql = "SELECT folio FROM timebytime WHERE folio = :folio LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':folio', $folio, PDO::PARAM_STR);
@@ -103,19 +103,13 @@ class TimeByTimeModel
 
     public function ValidarTimebyTimePagos($docID)
     {
-        $queryFaltas = "SELECT id, timebytime_id, fechaF, horasF 
-        FROM timebytimefaltas 
-        WHERE timebytime_id = :docID";
-
+        $queryFaltas = "SELECT * FROM timebytimefaltas WHERE timebytime_id = :docID";
         $stmtFaltas = $this->db->prepare($queryFaltas);
         $stmtFaltas->bindParam(':docID', $docID, PDO::PARAM_INT);
         $stmtFaltas->execute();
         $faltas = $stmtFaltas->fetchAll(PDO::FETCH_ASSOC);
 
-        $queryPagos = "SELECT id, timebytime_id, fechaP, horaP, estatusP 
-               FROM timebytimepagos 
-               WHERE timebytime_id = :docID";
-
+        $queryPagos = "SELECT * FROM timebytimepagos WHERE timebytime_id = :docID";
         $stmtPagos = $this->db->prepare($queryPagos);
         $stmtPagos->bindParam(':docID', $docID, PDO::PARAM_INT);
         $stmtPagos->execute();
@@ -127,29 +121,92 @@ class TimeByTimeModel
         ];
         
         return $resultadoFinal;
-        
-
     }
 
     public function updateTimebyTimePagos($docID, $estatusFields)
     {
-        $query = "UPDATE timebytimePagos 
-        SET estatusP = :estatus 
-        WHERE timebytime_id = :docID AND id = :pagoID";
-
-        $stmt = $this->db->prepare($query);
-
-        foreach ($estatusFields as $pagoID => $estatus) {
-        $stmt->bindParam(':estatus', $estatus, PDO::PARAM_INT);
-        $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
-        $stmt->bindParam(':pagoID', $pagoID, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            return false; // Si alguna falla, devuelve false
+        try {
+            // Iniciar la transacción
+            $this->db->prepare("START TRANSACTION")->execute();
+    
+            $query = "UPDATE timebytimePagos 
+                      SET estatusP = :estatus 
+                      WHERE timebytime_id = :docID AND id = :pagoID";
+    
+            $stmt = $this->db->prepare($query);
+    
+            foreach ($estatusFields as $pagoID => $estatus) {
+                $stmt->bindParam(':estatus', $estatus, PDO::PARAM_INT);
+                $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
+                $stmt->bindParam(':pagoID', $pagoID, PDO::PARAM_INT);
+    
+                if (!$stmt->execute()) {
+                    // Si falla una ejecución, revierte todo
+                    $this->db->rollBack();
+                    return false;
+                }
+            }
+    
+            // Si todo fue bien, confirma la transacción
+            $this->db->prepare("COMMIT")->execute();
+            return true;
+    
+        } catch (Exception $e) {
+            // Captura cualquier excepción y revierte
+            $this->db->prepare("ROLLBACK")->execute();
+            error_log("Error en actualizarPagos: " . $e->getMessage());
+            return false;
         }
-        }
-        return true; // Retorna true si todo se actualiza correctamente
     }
 
+
+    public function uploadFile($docID, $archivo, $estatus)
+    {
+        try {
+            // Iniciar la transacción
+            $this->db->prepare("START TRANSACTION")->execute();
+    
+            $query = "UPDATE timebytime SET archivo = :archivo, estatus = :estatus WHERE id = :docID";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
+            $stmt->bindParam(':archivo', $archivo, PDO::PARAM_LOB);
+            $stmt->bindParam(':estatus', $estatus, PDO::PARAM_STR);
+    
+            if (!$stmt->execute()) {
+                $errorInfo = $stmt->errorInfo();  // Obtener información sobre el error
+                error_log("Error al ejecutar la consulta: " . implode(", ", $errorInfo));
+                $this->db->prepare("ROLLBACK")->execute();
+                return false;   
+            }
+    
+            // Confirmar los cambios
+            $this->db->prepare("COMMIT")->execute();
+            return true;
+    
+        } catch (Exception $e) {
+            // En caso de excepción, revertir la transacción
+            $this->db->prepare("ROLLBACK")->execute();
+            error_log("Error al actualizar archivo: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function downloadDocument($docID)
+    {
+        $query = "SELECT archivo, folio FROM timebytime WHERE id = :docID";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':docID', $docID, PDO::PARAM_INT);
+        $stmt->execute();
+        $documento = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($documento) {
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . $documento['folio'] . '.pdf"');
+            echo $documento['archivo'];
+            exit;
+        } else {
+            echo "No se encontró el documento.";
+        }
+    }
 }
 ?>

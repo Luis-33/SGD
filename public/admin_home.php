@@ -213,7 +213,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             //print_r($_FILES);
                             //Enviar los datos al controlador para procesarlos
                             $TimeByTimeController->uploadFile($_POST, $_FILES);
-                        }else{
+                        }elseif ($action === 'timebytimeDeleteFile') {
+                            //print_r($_POST);
+                            $TimeByTimeController->deleteLogical($_POST);
+                        }else {
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
                         }
                     }else{

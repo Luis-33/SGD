@@ -2,16 +2,19 @@
 
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo x Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 5 ) : ?>
+            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4) : ?>
                 <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
+            <button class="btn_filter" data-filter="pendiente">Pendientes</button>
+            <button class="btn_filter" data-filter="entregado">Entregados</button>
+            <button class="btn_filter" data-filter="incidencias">Incidencias</button>
         </div>  
     </div>
     <div class="card_table_body">
         <div class="search_input" id="searchForm">
-            <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar Documento por Tipo - Fecha - Estatus" : "Buscar Documento por Empleado " ?>">
+            <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar por Folio o Fecha de registro" : "Buscar por nombre de empleado" ?>">
             <i class="fa-solid fa-xmark" id="clear_input"></i>
         </div>
         <div class="table_header">
@@ -28,20 +31,15 @@
         </div>
         <div class="table_body" id="tableContainer">
             <?php foreach ($registros as $registro) : ?>
-                <?php $rowClass = ($registro['tiene_pago_pendiente'] > 0) ? 'row_pendiente' : ''; ?>
+                <?php if ($registro['estatus'] === 'cancelado') continue; ?>
+                <?php $rowClass = ($registro['incidencia'] > 0) ? 'row_pendiente' : ''; ?>
                 <div class="table_body_item <?php echo $rowClass;?>">
-                    <span class="row_pdf" title="Descargar <?php echo $registro['id']; ?>">
-                        <form id="form-pdf-<?php echo $registro['id']; ?>" method="POST" action="generar_pdf.php" style="display:none;" target="_blank">
-                            <input type="hidden" name="docID" value="<?php echo $registro['id']; ?>">
-                            <input type="hidden" name="template" value="4">
-                        </form>
+                    <span class="row_pdf">
                         <?php if ($registro['estatus'] === 'pendiente') : ?>
-                            <a href="#" onclick="enviarFormulario(<?php echo $registro['id']; ?>)" title="Generar PDF"><i class="fa-solid fa-file-pdf"></i></a>
+                            <a href="href=generar.php?docID_timebytime=<?php echo $registro['id']; ?>&template=4" onclick="enviarFormulario(<?php echo $registro['id']; ?>)" title="Generar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                         <?php elseif ($registro['estatus'] === 'entregado') : ?>
-                            <!-- Descargar archivo si ya fue entregado -->
-                            <a href="download.php?docID_timebytime=<?php echo $registro['id']; ?>?>" target="_blank" title="Descargar PDF"><i class="fa-solid fa-file-arrow-down"></i></a>
+                            <a href="download.php?docID_timebytime=<?php echo $registro['id']; ?>?>" target="_blank" title="Descargar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-arrow-down"></i></a>
                         <?php endif; ?>
-                        <script>function enviarFormulario(id) {document.getElementById('form-pdf-' + id).submit();}</script>
                     </span>
                     <?php if ($_SESSION['user_role'] != 3) : ?>
                         <div class="row_user_info">
@@ -67,7 +65,7 @@
                         case "pendiente":
                             $estatusClass = 'warning';
                             break;
-                        case "Sin Entregar":
+                        case "cancelado":
                             $estatusClass = 'danger';
                             break;
                     }
@@ -76,8 +74,10 @@
                         <div class="row_actions">
                             <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $registro["usuario_nombre"]; ?>" data-id="<?php echo $registro['id']; ?>" onclick="openModal('timebytimeEdit<?php echo $registro['id']; ?>')"></i>
                             <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"]);?>  
-                            <i class="fa-solid fa-upload" title="Subir archivo" onclick="openModal('timebytimeUploadFile<?php echo $registro['id']; ?>')"></i>
+                            <i class="fa-solid fa-upload" title="Subir archivo de <?= $registro["usuario_nombre"]; ?>" onclick="openModal('timebytimeUploadFile<?php echo $registro['id']; ?>')"></i>
                             <?php echo generateModalUploadFile($registro['id']); ?>
+                            <i class="fa-solid fa-trash-can" title="Eliminar archivo de <?= $registro["usuario_nombre"]; ?>" onclick="openModal('timebytimeDeleteFile<?php echo $registro['id']; ?>')"></i>
+                            <?php echo generateModalDeleteTimeByTime($registro['id']); ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -91,14 +91,12 @@
     </div>
 </div>
 
-<script src="assets/js/search_document.js"></script>
-
 <?php else : ?>
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo por Tiempo"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo x Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 5 ) : ?>
+            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4) : ?>
                 <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
         </div>
@@ -114,13 +112,10 @@
 </div>
 <?php endif; ?>
 
-<script src="assets/js/alert.js"></script>
-<script src="assets/js/modal.js"></script>
-
 <?php
 //generar modal para subir documentos
-if ($_SESSION['user_role'] == 1) {
-echo generateModalDocumentForTime();
+if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4) {
+    echo generateModalDocumentForTime();
 }
 
 if (Session::exists('document_success')) {
@@ -141,3 +136,13 @@ echo "<script>hideAlert('error');</script>";
 Session::delete('document_error');
 }
 ?>
+
+<script>
+    const role = <?php echo $_SESSION['user_role']; ?>;
+</script>
+<script src="assets/js/filtrosTimeByTime.js"></script>
+<script src="assets/js/alert.js"></script>
+<script src="assets/js/modal.js"></script>
+
+
+

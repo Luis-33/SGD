@@ -1,9 +1,8 @@
 
 <?php
-
-require_once MODEL_PATH . "UserModel.php";
 require_once SERVER_PATH . "DB.php";
-
+require_once MODEL_PATH . "UserModel.php";
+require_once CONTROLLER_PATH . 'TimeByTimeController.php';
 function generateModalDocumentForTime()
 {
 
@@ -11,11 +10,11 @@ function generateModalDocumentForTime()
     <div class=\"modal timebytime\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Subir documentos</h2>
+                <h2>Generar Registro</h2>
                 <button onclick=\"closeModal('timebytime')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=TimeByTime&action=timebytime\" method=\"POST\" enctype=\"multipart/form-data\">
+                <form action=\"admin_home.php?page=TimeByTime&action=timebytime\" method=\"POST\">
                 <div class=\"input_group\">
                     <label for=\"empleado\">Empleado</label>
                     <div class=\"select_menu\" id=\"empleado\">
@@ -23,13 +22,34 @@ function generateModalDocumentForTime()
                             <span class=\"sBtn_text\">Selecciona al empleado</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
                         </div>
-                        <ul class=\"options\">";
+                        <ul class=\"options\">
+                        <li class=\"input_group\">
+                            <input type=\"text\" class=\"search_input\" placeholder=\"Buscar empleado...\" />
+                        </li>";
 
     $db = new DB();
     $userModel = new UserModel($db);
+    $TimeByTImeController = new TimeByTImeController($db);
+
     $usersList = $userModel->getUsersList();
+    $areaAdscripcionId = $_SESSION['user_area'];
+    $useName = $_SESSION['user_name'];
+    $userRoleId = $_SESSION['user_role'];
+
+    $newFolio = $TimeByTImeController->lastRegistro();
+    $date = date('Y-m-d');
 
     foreach ($usersList as $usuario) {
+        // Omitir al propio usuario
+        if (($userRoleId != 1 && $userRoleId != 2) && $usuario['usuario_nombre'] == $useName) {
+            continue;   
+        }
+        
+        // Si el usuario autenticado es 4 o 5, aplicar filtro por área de adscripción
+        if ($userRoleId == 4 && $usuario['areaAdscripcion_id'] != $areaAdscripcionId) {
+            continue;
+        }
+    
         $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
                        " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
                        <span>" . $usuario["usuario_nombre"] . "</span>
@@ -43,13 +63,12 @@ function generateModalDocumentForTime()
 
             <div class=\"input_group\">
                 <label for=\"fechaR\">Fecha de registro:</label>
-                <input type=\"date\" id=\"fechaR\" name=\"fechaR\" required>
+                <input type=\"date\" id=\"fechaR\" name=\"fechaR\" value=\"$date\" readonly>
             </div>
 
             <div class=\"input_group\">
                 <label for=\"folio\">Folio:</label>
-                <input type=\"text\" id=\"folio\" name=\"folio\" required pattern=\"[0-9]+\" 
-                oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\">
+                <input type=\"text\" id=\"folio\" name=\"folio\" value=\" $newFolio \" readonly>
 
             </div>
 
@@ -146,10 +165,24 @@ $(document).ready(function () {
         }
     });
 });
-
-
 </script>
 
+<script>
+    document.addEventListener(\"DOMContentLoaded\", function () {
+        const searchInput = document.querySelector(\"#empleado .search_input\");
+        const options = document.querySelectorAll(\"#empleado .option\");
+
+        // Filtrado en tiempo real
+        searchInput.addEventListener(\"input\", function () {
+            const filter = this.value.toLowerCase().normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\");
+
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase().normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\");
+                option.style.display = text.includes(filter) ? \"\" : \"none\";
+            });
+        });
+    });
+</script>
 ";
 
     return $modal;

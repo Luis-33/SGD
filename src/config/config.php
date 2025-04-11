@@ -27,5 +27,5 @@ require_once UTIL_PATH . 'Alert.php';
 require_once UTIL_PATH . 'ModalAddTimeByTime.php';
 require_once UTIL_PATH . 'ModalEditTimeByTime.php';
 require_once UTIL_PATH . 'ModalUploadFileTimeByTime.php';
-
+require_once UTIL_PATH . 'ModalDeleteTimeByTime.php';
 define('APP_NAME', 'SGDRH');

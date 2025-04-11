@@ -11,7 +11,7 @@ function generateModalUploadFile($docID){
             <div class=\"modal_body\">
                 <form action=\"admin_home.php?page=TimeByTime&action=timebytimeUploadFile\" method=\"POST\" enctype=\"multipart/form-data\">
                     <label for=\"document\">Seleccionar documento:</label>
-                    <input type=\"file\" name=\"archivo\" id=\"document\">
+                    <input type=\"file\" name=\"archivo\" id=\"document\" requiered>
                     <input type=\"hidden\" name=\"docID\" value=\"{$docID}\">
                     <button type=\"submit\">Subir documento</button>
                 </form>

@@ -15,14 +15,21 @@ class TimeByTimeController
 
     public function showTimeByTime($role, $userID)
     {
-        $registros = $this->TimeByTimeModel->getAllDocuments($role, $userID);
+        $registros = $this->TimeByTimeModel->getAllRegistros($role, $userID);
         require VIEW_PATH . 'TimeByTime/list.php';
+    }
+
+    public function lastRegistro()
+    {   
+        $registros = $this->TimeByTimeModel->getLastRegistro();
+        $lastFolio = isset($registros['folio']) ? (int)$registros['folio'] : 0;
+        $lastFolio++; // Incrementar el folio para el nuevo registro
+        return $lastFolio;
     }
 
     public function generarRegistro($data)
     {
-     
-        $user_ID = isset($data["usuario_id"]) ? intval($data["usuario_id"]) : null;
+        $user_ID = isset($data["usuario_id"]) ? intval($data["usuario_id"]): null;
         $num_registros = isset($data["num_registros"]) ?  intval($data["num_registros"]): null;
         $folio = isset($data["folio"]) ? trim($data["folio"]) : null;
         $fechaR = isset($data["fechaR"]) ? trim($data["fechaR"]) : null;
@@ -30,8 +37,7 @@ class TimeByTimeController
         $horasF = isset($data["horasF"]) ? $data["horasF"] : null;
         $fechasP = isset($data["fechaP"]) ? $data["fechaP"] : null;
         $horasP = isset($data["horasP"])? $data["horasP"] : null;
-        $estatus = 'pendiente';
-        $estatusP = 1;
+        
 
         // Array asociativo para validar los campos obligatorios
         $campos_obligatorios = [
@@ -50,7 +56,7 @@ class TimeByTimeController
             $valor = $info["valor"];
             $tipo = $info["tipo"];
         
-            if ($valor === null) {
+            if ($valor === null || $valor === 0) {
                 Session::set('document_warning', "Error: el campo {$campo} es obligatorio.");
                 echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
                 exit;
@@ -125,7 +131,7 @@ class TimeByTimeController
         }
 
         //Validación: saber si el folio ya existe en la base de datos
-        if ($this->TimeByTimeModel->existeFolio($folio)) {
+        if ($this->TimeByTimeModel->getValidationFolio($folio)) {
             Session::set('document_warning', 'El folio ingresado ya existe en la base de datos.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
             exit;
@@ -140,9 +146,8 @@ class TimeByTimeController
             exit;
         }
 
-        if ($this->TimeByTimeModel->generarRegistro(
-            $user_ID, $folio, $fechaR, $num_registros, $fechasF, $horasF, $fechasP, $horasP, $estatus, $estatusP
-        )) {
+        if ($this->TimeByTimeModel->createRegistro(
+            $user_ID, $folio, $fechaR, $num_registros, $fechasF, $horasF, $fechasP, $horasP)) {
             Session::set('document_success', 'Registro generado correctamente.');
         } else {
             Session::set('document_warning', 'Error al generar el registro, por favor intente nuevamente.');
@@ -153,8 +158,8 @@ class TimeByTimeController
 
     public function updateTimebyTimePagos($data)
     {
-        if (!isset($_POST['docID']) || empty($_POST['docID'])) {
-            Session::set('document_warning', 'Error al modificar el registro. No se ha podido encontrar el documento.');
+        if (!isset($data['docID']) || empty($data['docID'])) {
+            Session::set('document_warning', 'Error al modificar el registro. No se ha podido encontrar el Registro.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
             exit;
         }
@@ -175,12 +180,76 @@ class TimeByTimeController
             exit;
         }
 
-        if ($this->TimeByTimeModel->updateTimebyTimePagos($docID, $estatusFields)) {
+        if ($this->TimeByTimeModel->updateEstatusTimebyTimePagos($docID, $estatusFields)) {
             Session::set('document_success', 'Registro modificado correctamente.');
         } else {
             Session::set('document_warning', 'Error al modificar el registro, por favor intente nuevamente.');
         }
 
+        echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+    }
+
+    public function uploadFile($data, $dataFile)
+    {
+        $docID = isset($data['docID']) ? intval($data['docID']) : null; 
+        $file = isset($dataFile['archivo']) && !empty($dataFile['archivo']['tmp_name']) ? $dataFile['archivo'] : null;
+        $estatus = 'entregado';
+
+        if ($docID === null || $file === null) {
+            Session::set('document_warning', 'Error al subir el archivo. No se ha subido ningun archivo.');
+            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+            exit;
+        }
+
+
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);  
+        $mimeType = finfo_file($fileInfo, $file['tmp_name']);
+        finfo_close($fileInfo);
+        // Validar que sea un archivo PDF
+        if ($extension !== 'pdf' || $mimeType !== 'application/pdf') {
+            Session::set('document_warning', 'Error: el archivo no es un PDF válido.');
+            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+            exit;
+        } else{
+            $fileData = file_get_contents($file['tmp_name']);
+            if ($fileData === false) {
+                Session::set('document_warning', 'Error al leer el archivo.');
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }
+        }
+        
+        if ($this->TimeByTimeModel->UpdateUploadFile($docID, $fileData, $estatus)) {
+            Session::set('document_success', 'Archivo subido correctamente.');
+        } else {
+            Session::set('document_warning', 'Error al subir el archivo, por favor intente nuevamente.');
+        }
+
+        echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+    } 
+    public function downloadFile($docID)
+    {   
+        if ($archivo = $this->TimeByTimeModel->getDownloadFile($docID)) {
+            return $archivo;
+        } else {
+            Session::set('document_warning', 'Archivo no encontrado.');
+        }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+    }
+
+    public function deleteLogical($data)
+    {   
+        $registro = isset($data['id']) && !empty($data['id']) ? intval($data['id']) : null;
+        if ($registro == null) {
+            Session::set('document_warning', 'Error al eliminar el archivo. No se ha encontrado el registro.');
+            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+            exit;
+        }else if ($this->TimeByTimeModel->updateDeleteLogical($registro)) {
+            Session::set('document_success', 'Archivo eliminado correctamente.');
+        } else {
+            Session::set('document_warning', 'Error al eliminar el archivo, por favor intente nuevamente.');
+        }
         echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
     }
 }

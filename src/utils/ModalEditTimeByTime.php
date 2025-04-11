@@ -7,7 +7,7 @@ function generateModalEditTimeByTime($docID, $folio)
 {
     $db = new DB();
     $TimebyTimeModel = new TimebyTimeModel($db);
-    $resultados = $TimebyTimeModel->ValidarTimebyTimePagos($docID);
+    $resultados = $TimebyTimeModel->getValidationRegistro($docID);
     
     $faltas = $resultados['faltas'];
     $pagos = $resultados['pagos'];

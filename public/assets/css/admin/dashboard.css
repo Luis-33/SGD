@@ -7,7 +7,8 @@
 .header_tipo,
 .header_fecha,
 .header_estatus,
-.header_actions {
+.header_actions,
+.header_folio {
     font-size: 1.2rem;
     font-weight: 600;
     text-align: center;
@@ -57,7 +58,8 @@
 .row_tipo,
 .row_fecha,
 .row_estatus,
-.row_actions {
+.row_actions,
+.row_folio {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -117,7 +119,8 @@ i.fa-pen-to-square {
     .header_tipo,
     .header_fecha,
     .header_estatus,
-    .header_actions {
+    .header_actions,
+    .header_folio {
         font-size: 1rem;
     }
 
@@ -146,6 +149,10 @@ i.fa-pen-to-square {
         font-size: 1.2rem;
     }
 
+    .row_folio {
+        font-size: 1rem;
+    }
+
     .row_estatus.success,
     .row_estatus.warning,
     .row_estatus.danger {
@@ -160,7 +167,8 @@ i.fa-pen-to-square {
     .header_tipo,
     .header_fecha,
     .header_estatus,
-    .header_actions {
+    .header_actions,
+    .header_folio {
         font-size: 1rem;
     }
 
@@ -178,6 +186,10 @@ i.fa-pen-to-square {
     }
 
     .row_fecha {
+        font-size: 1rem;
+    }
+
+    .row_folio {
         font-size: 1rem;
     }
 

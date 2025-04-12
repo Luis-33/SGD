@@ -21,11 +21,6 @@ if(isset($_GET['template']) && $_GET['template'] == 2) {
 
 $html_content = file_get_contents($path_template);
 
-
-if (isset($id2)) {
-    $html_content = str_replace('{{id2}}', htmlspecialchars($id2), $html_content);
-}
-
 $dompdf->loadHtml($html_content);
 $dompdf->setPaper('A4', 'portrait'); 
 $dompdf->render();

@@ -37,6 +37,13 @@ switch ($page) {
         $css_file[] = "components/modal.css";
         $css_file[] = "admin/see_user.css";
         break;
+    case 'TimeByTime':
+            $page_title = "TimeByTime";
+            $css_file[] = "components/dropdown.css";
+            $css_file[] = "components/table.css";
+            $css_file[] = "components/modal.css";
+            $css_file[] = "admin/dashboard.css";
+            break;
     case 'configs':
         $page_title = "Configuraciónes";
         break;

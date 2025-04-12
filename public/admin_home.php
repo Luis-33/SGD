@@ -2,6 +2,7 @@
 
 require_once '../src/config/config.php';
 require_once CONTROLLER_PATH . 'DocumentController.php';
+require_once CONTROLLER_PATH . 'TimeByTimeController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
@@ -46,11 +47,11 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
+            $TimeByTimeController = new TimeByTimeController($db);
 
             switch ($page) {
 
                 case 'dashboard':
-
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
                             $permiso = $_POST['permiso'];
@@ -58,9 +59,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $endDate = $_POST['end-date'];
                             $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia economico', null);
-                        } else if ($action === 'addDiaCumple' && isset($_POST['birthday'])) {
-                            $birthday = $_POST['birthday'];
-                            $documentController->generateDiaCumple($db, $userID, $birthday);
+                        } else if ($action === 'addDiaCumple' && isset($_POST['dayOption'])) {
+                            $dayOption = $_POST['dayOption'];
+                            $documentController->generateDiaCumple($db, $userID, $dayOption);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia de cumpleaños', null);
                         } else if ($action === 'addReporteIncidencia' && isset($_POST['fecha'], $_POST['incidencia'], $_POST['motivo'])) {
                             $date = $_POST['fecha'];
@@ -180,11 +181,51 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 
 
                 case 'roles':
-                    $RolesController->showRoles($userRole, $userID);
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'save' && isset($_POST['rolNombre'])) {
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->addRole($rolNombre);
+                        } else if ($action === 'delete' && isset($_POST['rolId'])) {
+                            $rolId = $_POST['rolId'];
+                            $RolesController->deleteRole($rolId);
+                        } else if ($action === 'editRol' && isset($_POST['rolId'], $_POST['rolNombre'])) {
+                            $rolId = $_POST['rolId'];
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->updateRole($rolId, $rolNombre);
+                        } else {
+                            $RolesController->showRoles($userRole, $userID);
+                        }
+                    } else {
+                        $RolesController->showRoles($userRole, $userID);
+                    }
                     break;
                 case 'TimeByTime':
-                    $CommissionController->showCommission($userRole, $userID);
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'timebytime') {
+                        //print_r($_POST);
+                        //Enviar los datos al controlador para procesarlos
+                        $TimeByTimeController->generarRegistro($_POST); 
+                        }else if ($action === 'timebytimeEdit') 
+                        {
+                            //print_r($_POST);
+                            //Enviar los datos al controlador para procesarlos
+                            $TimeByTimeController->updateTimebyTimePagos($_POST);
+                        }elseif ($action === 'timebytimeUploadFile') {
+                            //print_r($_POST);
+                            //print_r($_FILES);
+                            //Enviar los datos al controlador para procesarlos
+                            $TimeByTimeController->uploadFile($_POST, $_FILES);
+                        }elseif ($action === 'timebytimeDeleteFile') {
+                            //print_r($_POST);
+                            $TimeByTimeController->deleteLogical($_POST);
+                        }else {
+                            $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        }
+                    }else{
+                        $TimeByTimeController->showTimeByTime($userRole, $userID);
+                    }
                     break;
+                
                 case 'commissions':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'comision') {

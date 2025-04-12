@@ -1,46 +1,20 @@
-<?php if ($_SESSION['user_role'] == 1) : ?>
-    <link rel="stylesheet" href="assets/css/components/table.css">
-    <link rel="stylesheet" href="assets/css/components/modal.css">
-    <link rel="stylesheet" href="assets/css/components/dropdown.css">
-    <link rel="stylesheet" href="assets/css/components/chips.css">
-    <link rel="stylesheet" href="assets/css/components/alerts.css">
-    <link rel="stylesheet" href="assets/css/admin/dashboard.css">
-    <link rel="stylesheet" href="assets/css/admin/see_user.css">
-    <link rel="stylesheet" href="assets/css/admin/manage_users.css">
-    
-
-<script>
-    function confirmDelete(docID, docTipo, userName) {
-        openModal('deleteDocument');
-        var message = `¿Estás seguro de que deseas eliminar el documento de tipo "${docTipo}" de "${userName}"?`;
-        var modal = $(".deleteDocument");
-        modal.find(".modal_body").html(`<span>${message}</span><button onclick="deleteDocument(${docID})">Eliminar</button>`);
-    }
-
-    function deleteDocument(docID) {
-        window.location.href = `deleteDocument.php?docID=${docID}`;
-    }
-</script>
-
-<?php endif; ?>
-
-
-
-<?php if (!empty($documents)) : ?>
+<?php if (!empty($registros)) : ?>
 
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo x Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <?php if ($_SESSION['user_role'] == 1) : ?>
-                <button class="btn_documento" onclick="openModal('documento')">Subir documento</button>
-                <button class="btn_documento" onclick="generarPDF(1)">PDf</button>
+            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4) : ?>
+                <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
-        </div>
+            <button class="btn_filter" data-filter="pendiente">Pendientes</button>
+            <button class="btn_filter" data-filter="entregado">Entregados</button>
+            <button class="btn_filter" data-filter="incidencias">Incidencias</button>
+        </div>  
     </div>
     <div class="card_table_body">
         <div class="search_input" id="searchForm">
-            <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar Documento por Tipo - Fecha - Estatus" : "Buscar Documento por Empleado " ?>">
+            <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar por Folio o Fecha de registro" : "Buscar por nombre de empleado" ?>">
             <i class="fa-solid fa-xmark" id="clear_input"></i>
         </div>
         <div class="table_header">
@@ -48,7 +22,7 @@
             <?php if ($_SESSION['user_role'] != 3) : ?>
                 <span class="header_empleado">Empleado</span>
             <?php endif; ?>
-            <span class="header_tipo">Tipo</span>
+            <span class="header_folio">Folio</span>
             <span class="header_fecha">Fecha de registro</span>
             <span class="header_estatus">Estatus</span>
             <?php if ($_SESSION['user_role'] == 1) : ?>
@@ -56,47 +30,58 @@
             <?php endif; ?>
         </div>
         <div class="table_body" id="tableContainer">
-            <?php foreach ($documents as $document) : ?>
-                <div class="table_body_item">
-                    <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
-                        <a href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+            <?php foreach ($registros as $registro) : ?>
+                <?php if ($registro['estatus'] === 'cancelado') continue; ?>
+                <?php $rowClass = ($registro['incidencia'] > 0) ? 'row_pendiente' : ''; ?>
+                <div class="table_body_item <?php echo $rowClass;?>">
+                    <span class="row_pdf">
+                        <?php if ($registro['estatus'] === 'pendiente') : ?>
+                            <a href="href=generar.php?docID_timebytime=<?php echo $registro['id']; ?>&template=4" onclick="enviarFormulario(<?php echo $registro['id']; ?>)" title="Generar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                        <?php elseif ($registro['estatus'] === 'entregado') : ?>
+                            <a href="download.php?docID_timebytime=<?php echo $registro['id']; ?>?>" target="_blank" title="Descargar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-arrow-down"></i></a>
+                        <?php endif; ?>
                     </span>
                     <?php if ($_SESSION['user_role'] != 3) : ?>
                         <div class="row_user_info">
-                            <?php if ($document['usuario_genero'] === 'H') {
+                            <?php if ($registro['usuario_genero'] === 'H') {
                                 echo '<img src="assets/images/hombre.png">';
                             } else {
                                 echo '<img src="assets/images/mujer.png">';
                             } ?>
                             <div class="info">
-                                <span class="user_name"><?php echo $document["usuario_nombre"]; ?></span>
-                                <span><?php echo $document["usuario_email"] ?></span>
+                                <span class="user_name"><?php echo $registro["usuario_nombre"]; ?></span>
+                                <span><?php echo $registro["usuario_email"] ?></span>
                             </div>
                         </div>
                     <?php endif; ?>
-                    <span class="row_tipo"><?php echo $document["documento_tipo"] ?></span>
-                    <span class="row_fecha"><?php echo $document["documento_fechaCreacion"] ?></span>
+                    <span class="row_folio"><?php echo $registro["folio"] ?></span>
+                    <span class="row_fecha"><?php echo $registro["fechaR"] ?></span>
                     <?php 
                     $estatusClass = '';
-                    switch ($document['documento_estatus']) {
-                        case "Entregado":
+                    switch ($registro['estatus']) {
+                        case "entregado":
                             $estatusClass = 'success';
                             break;
-                        case "Pendiente":
+                        case "pendiente":
                             $estatusClass = 'warning';
                             break;
-                        case "Sin Entregar":
+                        case "cancelado":
                             $estatusClass = 'danger';
                             break;
                     }
-                    echo "<span class=\"row_estatus {$estatusClass}\">{$document['documento_estatus']}</span>"; ?>
+                    echo "<span class=\"row_estatus {$estatusClass}\">{$registro['estatus']}</span>"; ?>
                     <?php if ($_SESSION['user_role'] == 1) : ?>
                         <div class="row_actions">
-                            <i class="fa-solid fa-pen-to-square" title="Modificar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" data-id="<?php echo $document['documento_id']; ?>" onclick="openModal('editDocument')"></i>
-                            <i class="fa-solid fa-trash-can" title="Eliminar <?= $document["documento_tipo"]; ?> de <?= $document["usuario_nombre"]; ?>" onclick="confirmDelete(<?= $document['documento_id']; ?>, '<?= $document['documento_tipo']; ?>', '<?= $document['usuario_nombre']; ?>')"></i>
+                            <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $registro["usuario_nombre"]; ?>" data-id="<?php echo $registro['id']; ?>" onclick="openModal('timebytimeEdit<?php echo $registro['id']; ?>')"></i>
+                            <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"]);?>  
+                            <i class="fa-solid fa-upload" title="Subir archivo de <?= $registro["usuario_nombre"]; ?>" onclick="openModal('timebytimeUploadFile<?php echo $registro['id']; ?>')"></i>
+                            <?php echo generateModalUploadFile($registro['id']); ?>
+                            <i class="fa-solid fa-trash-can" title="Eliminar archivo de <?= $registro["usuario_nombre"]; ?>" onclick="openModal('timebytimeDeleteFile<?php echo $registro['id']; ?>')"></i>
+                            <?php echo generateModalDeleteTimeByTime($registro['id']); ?>
                         </div>
                     <?php endif; ?>
                 </div>
+                
             <?php endforeach; ?>
         </div>
         <div class="no_result_message" id="noResultsMessage" style="display: none;">
@@ -106,40 +91,20 @@
     </div>
 </div>
 
-<?php
-
-if ($_SESSION['user_role'] == 1) {
-    echo generateModalEditDocument($document["documento_id"]);
-    echo generateModal('deleteDocument', 'Eliminar documento', true);
-}
-
-?>
-
-
-<script src="assets/js/search_document.js"></script>
-
 <?php else : ?>
 <div class="card_table">
     <div class="card_table_header">
-        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
+        <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis registros" : "Tiempo x Tiempo"; ?></h2>
         <div class="card_header_actions">
-            <div class="dias_economicos">
-                <span><?= $diasEconomicos; ?> / 8</span>
-                <i class="fa-solid fa-file-lines" title="Dia economico"></i>
-                <span><?= $diaCumple; ?> / 1</span>
-                <i class="fa-solid fa-birthday-cake" title="Dia de cumpleaños"></i>
-                <span><?= $reportesIncidencia; ?></span>
-                <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
-            </div>
-            <?php if ($_SESSION['user_role'] == 1) : ?>
-                <button class="btn_documento" onclick="openModal('documento')">Subir documento</button>
+            <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4) : ?>
+                <button class="btn_documento" onclick="openModal('timebytime')">Generar Registro</button>
             <?php endif; ?>
         </div>
     </div>
     <div class="card_table_body">
         <div class="card_table_message">
             <div class="no_result_message">
-                <span>Aun no hay Comisiones por mostrar</span>
+                <span>Aun no hay Tiempo por Tiempo por mostrar</span>
                 <i class="fa-regular fa-folder-open"></i>
             </div>
         </div>
@@ -147,54 +112,37 @@ if ($_SESSION['user_role'] == 1) {
 </div>
 <?php endif; ?>
 
-<script src="assets/js/alert.js"></script>
-<script src="assets/js/modal.js"></script>
-
-<script type="module">
-import {
-    addDiaEconomico
-} from './assets/js/documents/diaEconomico.js';
-import {
-    addDiaCumple
-} from './assets/js/documents/diaCumple.js';
-import {
-    addReporteIncidencia
-} from './assets/js/documents/reporteIncidencia.js';
-
-document.querySelector('.fa-file-lines').addEventListener('click', function() {
-    addDiaEconomico();
-});
-document.querySelector('.fa-birthday-cake').addEventListener('click', function() {
-    addDiaCumple();
-});
-document.querySelector('.fa-file-circle-xmark').addEventListener('click', function() {
-    addReporteIncidencia();
-});
-</script>
-
 <?php
-
-if ($_SESSION['user_role'] == 1) {
-echo generateModalDocument();
+//generar modal para subir documentos
+if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 4) {
+    echo generateModalDocumentForTime();
 }
-
-echo generateModal('addDiaEconomico', 'Generar dia economico', true);
-echo generateModal('addDiaCumple', 'Generar dia de cumpleaños', true);
-echo generateModal('addIncidencia', 'Generar reporte de incidencia', true);
 
 if (Session::exists('document_success')) {
 echo showAlert('success', Session::get('document_success'));
 echo "<script>hideAlert('success');</script>";
 Session::delete('document_success');
 }
+
 if (Session::exists('document_warning')) {
 echo showAlert('warning', Session::get('document_warning'));
 echo "<script>hideAlert('warning');</script>";
 Session::delete('document_warning');
 }
+
 if (Session::exists('document_error')) {
 echo showAlert('error', Session::get('document_error'));
 echo "<script>hideAlert('error');</script>";
 Session::delete('document_error');
 }
 ?>
+
+<script>
+    const role = <?php echo $_SESSION['user_role']; ?>;
+</script>
+<script src="assets/js/filtrosTimeByTime.js"></script>
+<script src="assets/js/alert.js"></script>
+<script src="assets/js/modal.js"></script>
+
+
+

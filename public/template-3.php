@@ -60,6 +60,11 @@
 </head>
 <body>
 <?php
+$db = new DB();
+$userModel = new UserModel($db);
+$commissionModel = new CommissionsModel($db); 
+$id2 = $_GET['id'] ?? null;
+$comision = $commissionModel->getCommissionsById($id2);
 ?>
 
     <div class="header">
@@ -72,16 +77,19 @@
 
         <table class="table">
             <tr>
-                <th>Nombre:</th><td>&lt;&lt;nombre&gt;&gt;</td>
-                <th>Fecha de elaboración:</th><td>&lt;&lt;fecha&gt;&gt;</td>
+                <th>ID2:</th><td><?php echo htmlspecialchars($id2); ?></td>
+            </tr> 
+            <tr>
+                <th>Nombre:</th><td><?php echo htmlspecialchars($comision['nombre'] ?? ''); ?></td>
+                <th>Fecha de elaboración:</th><td><?php echo htmlspecialchars($comision['fecha_elaboracion'] ?? ''); ?></td>
             </tr>
             <tr>
-                <th>Cargo:</th><td>&lt;&lt;cargo&gt;&gt;</td>
-                <th>Folio:</th><td><span style="color: red;">&lt;&lt;folio&gt;&gt;</span></td>
+                <th>Cargo:</th><td><?php echo htmlspecialchars($comision['cargo'] ?? ''); ?></td>
+                <th>Folio:</th><td><span style="color: red;"><?php echo htmlspecialchars($comision['folio'] ?? ''); ?></span></td>
             </tr>
             <tr>
-                <th>Departamento:</th><td>&lt;&lt;area&gt;&gt;</td>
-                <th>Nómina:</th><td>&lt;&lt;nomina&gt;&gt;</td>
+                <th>Departamento:</th><td><?php echo htmlspecialchars($comision['area'] ?? ''); ?></td>
+                <th>Nómina:</th><td><?php echo htmlspecialchars($comision['nomina'] ?? ''); ?></td>
             </tr>
         </table>
 

@@ -25,7 +25,11 @@ function generateModalComision($areaAdscripcion_id)
                             <span class=\"sBtn_text\">Selecciona al empleado</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
                         </div>
-                        <ul class=\"options\">";
+                        <ul class=\"options\">
+                        <li class=\"input_group\">
+                            <input type=\"text\" class=\"search_input\" placeholder=\"Buscar empleado...\" />
+                        </li>";
+
                         
 
     $db = new DB();
@@ -308,7 +312,23 @@ function generateModalComision($areaAdscripcion_id)
 
         });
 
+    document.addEventListener(\"DOMContentLoaded\", function () {
+        const searchInput = document.querySelector(\"#usuario_id_menu .search_input\");
+        const options = document.querySelectorAll(\"#usuario_id_menu .option\");
+
+        // Filtrado en tiempo real
+        searchInput.addEventListener(\"input\", function () {
+            const filter = this.value.toLowerCase().normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\");
+
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase().normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\");
+                option.style.display = text.includes(filter) ? \"\" : \"none\";
+            });
+        });
+    });
+
     </script>
+    
     ";
 
     return $modal;

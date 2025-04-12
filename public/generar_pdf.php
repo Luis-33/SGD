@@ -7,19 +7,27 @@ use Dompdf\Options;
 $options = new Options();
 $options->set('defaultFont', 'Arial');
 $options->set('isHtml5ParserEnabled', true);
+$options->set('isRemoteEnabled', true);
+$options->setChroot(__DIR__);
 $dompdf = new Dompdf($options);
 
 if(isset($_GET['template']) && $_GET['template'] == 2) {
     $path_template = __DIR__ . '/template-2.php';
-} else {
-    $path_template = __DIR__ . '/template.php';
+} else if (isset($_GET['template']) && $_GET['template'] == 3){
+    $path_template = __DIR__ . '/template-3.php';
+}else {
+    $path_template = __DIR__ . '/template-1.php';
 }
 
 $html_content = file_get_contents($path_template);
 
+
+if (isset($id2)) {
+    $html_content = str_replace('{{id2}}', htmlspecialchars($id2), $html_content);
+}
+
 $dompdf->loadHtml($html_content);
-$dompdf->setPaper('A4', 'portrait'); // Formato A4, vertical
+$dompdf->setPaper('A4', 'portrait'); 
 $dompdf->render();
 
-// Mostrar el PDF en el navegador
 $dompdf->stream("hola_mundo.pdf", ["Attachment" => false]);

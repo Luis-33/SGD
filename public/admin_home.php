@@ -89,6 +89,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     break;
                 case 'manage_users':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        print_r("usera");
                         if (
                             $action === 'addUser'
                             && isset($_POST['empleadoNomina'])
@@ -105,6 +106,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                         ) {
+                            print_r("user");
                             $userNomina = $_POST['empleadoNomina'];
                             $userName = $_POST['empleadoNombre'];
                             $userCurp = $_POST['empleadoCurp'];
@@ -223,15 +225,57 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         $TimeByTimeController->showTimeByTime($userRole, $userID);
                     }
                     break;
-                 case 'commissions':
-                    $CommissionController->showCommission($userRole, $userID);
+                
+                case 'commissions':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'comision') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $CommissionController->addComision($return_data);
+                            }
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        } else if ($action === 'editCommissions') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+                                $CommissionController->updateCommission($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        }
+                    } else {
+                        $CommissionController->showCommission($userRole, $userID);
+                        
+                    }
+                   
                     break;
                 case 'configs':
                     break;
+
+
                 default:
                     include VIEW_PATH . 'content/404.php';
                     break;
-            }
+                }
             ?>
         </div>
     </div>

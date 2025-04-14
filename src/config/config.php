@@ -14,12 +14,21 @@ define('PDF_PATH', BASE_PATH . '/pdf/');
 define('SERVER_PATH', BASE_PATH . '/server/');
 define('UTIL_PATH', BASE_PATH . '/src/utils/');
 define('VIEW_PATH', BASE_PATH . '/src/views/');
+define('VIEW_LIST', BASE_PATH . '/src/views/document/');
+
 
 require_once UTIL_PATH . 'Modal.php';
 require_once UTIL_PATH . 'ModalAddDocumento.php';
+require_once UTIL_PATH . 'ModalEditCommissions.php';
+require_once UTIL_PATH . 'ModalAddComision.php';
 require_once UTIL_PATH . 'ModalEditDocumento.php';
+require_once UTIL_PATH . 'ModalAddlicencias.php';
+require_once UTIL_PATH . 'ModalEditlicencias.php';
 require_once UTIL_PATH . 'ModalAddUser.php';
 require_once UTIL_PATH . 'ModalEditUser.php';
 require_once UTIL_PATH . 'Alert.php';
-
+require_once UTIL_PATH . 'ModalAddTimeByTime.php';
+require_once UTIL_PATH . 'ModalEditTimeByTime.php';
+require_once UTIL_PATH . 'ModalUploadFileTimeByTime.php';
+require_once UTIL_PATH . 'ModalDeleteTimeByTime.php';
 define('APP_NAME', 'SGDRH');

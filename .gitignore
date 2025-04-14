@@ -1,2 +1,7 @@
 pdf
 ./idea
+vendor
+/vendor/
+public/uploads
+/server/
+server/

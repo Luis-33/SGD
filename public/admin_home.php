@@ -2,9 +2,13 @@
 
 require_once '../src/config/config.php';
 require_once CONTROLLER_PATH . 'DocumentController.php';
+require_once CONTROLLER_PATH . 'TimeByTimeController.php';
+require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
+require_once CONTROLLER_PATH . 'RolesController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
+require_once CONTROLLER_PATH . 'LicenciasController.php';
 
 // Verify if session is active
 Session::start();
@@ -16,7 +20,6 @@ if (!Session::isLoggedIn()) {
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-
 ?>
 
 <!DOCTYPE html>
@@ -24,6 +27,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 <head>
     <?php include VIEW_PATH . 'content/include/header.php'; ?>
+
 </head>
 
 <body>
@@ -33,7 +37,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
     <div class="container_main">
 
         <?php include VIEW_PATH . 'content/template/navbar.php'; ?>
-
         <div class="content">
 
             <?php
@@ -43,11 +46,14 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $userRole = Session::get('user_role');
             $userController = new UserController($db);
             $documentController = new DocumentController($db);
+            $CommissionController = new CommissionController($db);
+            $RolesController = new RolesController($db);
+            $TimeByTimeController = new TimeByTimeController($db);
+            $licenciasController = new LicenciasController($db);
 
             switch ($page) {
 
                 case 'dashboard':
-
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
                             $permiso = $_POST['permiso'];
@@ -55,9 +61,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $endDate = $_POST['end-date'];
                             $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia economico', null);
-                        } else if ($action === 'addDiaCumple' && isset($_POST['birthday'])) {
-                            $birthday = $_POST['birthday'];
-                            $documentController->generateDiaCumple($db, $userID, $birthday);
+                        } else if ($action === 'addDiaCumple' && isset($_POST['dayOption'])) {
+                            $dayOption = $_POST['dayOption'];
+                            $documentController->generateDiaCumple($db, $userID, $dayOption);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia de cumpleaños', null);
                         } else if ($action === 'addReporteIncidencia' && isset($_POST['fecha'], $_POST['incidencia'], $_POST['motivo'])) {
                             $date = $_POST['fecha'];
@@ -71,7 +77,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $date = $_POST['date'];
                             $status = $_POST['status'];
                             $documentController->addDocument($user, $documentType, $date, $status);
-                        } else if ($action === 'editDocument' && isset(($_POST['docID']), $_POST['documentoEstatus'])) {
+                        } else if ($action === 'editDocument' && ($_POST['docID']) !== null && isset($_POST['documentoEstatus'])) {
                             $docID = $_POST['docID'];
                             $status = $_POST['documentoEstatus'];
                             $documentController->updateDocument($docID, $status);
@@ -85,6 +91,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     break;
                 case 'manage_users':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        print_r("usera");
                         if (
                             $action === 'addUser'
                             && isset($_POST['empleadoNomina'])
@@ -101,6 +108,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                         ) {
+                            print_r("user");
                             $userNomina = $_POST['empleadoNomina'];
                             $userName = $_POST['empleadoNombre'];
                             $userCurp = $_POST['empleadoCurp'];
@@ -172,12 +180,148 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         $userController->showProfile($userID);
                     }
                     break;
+                
+
+                case 'roles':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'save' && isset($_POST['rolNombre'])) {
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->addRole($rolNombre);
+                        } else if ($action === 'delete' && isset($_POST['rolId'])) {
+                            $rolId = $_POST['rolId'];
+                            $RolesController->deleteRole($rolId);
+                        } else if ($action === 'editRol' && isset($_POST['rolId'], $_POST['rolNombre'])) {
+                            $rolId = $_POST['rolId'];
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->updateRole($rolId, $rolNombre);
+                        } else {
+                            $RolesController->showRoles($userRole, $userID);
+                        }
+                    } else {
+                        $RolesController->showRoles($userRole, $userID);
+                    }
+                    break;
+                case 'TimeByTime':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'timebytime') {
+                        //print_r($_POST);
+                        //Enviar los datos al controlador para procesarlos
+                        $TimeByTimeController->generarRegistro($_POST); 
+                        }else if ($action === 'timebytimeEdit') 
+                        {
+                            //print_r($_POST);
+                            //Enviar los datos al controlador para procesarlos
+                            $TimeByTimeController->updateTimebyTimePagos($_POST);
+                        }elseif ($action === 'timebytimeUploadFile') {
+                            //print_r($_POST);
+                            //print_r($_FILES);
+                            //Enviar los datos al controlador para procesarlos
+                            $TimeByTimeController->uploadFile($_POST, $_FILES);
+                        }elseif ($action === 'timebytimeDeleteFile') {
+                            //print_r($_POST);
+                            $TimeByTimeController->deleteLogical($_POST);
+                        }else {
+                            $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        }
+                    }else{
+                        $TimeByTimeController->showTimeByTime($userRole, $userID);
+                    }
+                    break;
+                
+                case 'commissions':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'comision') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $CommissionController->addComision($return_data);
+                            }
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        } else if ($action === 'editCommissions') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+                                $CommissionController->updateCommission($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        }
+                    } else {
+                        $CommissionController->showCommission($userRole, $userID);
+                        
+                    }
+                   
+                    break;
+                case 'licencias':
+
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'licencias') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $licenciasController->addLicencias($return_data);
+                            }
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                        } else if ($action === 'editlicencias') {
+                            print_r("licencias");
+                            
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $licenciasController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+                                $licenciasController->updateLicencias($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                            
+                        }
+                    } else {
+                        $licenciasController->showLicencias($userRole, $userID);
+                        
+                    }
+                    break;    
                 case 'configs':
                     break;
+
                 default:
                     include VIEW_PATH . 'content/404.php';
                     break;
-            }
+                }
             ?>
         </div>
     </div>

@@ -93,7 +93,7 @@ function generateModalDocument()
             <input type=\"hidden\" name=\"documentType\" id=\"documentType\">
             <input type=\"hidden\" name=\"status\" id=\"status\">
 
-            <button class=\"insert_documento_btn\">Subir documento</button>
+            <button class=\"insert_documento_btn\">Subir daaaocumento</button>
             </form>
         </div>
     </div>

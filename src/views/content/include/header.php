@@ -37,9 +37,30 @@ switch ($page) {
         $css_file[] = "components/modal.css";
         $css_file[] = "admin/see_user.css";
         break;
+    case 'TimeByTime':
+            $page_title = "TimeByTime";
+            $css_file[] = "components/dropdown.css";
+            $css_file[] = "components/table.css";
+            $css_file[] = "components/modal.css";
+            $css_file[] = "admin/dashboard.css";
+            break;
     case 'configs':
         $page_title = "Configuraciónes";
         break;
+    case 'commissions':
+        $page_title = "Comisiones";
+        $css_file[] = "components/dropdown.css";
+        $css_file[] = "components/table.css";
+        $css_file[] = "components/modal.css";
+        $css_file[] = "admin/dashboard.css";
+        break;  
+    case 'licencias':
+        $page_title = "Comisiones";
+        $css_file[] = "components/dropdown.css";
+        $css_file[] = "components/table.css";
+        $css_file[] = "components/modal.css";
+        $css_file[] = "admin/dashboard.css";
+        break;             
     default:
         $page_title = "Error 404";
         break;

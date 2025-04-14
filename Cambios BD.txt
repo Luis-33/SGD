@@ -3,7 +3,7 @@ Cambios para modulo tiempoXtiempo
 CREATE TABLE timebytime (
     id INT PRIMARY KEY AUTO_INCREMENT,
     usuario_id INT,
-    folio varchar(10),
+    folio varchar(255),
     archivo LONGBLOB,
     estatus ENUM('pendiente', 'entregado', 'cancelado') NULL DEFAULT 'pendiente';
     fechaR DATE DEFAULT (CURRENT_DATE),
@@ -23,7 +23,7 @@ CREATE TABLE timebytimepagos (
     timebytime_id INT,
     fechaP DATE,
     horaP INT,
-    estatusP TINYINT NOT DEFAULT 1,
+    estatusP TINYINT NULL DEFAULT 1,
     FOREIGN KEY (timebytime_id) REFERENCES TimeByTime(id) ON DELETE CASCADE
 );
 

@@ -22,6 +22,8 @@ require_once UTIL_PATH . 'ModalAddDocumento.php';
 require_once UTIL_PATH . 'ModalEditCommissions.php';
 require_once UTIL_PATH . 'ModalAddComision.php';
 require_once UTIL_PATH . 'ModalEditDocumento.php';
+require_once UTIL_PATH . 'ModalAddlicencias.php';
+require_once UTIL_PATH . 'ModalEditlicencias.php';
 require_once UTIL_PATH . 'ModalAddUser.php';
 require_once UTIL_PATH . 'ModalEditUser.php';
 require_once UTIL_PATH . 'Alert.php';

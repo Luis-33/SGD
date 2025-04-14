@@ -1,5 +1,4 @@
 <?php
-
 require_once MODEL_PATH . "CommissionsModel.php";
 require_once SERVER_PATH . "DB.php";
 

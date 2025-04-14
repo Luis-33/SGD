@@ -8,6 +8,7 @@ require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
+require_once CONTROLLER_PATH . 'LicenciasController.php';
 
 // Verify if session is active
 Session::start();
@@ -48,6 +49,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
             $TimeByTimeController = new TimeByTimeController($db);
+            $licenciasController = new LicenciasController($db);
 
             switch ($page) {
 
@@ -268,9 +270,53 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                    
                     break;
+                case 'licencias':
+
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'licencias') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $licenciasController->addLicencias($return_data);
+                            }
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                        } else if ($action === 'editlicencias') {
+                            print_r("licencias");
+                            
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $licenciasController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+                                $licenciasController->updateLicencias($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                            
+                        }
+                    } else {
+                        $licenciasController->showLicencias($userRole, $userID);
+                        
+                    }
+                    break;    
                 case 'configs':
                     break;
-
 
                 default:
                     include VIEW_PATH . 'content/404.php';

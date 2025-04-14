@@ -36,12 +36,7 @@
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
                             <?php else : ?>
-                                <a href="generar_pdf.php?docID_timebytime=<?php echo $Commission['id']; ?>&template=3" target ="_blank" onclick="enviarFormulario(<?php echo $Commission['id']; ?>)" title="Generar PDF de <?= $Commission["usuario_nombre"];?> Folio: <?= $Commission['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
-                                <!-- <a class="btn_documento" 
-                                   onclick="console.log(<?php echo $Commission['id']; ?>); generarPDF2(3, <?php echo $Commission['id']; ?>)">
-                                   
-                                   <i class="fa-solid fa-file-pdf"></i>
-                                </a> -->
+                                <a href="admin_home.php?registro_id=<?php echo $Commission['id']; ?>&action=generarPdfComissions&page=commissions" target="_blank" title="Generar PDF de <?= $Commission["usuario_nombre"];?>"><i class="fa-solid fa-file-pdf"></i></a>
                             <?php endif; ?>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>

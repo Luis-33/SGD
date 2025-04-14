@@ -125,7 +125,12 @@ class CommissionsModel
 
     public function getCommissionsById($id)
     {
-        $query = "SELECT * FROM comisiones WHERE id = :id";
+        $query = "
+            SELECT comisiones.*, usuario.*
+            FROM comisiones
+            LEFT JOIN usuario ON comisiones.usuario_id = usuario.usuario_id
+            WHERE comisiones.id = :id
+        ";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();

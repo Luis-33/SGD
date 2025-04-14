@@ -85,6 +85,18 @@ class TimeByTimeModel
     
     }
 
+    public function getRegistroById($id){
+       
+        $query = "SELECT timebytime.*, usuario.*
+                  FROM timebytime
+                  LEFT JOIN usuario ON timebytime.usuario_id = usuario.usuario_id
+                  WHERE timebytime.id = :id";        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function createRegistro($user_ID, $folio, $fechaR, $num_registros, $fechaF, $horasF, $fechaP, $horasP) 
     {
         try {

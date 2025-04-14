@@ -36,7 +36,7 @@
                 <div class="table_body_item <?php echo $rowClass;?>">
                     <span class="row_pdf">
                         <?php if ($registro['estatus'] === 'pendiente') : ?>
-                            <a href="href=generar.php?docID_timebytime=<?php echo $registro['id']; ?>&template=4" onclick="enviarFormulario(<?php echo $registro['id']; ?>)" title="Generar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                            <a href="admin_home.php?registro_id=<?php echo $registro['id']; ?>&action=timebytimeGenerarPdf&page=TimeByTime" target="_blank" title="Generar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                         <?php elseif ($registro['estatus'] === 'entregado') : ?>
                             <a href="download.php?docID_timebytime=<?php echo $registro['id']; ?>?>" target="_blank" title="Descargar PDF de <?= $registro["usuario_nombre"];?> Folio: <?= $registro["folio"]; ?>"><i class="fa-solid fa-file-arrow-down"></i></a>
                         <?php endif; ?>

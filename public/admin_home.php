@@ -6,6 +6,7 @@ require_once CONTROLLER_PATH . 'TimeByTimeController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
+require_once CONTROLLER_PATH . 'PdfController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
 
@@ -48,6 +49,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
             $TimeByTimeController = new TimeByTimeController($db);
+            $PdfController = new PdfController($db);
 
             switch ($page) {
 
@@ -200,7 +202,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'TimeByTime':
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
                         if ($action === 'timebytime') {
                         //print_r($_POST);
                         //Enviar los datos al controlador para procesarlos
@@ -221,6 +223,15 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }else {
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
                         }
+                    }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+                        if ($action === 'timebytimeGenerarPdf') {
+                            //print_r($_GET);
+                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $PdfController->generarPdfTimeByTime($id);
+                        }else {
+                            $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        }
+                        
                     }else{
                         $TimeByTimeController->showTimeByTime($userRole, $userID);
                     }
@@ -262,11 +273,16 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
                             exit;
                         }
-                    } else {
+                    } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                        if ($action === 'generarPdfComissions') {
+                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $PdfController->generarPdfComision($id);
+                        } else {
+                            $CommissionController->showCommission($userRole, $userID);
+                        }
+                    }else{
                         $CommissionController->showCommission($userRole, $userID);
-                        
                     }
-                   
                     break;
                 case 'configs':
                     break;

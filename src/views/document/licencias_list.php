@@ -36,12 +36,7 @@
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
                             <?php else : ?>
-                                <a href="generar_pdf.php?docID_timebytime=<?php echo $Licencias['id']; ?>&template=3" target ="_blank" onclick="enviarFormulario(<?php echo $Licencias['id']; ?>)" title="Generar PDF de <?= $Licencias["usuario_nombre"];?> Folio: <?= $Licencias['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
-                                <!-- <a class="btn_documento" 
-                                   onclick="console.log(<?php echo $Licencias['id']; ?>); generarPDF2(3, <?php echo $Licencias['id']; ?>)">
-                                   
-                                   <i class="fa-solid fa-file-pdf"></i>
-                                </a> -->
+                                <a href="admin_home.php?registro_id=<?php echo $Licencias['id']; ?>&action=generarPdfLicencias&page=licencias" target="_blank" title="Generar PDF de <?= $Licencias["usuario_nombre"];?>"><i class="fa-solid fa-file-pdf"></i></a>
                             <?php endif; ?>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>

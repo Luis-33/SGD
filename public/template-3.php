@@ -80,16 +80,16 @@ $comision = $commissionModel->getCommissionsById($id2);
                 <th>ID2:</th><td><?php echo htmlspecialchars($id2); ?></td>
             </tr> 
             <tr>
-                <th>Nombre:</th><td><?php echo htmlspecialchars($comision['nombre'] ?? ''); ?></td>
+                <th>Nombre:</th><td></td>
                 <th>Fecha de elaboración:</th><td><?php echo htmlspecialchars($comision['fecha_elaboracion'] ?? ''); ?></td>
             </tr>
             <tr>
-                <th>Cargo:</th><td><?php echo htmlspecialchars($comision['cargo'] ?? ''); ?></td>
-                <th>Folio:</th><td><span style="color: red;"><?php echo htmlspecialchars($comision['folio'] ?? ''); ?></span></td>
+                <th>Cargo:</th><td></td>
+                <th>Folio:</th><td><span style="color: red;"></span></td>
             </tr>
             <tr>
-                <th>Departamento:</th><td><?php echo htmlspecialchars($comision['area'] ?? ''); ?></td>
-                <th>Nómina:</th><td><?php echo htmlspecialchars($comision['nomina'] ?? ''); ?></td>
+                <th>Departamento:</th><td></td>
+                <th>Nómina:</th><td></td>
             </tr>
         </table>
 

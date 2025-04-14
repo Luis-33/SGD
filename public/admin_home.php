@@ -287,7 +287,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'licencias':
-
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'licencias') {
                             $return_data = array("success" => "0"); $fields = array();
@@ -325,6 +324,13 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
                             
+                        }
+                    } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                        if ($action === 'generarPdfLicencias') {
+                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $PdfController->generarPdfLicencias($id);
+                        } else {
+                            $licenciasController->showLicencias($userRole, $userID);
                         }
                     } else {
                         $licenciasController->showLicencias($userRole, $userID);

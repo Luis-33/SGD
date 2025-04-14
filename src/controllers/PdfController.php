@@ -32,8 +32,23 @@ Class PdfController{
            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
             exit; 
         }
-        $nombreArchivo = "{$registro['usuario_nombre']} {$registro['usuario_nomina']} Folio {$registro['folio']}";
+        $pagosMismoDia = [];
+
+        if (!empty($registro['faltas']) && !empty($registro['pagos'])) {
+            foreach ($registro['faltas'] as $falta) {
+                foreach ($registro['pagos'] as $pago) {
+                    if ($falta['fechaF'] === $pago['fechaP']) {
+                        $pagosMismoDia[] = $falta['fechaF'];
+                    }
+                }
+            }
+        }
+        $pagosMismoDia = array_unique($pagosMismoDia);
+        $registro['pagos_mismo_dia'] = $pagosMismoDia;
         //print_r($registro); exit;
+
+        $nombreArchivo = "{$registro['usuario_nombre']} {$registro['usuario_nomina']} Folio {$registro['folio']}";
+        
         ob_start();
         include __DIR__ . '/../pdf_templates/template-4.php'; // ruta relativa al archivo actual
         $html = ob_get_clean();

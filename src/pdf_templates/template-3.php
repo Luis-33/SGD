@@ -1,3 +1,12 @@
+<?=
+    $imagePath = 'C:/laragon/www/SGD/src/assets/images/head.jpg';
+    $imageData = base64_encode(file_get_contents($imagePath));
+    $head = 'data:image/jpeg;base64,' . $imageData;
+
+    $imagePath2 = 'C:/laragon/www/SGD/src/assets/images/footer.jpg';
+    $imageData2 = base64_encode(file_get_contents($imagePath2));
+    $footer = 'data:image/jpeg;base64,' . $imageData2;
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,19 +66,10 @@
             height: 70px;
         }
     </style>
-    <?=
-    $imagePath = 'C:/laragon/www/SGD/src/assets/images/head.jpg';
-    $imageData = base64_encode(file_get_contents($imagePath));
-    $head = 'data:image/jpeg;base64,' . $imageData;
-
-    $imagePath2 = 'C:/laragon/www/SGD/src/assets/images/footer.jpg';
-    $imageData2 = base64_encode(file_get_contents($imagePath2));
-    $footer = 'data:image/jpeg;base64,' . $imageData2;
-    ?>
 </head>
 <body>
     <div class="header">
-        <img src="<?= $head?> " width="100%" height="70px">
+        <img src="<?= $head ?>" width="100%" height="70px">
     </div>
 
     <div class="container">
@@ -78,7 +78,7 @@
 
         <table class="table">
             <tr>
-                <th>ID2:</th><td><?=htmlspecialchars($$comision['id']);?></td>
+                <th>ID2:</th><td><?=htmlspecialchars($comision['id']);?></td>
             </tr> 
             <tr>
                 <th>Nombre:</th><td><?=htmlspecialchars($comision['nombre'] ?? '');?></td>

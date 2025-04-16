@@ -81,46 +81,50 @@ function generateModalEditTimeByTime($docID, $folio)
     </div>";
 
     $modal .= "
-<script>
-document.addEventListener(\"DOMContentLoaded\", function() {
-    function actualizarTotalHoras(idTotalHoras, modalSelector) {
-        let totalHoras = 0;
-        const totalHorasElement = document.getElementById(idTotalHoras);
+    <script>
+    document.addEventListener(\"DOMContentLoaded\", function() {
+        function actualizarTotalHoras(idTotalHoras, modalSelector) {
+            let totalHoras = 0;
+            const totalHorasElement = document.getElementById(idTotalHoras);
 
-        if (!totalHorasElement) {
-            console.error(\"No se encontró el elemento con ID:\", idTotalHoras);
-            return;
+            if (!totalHorasElement) {
+                console.error(\"No se encontró el elemento con ID:\", idTotalHoras);
+                return;
+            }
+
+            // Buscar solo checkboxes dentro del modal actual
+            document.querySelectorAll(modalSelector + \" .estatusP:checked\").forEach(function(checkbox) {
+                totalHoras += parseFloat(checkbox.dataset.horas) || 0;
+            });
+
+            // Actualizar el total de horas en la interfaz
+            totalHorasElement.textContent = totalHoras.toFixed(2);
         }
 
-        // Buscar solo checkboxes dentro del modal actual
-        document.querySelectorAll(modalSelector + \" .estatusP:checked\").forEach(function(checkbox) {
-            totalHoras += parseFloat(checkbox.dataset.horas) || 0;
-        });
+        document.querySelectorAll(\".modal\").forEach(function(modal) {
+            // Solo continuar si el modal tiene alguna clase que empieza con 'timebytimeEdit'
+            const timebyClass = Array.from(modal.classList).find(c => c.startsWith(\"timebytimeEdit\"));
+        
+            if (timebyClass) {
+                const docID = timebyClass.replace(\"timebytimeEdit\", \"\"); // Extraer el docID
 
-        // Actualizar el total de horas en la interfaz
-        totalHorasElement.textContent = totalHoras.toFixed(2);
-    }
-
-    document.querySelectorAll(\".modal\").forEach(function(modal) {
-        const docID = modal.classList[1].replace(\"timebytimeEdit\", \"\"); // Obtener el docID desde la clase
-
-        // Al abrir el modal, calcular el total de horas automáticamente
-        actualizarTotalHoras(\"totalHorasPagos\" + docID, \".timebytimeEdit\" + docID);
-
-        modal.querySelectorAll(\".estatusP\").forEach(function(checkbox) {
-            checkbox.addEventListener(\"change\", function() {
+                // Al abrir el modal, calcular el total de horas automáticamente
                 actualizarTotalHoras(\"totalHorasPagos\" + docID, \".timebytimeEdit\" + docID);
-                
-                // Obtener el campo hidden asociado al checkbox
-                var hiddenInput = this.previousElementSibling;
-                hiddenInput.value = this.checked ? 1 : 0;
-            });
+
+                modal.querySelectorAll(\".estatusP\").forEach(function(checkbox) {
+                    checkbox.addEventListener(\"change\", function() {
+                        actualizarTotalHoras(\"totalHorasPagos\" + docID, \".timebytimeEdit\" + docID);
+
+                        // Obtener el campo hidden asociado al checkbox
+                        var hiddenInput = this.previousElementSibling;
+                        hiddenInput.value = this.checked ? 1 : 0;
+                    });
+                });
+            }
         });
+
     });
-});
-
-
-</script>";
+    </script>";
 
 
     return $modal;

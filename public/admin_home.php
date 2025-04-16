@@ -206,28 +206,18 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 case 'TimeByTime':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
                         if ($action === 'timebytime') {
-                        //print_r($_POST);
-                        //Enviar los datos al controlador para procesarlos
                         $TimeByTimeController->generarRegistro($_POST); 
-                        }else if ($action === 'timebytimeEdit') 
-                        {
-                            //print_r($_POST);
-                            //Enviar los datos al controlador para procesarlos
+                        }else if ($action === 'timebytimeEdit') {
                             $TimeByTimeController->updateTimebyTimePagos($_POST);
                         }elseif ($action === 'timebytimeUploadFile') {
-                            //print_r($_POST);
-                            //print_r($_FILES);
-                            //Enviar los datos al controlador para procesarlos
                             $TimeByTimeController->uploadFile($_POST, $_FILES);
                         }elseif ($action === 'timebytimeDeleteFile') {
-                            //print_r($_POST);
                             $TimeByTimeController->deleteLogical($_POST);
                         }else {
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
                         }
                     }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
                         if ($action === 'timebytimeGenerarPdf') {
-                            //print_r($_GET);
                             $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
                             $PdfController->generarPdfTimeByTime($id);
                         }else {

@@ -103,11 +103,12 @@ function generateModalComision($areaAdscripcion_id)
                     <input type=\"text\" id=\"especificacion_viaticos\" name=\"especificacion_viaticos\">
                 </div>
 
-                <div class=\"input_group\" id=\"observaciones\" style=\"display: none;\">
-                    <label for=\"observaciones\">Especificación de Viáticos</label>
+                <div class=\"input_group\" id=\"observaciones\">
+                    <label for=\"observaciones\">Observaciones</label>
                     <br>
                     <input type=\"text\" id=\"observaciones\" name=\"observaciones\">
                 </div>
+
 
                 <div class=\"input_group\">
                     <label for=\"fecha_salida\">Fecha de Salida</label>

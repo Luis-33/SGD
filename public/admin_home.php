@@ -244,13 +244,15 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         if ($action === 'comision') {
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $CommissionController->describeTable("comisiones");
+
+                            
                             if (!empty($data)) {
                                 $fields = array_column($data, 'Field');
-
+                                
                                 foreach ($fields as $field) {
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
-
+                                
                                 $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 
@@ -287,7 +289,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     }
                     break;
                 case 'licencias':
-
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'licencias') {
                             $return_data = array("success" => "0"); $fields = array();
@@ -308,7 +309,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
                         } else if ($action === 'editlicencias') {
-                            print_r("licencias");
                             
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $licenciasController->describeTable("licencias");
@@ -325,6 +325,13 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
                             
+                        }
+                    } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                        if ($action === 'generarPdfLicencias') {
+                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $PdfController->generarPdfLicencias($id);
+                        } else {
+                            $licenciasController->showLicencias($userRole, $userID);
                         }
                     } else {
                         $licenciasController->showLicencias($userRole, $userID);

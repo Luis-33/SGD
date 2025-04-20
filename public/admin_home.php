@@ -244,13 +244,15 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         if ($action === 'comision') {
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $CommissionController->describeTable("comisiones");
+
+                            
                             if (!empty($data)) {
                                 $fields = array_column($data, 'Field');
-
+                                
                                 foreach ($fields as $field) {
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
-
+                                
                                 $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 
@@ -307,7 +309,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
                         } else if ($action === 'editlicencias') {
-                            print_r("licencias");
                             
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $licenciasController->describeTable("licencias");

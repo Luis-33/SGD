@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,6 +65,9 @@ $userModel = new UserModel($db);
 $commissionModel = new CommissionsModel($db); 
 $comisions = $commissionModel->getCommissionsById($comision['id']);
 $usuario = $userModel->getUserById($comision['usuario_id']);
+$director = $userModel->getDirectorName2();
+$jefeinmediato = $userModel->getJefeInmediato3($usuario['areaAdscripcion_id']);
+
 ?>
     <div class="header">
         <img src="/images/head.jpg" width="100%" height="70px">
@@ -90,6 +92,7 @@ $usuario = $userModel->getUserById($comision['usuario_id']);
             </tr>
         </table>
 
+        <br>
         <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
         
         <table class="table">
@@ -124,10 +127,39 @@ $usuario = $userModel->getUserById($comision['usuario_id']);
         <h3 class="center">Observaciones</h3>
         <table class="table">
             <tr>
-                <td colspan="4"><?=htmlspecialchars($comisions['observaciones'] ?? '');?></td>
+                <td colspan="4">
+                    <?php
+                        $observaciones = $comisions['observaciones'] ?? '';
+                        $detalles = [];
+
+                        if (!empty($comisions['transporte_propio'])) {
+                            $detalles[] = "Transporte propio: " . $comisions['transporte_propio'];
+                        }
+                        if (!empty($comisions['marca'])) {
+                            $detalles[] = "Marca: " . $comisions['marca'];
+                        }
+                        if (!empty($comisions['modelo'])) {
+                            $detalles[] = "Modelo: " . $comisions['modelo'];
+                        }
+                        if (!empty($comisions['color'])) {
+                            $detalles[] = "Color: " . $comisions['color'];
+                        }
+                        if (!empty($comisions['placas'])) {
+                            $detalles[] = "Placas: " . $comisions['placas'];
+                        }
+                        if (!empty($comisions['kilometraje'])) {
+                            $detalles[] = "Kilometraje: " . $comisions['kilometraje'];
+                        }
+
+                        $infoExtra = implode(', ', $detalles);
+
+                        echo htmlspecialchars(trim($observaciones . ($infoExtra ? '. ' . $infoExtra : '')));
+                    ?>
+                </td>
             </tr>
         </table>
 
+        <br>
         <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
 
         <table class="table">
@@ -146,31 +178,36 @@ $usuario = $userModel->getUserById($comision['usuario_id']);
                 <td><?= htmlspecialchars(date('Y-m-d', strtotime($comisions['fecha_regreso'] ?? ''))); ?></td>
                 <td><?= htmlspecialchars(date('H:i', strtotime($comisions['fecha_regreso'] ?? ''))); ?></td>
             </tr>
-
-            
         </table>
 
         <table class="table">
-            <tr>
-                <th>Jefe Inmediato</th>
-                <th>Cinthia Lizbeth Ramos Osuna</th>
+                <th></th>
+                <td><br><br><br><br><br><br><hr style="border: 1px solid black; margin: 1px; width: 70%;"></td>
+                <th></th>
+                <td><br><br><br><br><br><br><hr style="border: 1px solid black; margin: 1px; width: 70%;"></td>
             </tr>
             <tr>
-                <th>Puesto del Jefe</th><td>&lt;&lt;Puesto del Jefe&gt;&gt;</td>
-                <th>Puesto</th>
-                <td>Directora</td>
+                <th></th>
+                <td><?=htmlspecialchars($usuario['jefeInmediato_nombre'] ?? '');?></td>
+                <th></th>
+                <td><?=htmlspecialchars($director['usuario_nombre'] ?? '');?></td>
+            </tr>
+            <tr>
+                <th></th><td><?=htmlspecialchars($jefeinmediato['puesto_nombre'] ?? '');?></td>
+                <th></th>
+                <td><?=htmlspecialchars($director['puesto_nombre'] ?? '');?></td>
                 
             </tr>
             <tr>
-                <th>Área de Adscripción</th><td>&lt;&lt;Area de Adscripcion&gt;&gt;</td>
+                <th></th><td><?=htmlspecialchars($jefeinmediato['areaAdscripcion_nombre'] ?? '');?><br> Unidad Académica Zapopan del ITJMMPyH</td>
                 
-                <th>Unidad Académica</th>
-                <td> de la Unidad Académica Zapopan del <strong>ITJMMPyH</strong></td>
+                <th></th>
+                <td> de la Unidad Académica Zapopan del ITJMMPyH</td>
             </tr>
         </table>
         <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
         <p class="note">
-            <strong>Nota:</strong> Se le recuerda que tiene 2 días naturales después de su regreso indicado, para entregar esta comisión SELLADA Y FIRMADA como a continuación se detalla: En el Depto. de Recursos Humanos: Comisión en original, ficha informativa y copia del reporte de incidencias.
+            <strong>Nota:</strong> Se le recuerda que tiene 2 días naturales después de su regreso indicado, para entregar esta comisión<strong> SELLADA Y FIRMADA </strong>como a continuación se detalla: En el Depto. de Recursos Humanos: Comisión en original, ficha informativa y copia del reporte de incidencias.
         </p>
 
     </div>

@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Formato Comisión</title>
+    <title>Formato Licencia Sin Goce de Sueldo</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -15,7 +14,7 @@
         .container {
             width: 90%;
             margin: auto;
-            border: 2px solid black;
+            border: 2px;
             padding: 20px;
             text-align: left;
         }
@@ -29,13 +28,9 @@
             border-collapse: collapse;
             margin-bottom: 10px;
         }
-        .table th, .table td {
-            border: 1px ;
+        .table td {
             padding: 6px;
-        }
-        .table th {
-            background-color:rgb(255, 255, 255);
-            text-align: left;
+            vertical-align: top;
         }
         .center {
             text-align: center;
@@ -57,306 +52,151 @@
             width: 100%;
             height: 70px;
         }
-    </style>
-</head>
-<body>
-<?php
-$db = new DB();
-$userModel = new UserModel($db);
-$commissionModel = new CommissionsModel($db); 
-$comisions = $commissionModel->getCommissionsById($comision['id']);
-$usuario = $userModel->getUserById($comision['usuario_id']);
-?>
-    <div class="header">
-        <img src="/images/head.jpg" width="100%" height="70px">
-    </div>
-
-    <div class="container">
-        <h2 class="center">TECNOLÓGICO SUPERIOR DE JALISCO ZAPOPAN</h2>
-        <h3 class="center">COMISIÓN</h3>
-
-        <table class="table">
-            <tr>
-                <th>Nombre:</th><td><?=htmlspecialchars($usuario['usuario_nombre'] ?? '');?></td>
-                <th>Fecha de elaboración:</th><td><?=htmlspecialchars($comisions['fecha_elaboracion'] ?? '');?></td>
-            </tr>
-            <tr>
-                <th>Cargo:</th><td><?=htmlspecialchars($usuario['puesto_nombre'] ?? ''); ?></td>
-                <th>Folio:</th><td><span><?=htmlspecialchars($comisions['id'] ?? '');?></span></td>
-            </tr>
-            <tr>
-                <th>Departamento:</th><td><?=htmlspecialchars($usuario['areaAdscripcion_nombre'] ?? '');?></td>
-                <th>Nómina:</th><td><?=htmlspecialchars($usuario['usuario_nomina'] ?? '');?></td>
-            </tr>
-        </table>
-
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-        
-        <table class="table">
-            <tr>
-                <th>LUGAR(ES):</th>
-                
-                
-                <td colspan="3"><span><?=htmlspecialchars($comisions['lugar'] ?? '');?></td>
-
-
-            </tr>
-            <tr>
-                <th>ASUNTO:</th>
-                
-                
-                <td colspan="3"><span><?=htmlspecialchars($comisions['asunto'] ?? '');?></td>
-
-
-            </tr>
-            <tr>
-                <th>Requiere Transporte:</th><td colspan="3"><span><?=htmlspecialchars($comisions['transporte'] ?? '');?></td>
-            </tr>
-            <tr>
-                <th>Requiere viáticos:</th><td colspan="3"><span><?=htmlspecialchars($comisions['viaticos'] ?? '');?></td>
-            <tr>
-                <th>Especifique viáticos:</th><td colspan="3"><span><?=htmlspecialchars($comisions['especificacion_viaticos'] ?? '');?></td>
-            </tr>
-        </table>
-
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-        
-        <h3 class="center">Observaciones</h3>
-        <table class="table">
-            <tr>
-                <td colspan="4"><?=htmlspecialchars($comisions['observaciones'] ?? '');?></td>
-            </tr>
-        </table>
-
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-
-        <table class="table">
-            <tr>
-                <th>Fecha de Salida</th><th>Hora</th>
-            </tr>
-            <tr>
-                <td><?= htmlspecialchars(date('Y-m-d', strtotime($comisions['fecha_salida'] ?? ''))); ?></td>
-                <td><?= htmlspecialchars(date('H:i', strtotime($comisions['fecha_salida'] ?? ''))); ?></td>
-            </tr>
-
-            <tr>
-                <th>Fecha de Regreso</th><th>Hora</th>
-            </tr>
-            <tr>
-                <td><?= htmlspecialchars(date('Y-m-d', strtotime($comisions['fecha_regreso'] ?? ''))); ?></td>
-                <td><?= htmlspecialchars(date('H:i', strtotime($comisions['fecha_regreso'] ?? ''))); ?></td>
-            </tr>
-
-            
-        </table>
-
-        <table class="table">
-            <tr>
-                <th>Jefe Inmediato</th>
-                <th>Cinthia Lizbeth Ramos Osuna</th>
-            </tr>
-            <tr>
-                <th>Puesto del Jefe</th><td>&lt;&lt;Puesto del Jefe&gt;&gt;</td>
-                <th>Puesto</th>
-                <td>Directora</td>
-                
-            </tr>
-            <tr>
-                <th>Área de Adscripción</th><td>&lt;&lt;Area de Adscripcion&gt;&gt;</td>
-                
-                <th>Unidad Académica</th>
-                <td> de la Unidad Académica Zapopan del <strong>ITJMMPyH</strong></td>
-            </tr>
-        </table>
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-        <p class="note">
-            <strong>Nota:</strong> Se le recuerda que tiene 2 días naturales después de su regreso indicado, para entregar esta comisión SELLADA Y FIRMADA como a continuación se detalla: En el Depto. de Recursos Humanos: Comisión en original, ficha informativa y copia del reporte de incidencias.
-        </p>
-
-    </div>
-    <div class="footer">
-        <img src="/images/footer.jpg" width="100%" height="70px">
-    </div>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Formato Comisión</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            font-size: 11px;
-            margin: 0;
-            padding: 0;
-            text-align: center;
+        .input-line {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            width: 235px;
         }
-        .container {
-            width: 90%;
-            margin: auto;
-            border: 2px solid black;
-            padding: 20px;
-            text-align: left;
+        .small-input-line {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            width: 150px;
         }
-        .header, .footer {
-            width: 100%;
+        .cuadro{
+            border: 1px solid black;
+            padding: 10px;
             margin-bottom: 10px;
-            text-align: center;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-        }
-        .table th, .table td {
-            border: 1px ;
-            padding: 6px;
-        }
-        .table th {
-            background-color:rgb(255, 255, 255);
-            text-align: left;
-        }
-        .center {
-            text-align: center;
-            font-weight: bold;
-        }
-        .note {
-            font-size: 10px;
-            text-align: justify;
-        }
-        .signature {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .signature p {
-            margin: 0;
-            font-size: 12px;
-        }
-        .footer img {
-            width: 100%;
-            height: 70px;
         }
     </style>
 </head>
 <body>
+
 <?php
 $db = new DB();
 $userModel = new UserModel($db);
-$commissionModel = new CommissionsModel($db); 
-$comisions = $commissionModel->getCommissionsById($comision['id']);
-$usuario = $userModel->getUserById($comision['usuario_id']);
+$LicenciasModel = new LicenciasModel($db); 
+$licencia = $LicenciasModel->getLicenciasById($Licencias['id']);
+$usuario = $userModel->getUserById($Licencias['usuario_id']);
+$director = $userModel->getDirectorName2();
+$jefeinmediato = $userModel->getJefeInmediato3($usuario['areaAdscripcion_id']);
+
+$meses = [
+    1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril', 5 => 'mayo', 6 => 'junio',
+    7 => 'julio', 8 => 'agosto', 9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'
+];
 ?>
-    <div class="header">
-        <img src="/images/head.jpg" width="100%" height="70px">
+
+<div class="header">
+    <img src="/images/head.jpg" width="100%" height="70px">
+</div>
+
+<div class="container">
+    <div style="text-align: right;">
+        <?php
+        if (!empty($licencia['fecha_elaboracion'])) {
+            $fecha = new DateTime($licencia['fecha_elaboracion']);
+            $dia = $fecha->format('d');
+            $mes = $meses[(int)$fecha->format('m')];
+            $anio = $fecha->format('Y');
+            echo "Jalisco, a {$dia} de {$mes} del año {$anio}.";
+        } else {
+            echo "Jalisco, a ____ de __________ del año 2024.";
+        }
+        ?>
     </div>
 
-    <div class="container">
-        <h2 class="center">TECNOLÓGICO SUPERIOR DE JALISCO ZAPOPAN</h2>
-        <h3 class="center">COMISIÓN</h3>
+    <p>
+        ILIANA JANETT HERNÁNDEZ PARTIDA<br>
+        DIRECTORA GENERAL DEL INSTITUTO TECNOLÓGICO <br>JOSÉ MARIO MOLINA PASQUEL Y HENRÍQUEZ<br>
+        PRESENTE:
+    </p>
 
-        <table class="table">
-            <tr>
-                <th>Nombre:</th><td><?=htmlspecialchars($usuario['usuario_nombre'] ?? '');?></td>
-                <th>Fecha de elaboración:</th><td><?=htmlspecialchars($comisions['fecha_elaboracion'] ?? '');?></td>
-            </tr>
-            <tr>
-                <th>Cargo:</th><td><?=htmlspecialchars($usuario['puesto_nombre'] ?? ''); ?></td>
-                <th>Folio:</th><td><span><?=htmlspecialchars($comisions['id'] ?? '');?></span></td>
-            </tr>
-            <tr>
-                <th>Departamento:</th><td><?=htmlspecialchars($usuario['areaAdscripcion_nombre'] ?? '');?></td>
-                <th>Nómina:</th><td><?=htmlspecialchars($usuario['usuario_nomina'] ?? '');?></td>
-            </tr>
-        </table>
-
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-        
-        <table class="table">
-            <tr>
-                <th>LUGAR(ES):</th>
-                
-                
-                <td colspan="3"><span><?=htmlspecialchars($comisions['lugar'] ?? '');?></td>
-
-
-            </tr>
-            <tr>
-                <th>ASUNTO:</th>
-                
-                
-                <td colspan="3"><span><?=htmlspecialchars($comisions['asunto'] ?? '');?></td>
-
-
-            </tr>
-            <tr>
-                <th>Requiere Transporte:</th><td colspan="3"><span><?=htmlspecialchars($comisions['transporte'] ?? '');?></td>
-            </tr>
-            <tr>
-                <th>Requiere viáticos:</th><td colspan="3"><span><?=htmlspecialchars($comisions['viaticos'] ?? '');?></td>
-            <tr>
-                <th>Especifique viáticos:</th><td colspan="3"><span><?=htmlspecialchars($comisions['especificacion_viaticos'] ?? '');?></td>
-            </tr>
-        </table>
-
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-        
-        <h3 class="center">Observaciones</h3>
-        <table class="table">
-            <tr>
-                <td colspan="4"><?=htmlspecialchars($comisions['observaciones'] ?? '');?></td>
-            </tr>
-        </table>
-
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-
-        <table class="table">
-            <tr>
-                <th>Fecha de Salida</th><th>Hora</th>
-            </tr>
-            <tr>
-                <td><?= htmlspecialchars(date('Y-m-d', strtotime($comisions['fecha_salida'] ?? ''))); ?></td>
-                <td><?= htmlspecialchars(date('H:i', strtotime($comisions['fecha_salida'] ?? ''))); ?></td>
-            </tr>
-
-            <tr>
-                <th>Fecha de Regreso</th><th>Hora</th>
-            </tr>
-            <tr>
-                <td><?= htmlspecialchars(date('Y-m-d', strtotime($comisions['fecha_regreso'] ?? ''))); ?></td>
-                <td><?= htmlspecialchars(date('H:i', strtotime($comisions['fecha_regreso'] ?? ''))); ?></td>
-            </tr>
-
-            
-        </table>
-
-        <table class="table">
-            <tr>
-                <th>Jefe Inmediato</th>
-                <th>Cinthia Lizbeth Ramos Osuna</th>
-            </tr>
-            <tr>
-                <th>Puesto del Jefe</th><td>&lt;&lt;Puesto del Jefe&gt;&gt;</td>
-                <th>Puesto</th>
-                <td>Directora</td>
-                
-            </tr>
-            <tr>
-                <th>Área de Adscripción</th><td>&lt;&lt;Area de Adscripcion&gt;&gt;</td>
-                
-                <th>Unidad Académica</th>
-                <td> de la Unidad Académica Zapopan del <strong>ITJMMPyH</strong></td>
-            </tr>
-        </table>
-        <hr style="border: 1px solid black; margin: 0 -20px; width: calc(100% + 40px);">
-        <p class="note">
-            <strong>Nota:</strong> Se le recuerda que tiene 2 días naturales después de su regreso indicado, para entregar esta comisión SELLADA Y FIRMADA como a continuación se detalla: En el Depto. de Recursos Humanos: Comisión en original, ficha informativa y copia del reporte de incidencias.
+    <div class="cuadro">
+        <p style="text-align: justify;">
+            Con fundamento en lo dispuesto en las cláusulas 64 establecidas en las Condiciones Generales de Trabajo pactadas entre el Instituto Tecnológico José Mario Molina Pasquel y Henríquez y el Sindicato Titular, documento que fue depositado en el Tribunal de Arbitraje y Escalafón el pasado 15 de enero del año 2021, se pactó que para efecto de que fueran concedidos estos, dependerán de una manifestación por parte del Director General, por lo que la presente solicitud no implicará autorización por su sola presentación. Por lo que para tal efecto se solicita <b>LICENCIA SIN GOCE DE SUELDO</b> para el (la) siguiente trabajador(a):
         </p>
+    </div>
 
+    <br>
+
+    <table class="table">
+        <tr>
+            <td><b>Nombre del Colaborador(a):</b></td>
+            <td class="input-line"><br><?=htmlspecialchars($usuario['usuario_nombre'] ?? '');?></td>
+        </tr>
+        <tr>
+            <td><b>Número de Empleado(a):</b></td>
+            <td class="input-line"><br><?=htmlspecialchars($usuario['usuario_nomina'] ?? '');?></td>
+            <td><b>Puesto:</b></td>
+            <td class="input-line"><?=htmlspecialchars($usuario['puesto_nombre'] ?? '');?></td>
+        </tr>
+        <tr>
+            <td><b>Unidad Académica:</b></td>
+            <td class="input-line"><br>Zapopan del ITJMMPyH</td>
+            <td><b>Área:</b></td>
+            <td class="input-line"><?=htmlspecialchars($usuario['areaAdscripcion_nombre'] ?? '');?></td>
+        </tr>
+        <tr>
+            <td><b>Fecha de Ingreso:</b></td>
+            <td class="input-line"><br><?=htmlspecialchars($usuario['usuario_fechaIngreso'] ?? '');?></td>
+        </tr>
+    </table>
+
+    <br><br><br>
+
+    <?php
+        $fechaSalida = isset($licencia['fecha_salida']) ? explode('-', $licencia['fecha_salida']) : ['', '', ''];
+        $fechaRegreso = isset($licencia['fecha_regreso']) ? explode('-', $licencia['fecha_regreso']) : ['', '', ''];
+    ?>
+
+    <table class="table">
+        <tr>
+            <td><b>Para ausentarse del día:</b></td>
+            <td class="small-input-line"><br><?= htmlspecialchars($fechaSalida[2]) ?></td>
+            <td><b>Del mes:</b></td>
+            <td class="small-input-line"><br><?= isset($meses[(int)$fechaSalida[1]]) ? $meses[(int)$fechaSalida[1]] : '' ?></td>
+            <td><b>Del año:</b></td>
+            <td class="small-input-line"><br><?= htmlspecialchars($fechaSalida[0]) ?></td>
+        </tr>
+        <tr>
+            <td><b><br><br>Al día:</b></td>
+            <td class="small-input-line"><br><br><?= htmlspecialchars($fechaRegreso[2]) ?></td>
+            <td><b><br>Del mes:</b></td>
+            <td class="small-input-line"><br><br><?= isset($meses[(int)$fechaRegreso[1]]) ? $meses[(int)$fechaRegreso[1]] : '' ?></td>
+            <td><b><br>Del año:</b></td>
+            <td class="small-input-line"><br><br><?= htmlspecialchars($fechaRegreso[0]) ?></td>
+        </tr>
+    </table>
+
+    <br><br>
+
+    <table class="table" style="text-align: center;">  
+        <tr>
+            <th style="width: 40%;"><br>Nombre y Firma del Solicitante:</th>
+            <td style="height: 40px; border-bottom: 1px solid black;"></td>
+        </tr>
+        <tr>
+            <th><br>Nombre y Firma del Jefe Inmediato:</th>
+            <td style="height: 40px; border-bottom: 1px solid black;"></td>
+        </tr>
+        <tr>
+            <th><br><br>Vo. Bo. Nombre y Firma del Director(a) de Unidad Académica:</th>
+            <td style="height: 40px; border-bottom: 1px solid black;"></td>
+        </tr>
+    </table>
+
+    <br><br><br>
+
+    <div style="font-size:10px; text-align: left;">
+        C.c.p. Capital Humano Dirección General<br>
+        C.c.p. Capital Humano Unidad Académica
     </div>
-    <div class="footer">
-        <img src="/images/footer.jpg" width="100%" height="70px">
-    </div>
+
+</div>
+
+<div class="footer">
+    <img src="/images/footer.jpg" width="100%" height="70px">
+</div>
+
 </body>
 </html>

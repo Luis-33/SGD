@@ -68,7 +68,7 @@
                                 break;
                         }
                         echo "<span class=\"row_estatus {$estatusClass}\">{$Commission['status']}</span>"; ?>
-                        <?php if ($_SESSION['user_role'] == 1 && $Commission['status'] != 'Entregado') : ?>
+                        <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 && $Commission['status'] != 'Entregado') : ?>
                             <div class="row_actions">
                                 
                                 <i class="fa-solid fa-pen-to-square" 

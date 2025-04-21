@@ -18,17 +18,20 @@ use PHPMailer\PHPMailer\Exception;
 class LicenciasController
 {
     private $LicenciasModel;
+    private $userModel;
     public  $table_name = 'licencias';
 
     public function __construct($db)
     {
         $this->LicenciasModel = new LicenciasModel($db);
+        $this->userModel = new UserModel($db); 
     }
 
 
     public function showLicencias($role, $userID)
     {
         $documents = $this->LicenciasModel->getAllLicencias($role, $userID, $this->table_name);
+        $user = $this->userModel->getUserById($userID);
         require VIEW_PATH . 'document/licencias_list.php';
 
     }

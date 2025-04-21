@@ -219,4 +219,13 @@ class UserModel
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public function getLicenciasByUsuarioId($userID)
+    {
+        $query = "SELECT * FROM licencias WHERE usuario_id = :userID";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

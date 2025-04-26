@@ -27,7 +27,9 @@
             generateSidebarItem('commissions', 'fas fa-money-bill', 'Comisiónes');
             generateSidebarItem('TimeByTime', 'fas fa-money-bill', 'timebytime');
             generateSidebarItem('roles', 'fa-solid fa-user-tag', 'Roles');
-            generateSidebarItem('imss', 'fa-user-md', 'imss');
+            if ($_SESSION['user_role'] == 1) {
+                generateSidebarItem('imss', 'fa-user-md', 'imss');
+            }
 
 
             ?>

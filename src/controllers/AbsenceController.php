@@ -12,14 +12,17 @@ require_once UTIL_PATH . 'Session.php';
 class AbsenceController
 {
     private $absenceModel;
+    private $userModel;
 
     public function __construct($db)
     {
         $this->absenceModel = new absenceModel($db);
+        $this->userModel = new UserModel($db);
     }
     public function show()
     {
         $return_data = $this->absenceModel->getAll();
+        $users = $this->userModel->getAllUsers(1);
         require VIEW_PATH . 'document/absence_list.php';
     }
 

@@ -276,6 +276,21 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             }
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
                             exit;
+                        }else if ($action === 'deleteCommissions') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Cancelado";
+                                $CommissionController->updateCommission($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
                         }
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfComissions') {
@@ -326,6 +341,25 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             exit;
                             
                         }
+                        if ($action === 'deleteLicencia') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $licenciasController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Cancelado";
+
+                                
+                                $licenciasController->updateLicencias($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                        }
+                    
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfLicencias') {
                             $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;

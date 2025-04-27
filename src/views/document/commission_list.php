@@ -29,6 +29,7 @@
             </div>
             <div class="table_body" id="tableContainer">
                 <?php foreach ($documents as $Commission) : ?>
+                    <?php if ($Commission['status'] === 'Cancelado') continue; ?>
                     <div class="table_body_item" data-status="<?php echo $Commission['status']; ?>">
                         <span class="row_pdf" title="Descargar Comisión">
                             <?php if ($Commission['status'] === 'Entregado') : ?>
@@ -75,9 +76,17 @@
                                     title="Modificar Comisión de <?= $Commission["usuario_nombre"]; ?> " 
                                     data-id="<?php echo $Commission['id']; ?>" 
                                     onclick="openModal('editCommissions<?php echo $Commission['id']; ?>')">
-                                </i>        
+                                </i> 
+                                <i class="fa-solid fa-trash-can" 
+                                    title="Eliminar Licencia de <?= $Commission["usuario_nombre"]; ?> " 
+                                    data-id="<?php echo $Commission['id']; ?>" 
+                                    onclick="openModal('ModalDeleteCommissions<?php echo $Commission['id']; ?>')">
+                                    
+                                    
+                                </i>       
                             </div>
                         <?php endif; ?>
+                        <?php echo generateModalDeleteCommissions($Commission["id"]); ?>
                         <?php echo generateModalEditComision($Commission["id"]); ?>
                     </div>
                 <?php endforeach; ?>

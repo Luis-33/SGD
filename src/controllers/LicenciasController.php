@@ -52,6 +52,16 @@ class LicenciasController
         }
     }
 
+    public function DeleteLicencias($data) {
+       
+        
+        if ($this->LicenciasModel->updateLicencias($data, $this->table_name)) {
+            Session::set('user_success', 'Licencia registrada correctamente.');
+        } else {
+            Session::set('user_error', 'No se pudo registrar la Licencia.');
+        }
+    }
+
     public function describeTable($name)
     {
         return $this->LicenciasModel->describeTable($name);

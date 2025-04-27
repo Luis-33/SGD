@@ -105,7 +105,7 @@ class absenceModel
     public function delete($absenceId)
     {
         $query = "UPDATE absences 
-              SET is_deleted = '1', deleted_at = NOW() 
+              SET is_deleted = '1', is_open = '0', deleted_at = NOW() 
               WHERE absence_id = :absence_id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);

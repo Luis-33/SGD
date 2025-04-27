@@ -8,31 +8,30 @@
 <link rel="stylesheet" href="assets/css/admin/manage_users.css">
 
 <script>
-    function confirmDelete(rolId, rolName) {
+    function confirmDelete(id, data) {
         const modalContent = `
         <div class="modal confirmDelete">
             <div class="modal_content">
-                <div class="modal_header">
+               <form method="post" action="admin_home.php?page=absences&action=remove">
+                <input type="hidden" name="absence_id" value="${id}">
+                 <div class="modal_header">
                     <h2>Confirmar Eliminación</h2>
-                    <button onclick="closeModal('confirmDelete')">Cerrar</button>
-                </div>
-                <div class="modal_body">
-                    <p>¿Estás seguro de que deseas eliminar el rol <strong>${rolName}</strong>?</p>
-                    <div class="modal_actions">
-                        <button onclick="deleteRol(${rolId})" class="btn_confirm">Eliminar</button>
-                        <button onclick="closeModal('confirmDelete')" class="btn_cancel">Cancelar</button>
+                        <button onclick="closeModal('confirmDelete')">Cerrar</button>
                     </div>
-                </div>
+                    <div class="modal_body">
+                        <p>¿Estás seguro de que deseas eliminar el registro de: <strong>${data}</strong>?</p>
+                        <div class="modal_actions">
+                            <button type="submit" class="btn_confirm">Eliminar</button>
+                            <button onclick="closeModal('confirmDelete')" class="btn_cancel">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     `;
         document.body.insertAdjacentHTML('beforeend', modalContent);
         openModal('confirmDelete');
     }
-
-    function deleteRol(rolId) {
-    }
-
 
     function addRol() {
         const modalContent = `
@@ -98,46 +97,69 @@
 </script>
 
 
-<?php if (!empty($roles)) : ?>
+<?php if (!empty($return_data)) : ?>
 
-<div class="card_table">
-    <div class="card_table_header">
-        <h2>IMSS</h2>
-        <div class="card_header_actions">
-            <button class="btn_documento" onclick="addRol()">Agregar</button>
+    <div class="card_table">
+        <div class="card_table_header">
+            <h2>Incapacidades</h2>
+            <div class="card_header_actions">
+                <button class="btn_documento" onclick="addRol()">Agregar</button>
+            </div>
         </div>
-    </div>
-    <div class="card_table_body">
+        <div class="card_table_body">
         <div class="search_input" id="searchForm">
             <input type="text" id="searchInput" placeholder="Buscar">
             <i class="fa-solid fa-xmark" id="clear_input"></i>
         </div>
-        <div class="table_header">
-            <span class="header_tipo">ID</span>
-            <span class="header_fecha">Nombre</span>
-            <span class="header_actions">Acciones</span>
-        </div>
-        <div class="table_body" id="tableContainer">
-            <!-- <?php foreach ($roles as $rol) : ?>
-                <div class="table_body_item">
-                    <span class="row_tipo"><?php echo $rol["rol_id"] ?></span>
-                    <span class="row_fecha"><?php echo $rol["rol_nombre"] ?></span>
-                    <?php if ($_SESSION['user_role'] == 1) : ?>
-                        <div class="row_actions">
-                            <i class="fa-solid fa-pen-to-square" title="Modificar" data-id="<?php echo $rol['rol_id']; ?>" onclick="editRol(<?= $rol['rol_id']; ?>, '<?= $rol['rol_nombre']; ?>')"></i>
-                            <i class="fa-solid fa-trash-can" title="Eliminar" onclick="confirmDelete(<?= $rol['rol_id']; ?>, '<?= $rol['rol_nombre']; ?>')"></i>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?> -->
-        </div>
+            <div class="table_header">
+                <span class="header_tipo">ID</span>
+                <span class="header_fecha">Usuario</span>
+                <span class="header_fecha">Folio</span>
+                <span class="header_fecha">Inicio</span>
+                <span class="header_fecha">Fin</span>
+                <span class="header_fecha">Estado</span>
+                <span class="header_actions">Acciones</span>
+            </div>
+            <div class="table_body" id="tableContainer">
+                <?php foreach ($return_data as $absence) : ?>
+                    <div class="table_body_item">
+                        <span class="row_tipo"><?php echo $absence["absence_id"]; ?></span>
+                        <span class="row_fecha"><?php echo htmlspecialchars($absence["full_name"]); ?></span>
+                        <span class="row_fecha"><?php echo htmlspecialchars($absence["folio_number"]); ?></span>
+                        <span class="row_fecha"><?php echo htmlspecialchars($absence["start_date"]); ?></span>
+                        <span class="row_fecha"><?php echo htmlspecialchars($absence["end_date"]); ?></span>
+                        <span class="row_fecha">
+                <?php echo $absence["is_open"] === '1' ? 'Abierto' : 'Cerrado'; ?>
+            </span>
+                        <?php if ($_SESSION['user_role'] == 1) : ?>
+                            <div class="row_actions">
+                                <i class="fa-solid fa-pen-to-square"
+                                   title="Modificar"
+                                   data-id="<?= $absence['absence_id']; ?>"
+                                   onclick="editAbsence(
+                                   <?= $absence['absence_id']; ?>,
+                                           '<?= addslashes($absence['folio_number']); ?>',
+                                           '<?= $absence['start_date']; ?>',
+                                           '<?= $absence['end_date']; ?>',
+                                           '<?= $absence['is_open']; ?>'
+                                           )">
+                                </i>
+                                <i class="fa-solid fa-trash-can"
+                                   title="Eliminar"
+                                   onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
+                                </i>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
 
         <div class="no_result_message" id="noResultsMessage" style="display: none;">
             <span>No se roles con el nombre ingresado</span>
             <i class="fa-solid fa-magnifying-glass"></i>
         </div>
     </div>
-</div>
+    </div>
 
 <?php
 

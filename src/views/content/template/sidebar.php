@@ -28,7 +28,7 @@
             generateSidebarItem('TimeByTime', 'fas fa-money-bill', 'timebytime');
             generateSidebarItem('roles', 'fa-solid fa-user-tag', 'Roles');
             if ($_SESSION['user_role'] == 1) {
-                generateSidebarItem('imss', 'fa-user-md', 'imss');
+                generateSidebarItem('absences', 'fa-user-md', 'imss');
             }
 
 

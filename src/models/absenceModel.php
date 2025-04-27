@@ -11,7 +11,12 @@ class absenceModel
 
     public function getAll()
     {
-        $query = "SELECT * FROM absences";
+        $query = "SELECT
+                    absences.*,
+                    usuario.usuario_nombre AS full_name
+                FROM absences
+                LEFT JOIN usuario ON usuario.usuario_id = absences.user_id
+                WHERE absences.is_deleted = '0'";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -102,7 +107,6 @@ class absenceModel
         $query = "UPDATE absences 
               SET is_deleted = '1', deleted_at = NOW() 
               WHERE absence_id = :absence_id";
-
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);
         return $stmt->execute();

@@ -1,11 +1,40 @@
+
 <?php if (!empty($documents)) : ?>
     <div class="card_table">
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Licencias" : "Licencias"; ?></h2>
             <div class="card_header_actions">
-                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
-                    <button class="btn_entregadoo" data-status="Entregado" onclick="filterLicenciass('Entregado')">Entregados</button>
-                    <button class="btn_Pendiente" data-status="Pendiente" onclick="filterLicenciass('Pendiente')">Pendientes</button>
+
+                <?php 
+                $fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
+                $fechaActual = new DateTime();
+                $diferenciaAnios = $fechaIngreso->diff($fechaActual)->y;
+                $diasHabiles = 0;
+                foreach ($documents as $licencia) {
+                    if ($licencia['usuario_id'] == $user['usuario_id'] && $licencia['status'] === 'Entregado') {
+                        $fechaSalida = new DateTime($licencia['fecha_salida']);
+                        $fechaRegreso = new DateTime($licencia['fecha_regreso']);
+                        while ($fechaSalida <= $fechaRegreso) {
+                            $diaSemana = $fechaSalida->format('N'); 
+                            if ($diaSemana < 6) {
+                                $diasHabiles++;
+                            }
+                            $fechaSalida->modify('+1 day');
+                        }
+                    }
+                }
+
+                if ($diferenciaAnios >= 1 && $diferenciaAnios < 3) {
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                } elseif ($diferenciaAnios >= 3 && $diferenciaAnios < 6) {
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                } elseif ($diferenciaAnios >= 6) {
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                }
+                ?>
+                <button class="btn_entregadoo" data-status="Entregado" onclick="filterLicenciass('Entregado')">Entregados</button>
+                <button class="btn_Pendiente" data-status="Pendiente" onclick="filterLicenciass('Pendiente')">Pendientes</button>
+                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>
                     <button class="btn_documento" onclick="openModal('licencias')">Crear Licencia</button>
                 <?php endif; ?>
             </div>
@@ -29,6 +58,7 @@
             </div>
             <div class="table_body" id="tableContainer">
                 <?php foreach ($documents as $Licencias) : ?>
+                    <?php if ($Licencias['status'] === 'Cancelado') continue; ?>
                     <div class="table_body_item" data-status="<?php echo $Licencias['status']; ?>">
                         <span class="row_pdf" title="Descargar Licencia">
                             <?php if ($Licencias['status'] === 'Entregado') : ?>
@@ -36,7 +66,7 @@
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
                             <?php else : ?>
-                                <a href="admin_home.php?registro_id=<?php echo $Licencias['id']; ?>&action=generarPdfLicencias&page=licencias" target="_blank" title="Generar PDF de <?= $Licencias["usuario_nombre"];?>"><i class="fa-solid fa-file-pdf"></i></a>
+                                <a href="admin_home.php?Licencias_id=<?php echo $Licencias['id']; ?>&action=generarPdfLicencias&page=licencias" target="_blank" title="Generar PDF de <?= $Licencias["usuario_nombre"];?>"><i class="fa-solid fa-file-pdf"></i></a>
                             <?php endif; ?>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>
@@ -68,17 +98,34 @@
                                 break;
                         }
                         echo "<span class=\"row_estatus {$estatusClass}\">{$Licencias['status']}</span>"; ?>
-                        <?php if ($_SESSION['user_role'] == 1 && $Licencias['status'] != 'Entregado') : ?>
+                        <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2  && $Licencias['status'] != 'Entregado') : ?>
                             <div class="row_actions">
                                 
                                 <i class="fa-solid fa-pen-to-square" 
                                     title="Modificar Licencia de <?= $Licencias["usuario_nombre"]; ?> " 
                                     data-id="<?php echo $Licencias['id']; ?>" 
                                     onclick="openModal('editlicencias<?php echo $Licencias['id']; ?>')">
-                                </i>        
+                                    
+                                    
+                                </i> 
+                                <i class="fa-solid fa-trash-can" 
+                                    title="Eliminar Licencia de <?= $Licencias["usuario_nombre"]; ?> " 
+                                    data-id="<?php echo $Licencias['id']; ?>" 
+                                    onclick="openModal('ModalDeleteLicencias<?php echo $Licencias['id']; ?>')">
+                                    
+                                    
+                                </i>
+
+                                
                             </div>
+                            
+
+                        
                         <?php endif; ?>
+                        <?php echo generateModalDeleteLicencias($Licencias["id"]); ?>
                         <?php echo generateModalEditLicencias($Licencias["id"]); ?>
+                        
+                        
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -93,7 +140,7 @@
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3 || $_SESSION['user_role'] == 4) ? "Mis Licencias" : "Licencias"; ?></h2>
             <div class="card_header_actions">
-                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) : ?>
+                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>
                     <button class="btn_documento" onclick="openModal('licencias')">Crear Licencia</button>
                 <?php endif; ?>
             </div>
@@ -154,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <?php
-if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4) {
+if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) {
     echo generateModalLicencias($_SESSION['user_area']);
 }
 
@@ -174,3 +221,4 @@ if (Session::exists('Licencias_error')) {
     Session::delete('Licencias_error');
 }
 ?>
+

@@ -215,5 +215,82 @@ function generateModalLicencias($areaAdscripcion_id)
     
     ";
 
+    $diasTotalesPermitidos = 0;
+    $fechaIngreso = new DateTime($usuario['usuario_fechaIngreso']);
+    $fechaActual = new DateTime();
+    $diferenciaAnios = $fechaIngreso->diff($fechaActual)->y;
+
+    
+    if ($diferenciaAnios >= 1 && $diferenciaAnios < 3) {
+        $diasTotalesPermitidos = 15;
+    } elseif ($diferenciaAnios >= 3 && $diferenciaAnios < 6) {
+        $diasTotalesPermitidos = 30;
+    } elseif ($diferenciaAnios >= 6) {
+        $diasTotalesPermitidos = 60;
+    }
+    $diasUtilizados = 0;
+    foreach ($userModel->getLicenciasByUsuarioId($usuario['usuario_id']) as $licencia) {
+        if ($licencia['status'] === 'Entregado') {
+            $fechaSalida = new DateTime($licencia['fecha_salida']);
+            $fechaRegreso = new DateTime($licencia['fecha_regreso']);
+            while ($fechaSalida <= $fechaRegreso) {
+                $diaSemana = $fechaSalida->format('N'); 
+                if ($diaSemana < 6) {
+                    $diasUtilizados++;
+                }
+                $fechaSalida->modify('+1 day');
+            }
+        }
+    }
+
+    $diasRestantes = $diasTotalesPermitidos - $diasUtilizados;
+
+    $modal .= "
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fechaSalidaInput = document.getElementById('fecha_salida');
+            const fechaRegresoInput = document.getElementById('fecha_regreso');
+            const diasRestantes = $diasRestantes;
+
+            fechaSalidaInput.addEventListener('change', function () {
+                const fechaSalida = new Date(this.value);
+                if (isNaN(fechaSalida.getTime())) return;
+
+                let diasDisponibles = diasRestantes;
+                let fechaMaxima = new Date(fechaSalida);
+                while (diasDisponibles > 0) {
+                    fechaMaxima.setDate(fechaMaxima.getDate() + 1);
+                    const diaSemana = fechaMaxima.getDay(); 
+                    if (diaSemana !== 0 && diaSemana !== 6) { 
+                        diasDisponibles--;
+                    }
+                }
+
+                fechaRegresoInput.max = fechaMaxima.toISOString().split('T')[0];
+            });
+
+            fechaRegresoInput.addEventListener('change', function () {
+                const fechaSalida = new Date(fechaSalidaInput.value);
+                const fechaRegreso = new Date(this.value);
+                if (isNaN(fechaSalida.getTime()) || isNaN(fechaRegreso.getTime())) return;
+
+                let diasSeleccionados = 0;
+                let fechaTemp = new Date(fechaSalida);
+                while (fechaTemp <= fechaRegreso) {
+                    const diaSemana = fechaTemp.getDay(); 
+                    if (diaSemana !== 0 && diaSemana !== 6) { 
+                        diasSeleccionados++;
+                    }
+                    fechaTemp.setDate(fechaTemp.getDate() + 1);
+                }
+
+                if (diasSeleccionados > diasRestantes) {
+                    alert('No puedes seleccionar más días de los disponibles. Te quedan ' + diasRestantes + ' días.');
+                    this.value = ''; 
+                }
+            });
+        });
+    </script>";
+
     return $modal;
 }

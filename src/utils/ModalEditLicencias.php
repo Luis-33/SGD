@@ -23,7 +23,7 @@ function generateModalEditLicencias($id)
                     <input type=\"hidden\" name=\"id\" value=\"{$Licencias['id']}\">
                     <div class=\"input_group\">
                         <label>Adjuntar documento</label>
-                        <input type=\"file\" name=\"pdf\" accept=\"application/pdf\">
+                        <input type=\"file\" name=\"pdf\" accept=\"application/pdf\"required>
                     </div>
                     <button type=\"submit\">Actualizar licencia</button>
                 </form>

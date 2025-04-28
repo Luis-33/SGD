@@ -119,7 +119,7 @@
     
 <?php endif;  
 ?>
-
+<script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>
 <script>
 let currentStatusFilter = 'Pendiente';
@@ -167,19 +167,20 @@ if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['use
     echo generateModalComision($_SESSION['user_area']);
 }
 
-if (Session::exists('Commission_success')) {
-    echo showAlert('success', Session::get('Commission_success'));
+if (Session::exists('document_success')) {
+    echo showAlert('success', Session::get('document_success'));
     echo "<script>hideAlert('success');</script>";
-    Session::delete('Commission_success');
-}
-if (Session::exists('Commission_warning')) {
-    echo showAlert('warning', Session::get('Commission_warning'));
+    Session::delete('document_success');
+    }
+    
+    if (Session::exists('document_warning')) {
+    echo showAlert('warning', Session::get('document_warning'));
     echo "<script>hideAlert('warning');</script>";
-    Session::delete('Commission_warning');
-}
-if (Session::exists('Commission_error')) {
-    echo showAlert('error', Session::get('Commission_error'));
+    Session::delete('document_warning');
+    }
+    
+    if (Session::exists('document_error')) {
+    echo showAlert('error', Session::get('document_error'));
     echo "<script>hideAlert('error');</script>";
-    Session::delete('Commission_error');
-}
-?>
+    Session::delete('document_error');
+    }

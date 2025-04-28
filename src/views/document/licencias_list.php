@@ -1,37 +1,77 @@
-
 <?php if (!empty($documents)) : ?>
     <div class="card_table">
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Licencias" : "Licencias"; ?></h2>
             <div class="card_header_actions">
 
-                <?php 
+            <?php 
                 $fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
                 $fechaActual = new DateTime();
-                $diferenciaAnios = $fechaIngreso->diff($fechaActual)->y;
+                $diferenciadias = $fechaIngreso->diff($fechaActual)->days; 
+
                 $diasHabiles = 0;
+
+                // Calcular último aniversario
+                $anioActual = $fechaActual->format('Y');
+                $aniversario = DateTime::createFromFormat('Y-m-d', $anioActual . '-' . $fechaIngreso->format('m-d'));
+                if ($fechaActual < $aniversario) {
+                    $aniversario->modify('-1 year');
+                }
+
+                // DEBUG:
+                //echo "Aniversario considerado: " . $aniversario->format('Y-m-d') . "<br>";
+
                 foreach ($documents as $licencia) {
                     if ($licencia['usuario_id'] == $user['usuario_id'] && $licencia['status'] === 'Entregado') {
                         $fechaSalida = new DateTime($licencia['fecha_salida']);
                         $fechaRegreso = new DateTime($licencia['fecha_regreso']);
-                        while ($fechaSalida <= $fechaRegreso) {
-                            $diaSemana = $fechaSalida->format('N'); 
-                            if ($diaSemana < 6) {
-                                $diasHabiles++;
+
+                        //echo "Licencia de " . $fechaSalida->format('Y-m-d') . " a " . $fechaRegreso->format('Y-m-d') . "<br>";
+
+                        if ($fechaRegreso >= $aniversario) {
+
+                            if ($fechaSalida < $aniversario) {
+                                $fechaSalida = clone $aniversario;
                             }
-                            $fechaSalida->modify('+1 day');
+
+                            //echo "Se ajusta salida a: " . $fechaSalida->format('Y-m-d') . "<br>";
+
+                            while ($fechaSalida <= $fechaRegreso && $fechaSalida <= $fechaActual) {
+                                $diaSemana = $fechaSalida->format('N'); // 1 (lunes) a 7 (domingo)
+                                //echo "Revisando día: " . $fechaSalida->format('Y-m-d') . " (Día semana: $diaSemana)<br>";
+
+                                if ($diaSemana < 6) { // Lunes a viernes
+                                    $diasHabiles++;
+                                    //echo "Es día hábil! ++ <br>";
+                                }
+                                $fechaSalida->modify('+1 day');
+                            }
+                        } else {
+                            //echo "Licencia ignorada porque terminó antes del aniversario.<br>";
                         }
                     }
                 }
 
-                if ($diferenciaAnios >= 1 && $diferenciaAnios < 3) {
+                //print_r($diferenciadias);
+                //print_r($licencia['puesto_id']);
+
+                if ($diferenciadias < 90 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
                     echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciaAnios >= 3 && $diferenciaAnios < 6) {
+                } elseif ($diferenciadias >= 91 && $diferenciadias < 180 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
                     echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciaAnios >= 6) {
+                } elseif ($diferenciadias >= 181 && $diferenciadias < 365 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                } elseif ($diferenciadias > 366 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/180 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                } elseif ($diferenciadias < 90 && !in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                } elseif ($diferenciadias >= 91 && $diferenciadias < 180 && !in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+                } elseif ($diferenciadias >= 181 && !in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
                     echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
                 }
                 ?>
+
                 <button class="btn_entregadoo" data-status="Entregado" onclick="filterLicenciass('Entregado')">Entregados</button>
                 <button class="btn_Pendiente" data-status="Pendiente" onclick="filterLicenciass('Pendiente')">Pendientes</button>
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>
@@ -157,8 +197,9 @@
     
 <?php endif;  
 ?>
-
+<script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>
+
 <script>
 let currentStatusFilter = 'Pendiente';
 
@@ -205,20 +246,20 @@ if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['use
     echo generateModalLicencias($_SESSION['user_area']);
 }
 
-if (Session::exists('Licencias_success')) {
-    echo showAlert('success', Session::get('Licencias_success'));
-    echo "<script>hideAlert('success');</script>";
-    Session::delete('Licencias_success');
+if (Session::exists('document_success')) {
+echo showAlert('success', Session::get('document_success'));
+echo "<script>hideAlert('success');</script>";
+Session::delete('document_success');
 }
-if (Session::exists('Licencias_warning')) {
-    echo showAlert('warning', Session::get('Licencias_warning'));
-    echo "<script>hideAlert('warning');</script>";
-    Session::delete('Licencias_warning');
-}
-if (Session::exists('Licencias_error')) {
-    echo showAlert('error', Session::get('Licencias_error'));
-    echo "<script>hideAlert('error');</script>";
-    Session::delete('Licencias_error');
-}
-?>
 
+if (Session::exists('document_warning')) {
+echo showAlert('warning', Session::get('document_warning'));
+echo "<script>hideAlert('warning');</script>";
+Session::delete('document_warning');
+}
+
+if (Session::exists('document_error')) {
+echo showAlert('error', Session::get('document_error'));
+echo "<script>hideAlert('error');</script>";
+Session::delete('document_error');
+}

@@ -31,15 +31,19 @@ function generateModalLicencias($areaAdscripcion_id)
                         </li>";
     $db = new DB();
     $userModel = new UserModel($db);
-    $jefeInmediato = $userModel->getJefeInmediato($areaAdscripcion_id);
-    $jefeInmediatoId = is_array($jefeInmediato) && isset($jefeInmediato[0]) ? $jefeInmediato[0] : null;
-    if($jefeInmediatoId == 0){
-        $usersList = $userModel->getUsersList1();
-    }else{
-        $usersList = $userModel->getUsersListJefeInmediato($jefeInmediatoId);
-    }
-    
+    $usersList = $userModel->getUsersList();
+    $areaAdscripcionId = $_SESSION['user_area'];
+    $useName = $_SESSION['user_name'];
+    $userRoleId = $_SESSION['user_role'];
     foreach ($usersList as $usuario) {
+
+        if (($userRoleId != 1 && $userRoleId != 2) && $usuario['usuario_nombre'] == $useName) {
+            continue;   
+        }
+        if ($userRoleId == 4 && $usuario['areaAdscripcion_id'] != $areaAdscripcionId) {
+            continue;
+        }
+
         $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
                        " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
                        <span>" . $usuario["usuario_nombre"] . "</span>
@@ -211,6 +215,20 @@ function generateModalLicencias($areaAdscripcion_id)
         });
     });
     
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form[action=\"admin_home.php?page=licencias&action=licencias\"]');
+        const usuarioIdInput = document.getElementById('usuario_id');
+        const sBtnText = document.querySelector('#usuario_id_menu .sBtn_text');
+
+        form.addEventListener('submit', function (event) {
+            if (sBtnText.innerText.trim() === 'Selecciona al empleado' || !usuarioIdInput.value.trim()) {
+                alert('Por favor selecciona un empleado antes de enviar el formulario.');
+                event.preventDefault();
+            }
+        });
+
+    });
+    
     </script>
     
     ";
@@ -221,20 +239,40 @@ function generateModalLicencias($areaAdscripcion_id)
     $diferenciaAnios = $fechaIngreso->diff($fechaActual)->y;
 
     
-    if ($diferenciaAnios >= 1 && $diferenciaAnios < 3) {
-        $diasTotalesPermitidos = 15;
-    } elseif ($diferenciaAnios >= 3 && $diferenciaAnios < 6) {
-        $diasTotalesPermitidos = 30;
-    } elseif ($diferenciaAnios >= 6) {
-        $diasTotalesPermitidos = 60;
+    $puestosEspeciales = [16, 17, 18, 19, 20, 21];
+    $fechaIngreso = new DateTime($usuario['usuario_fechaIngreso']);
+    $fechaActual = new DateTime();
+    $diferenciadias = $fechaIngreso->diff($fechaActual)->days;
+
+    $diasTotalesPermitidos = 0;
+
+    if (in_array($usuario['puesto_id'], $puestosEspeciales)) {
+        if ($diferenciadias < 90) {
+            $diasTotalesPermitidos = 15;
+        } elseif ($diferenciadias >= 91 && $diferenciadias < 180) {
+            $diasTotalesPermitidos = 30;
+        } elseif ($diferenciadias >= 181 && $diferenciadias < 365) {
+            $diasTotalesPermitidos = 60;
+        } elseif ($diferenciadias > 366) {
+            $diasTotalesPermitidos = 180;
+        }
+    } else {
+        if ($diferenciadias < 90) {
+            $diasTotalesPermitidos = 15;
+        } elseif ($diferenciadias >= 91 && $diferenciadias < 180) {
+            $diasTotalesPermitidos = 30;
+        } elseif ($diferenciadias >= 181) {
+            $diasTotalesPermitidos = 60;
+        }
     }
+
     $diasUtilizados = 0;
     foreach ($userModel->getLicenciasByUsuarioId($usuario['usuario_id']) as $licencia) {
         if ($licencia['status'] === 'Entregado') {
             $fechaSalida = new DateTime($licencia['fecha_salida']);
             $fechaRegreso = new DateTime($licencia['fecha_regreso']);
             while ($fechaSalida <= $fechaRegreso) {
-                $diaSemana = $fechaSalida->format('N'); 
+                $diaSemana = $fechaSalida->format('N');
                 if ($diaSemana < 6) {
                     $diasUtilizados++;
                 }
@@ -244,7 +282,13 @@ function generateModalLicencias($areaAdscripcion_id)
     }
 
     $diasRestantes = $diasTotalesPermitidos - $diasUtilizados;
+    if ($diasRestantes < 0) {
+        $diasRestantes = 0;
+    }
 
+
+    $diasRestantes = $diasTotalesPermitidos - $diasUtilizados;
+echo "<script>console.log('Días restantes: $diasRestantes');</script>";
     $modal .= "
     <script>
         document.addEventListener('DOMContentLoaded', function () {

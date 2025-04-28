@@ -33,19 +33,29 @@ class CommissionController
     }
 
     public function addComision($data) {
-        if ($this->CommissionsModel->addComision($data, $this->table_name)) {
-            Session::set('user_success', 'Comisión registrada correctamente.');
-        } else {
-            Session::set('user_error', 'No se pudo registrar la comisión.');
+        $user_ID = isset($data["usuario_id"]) ? intval($data["usuario_id"]) : null;
+
+        if (empty($user_ID) || !is_int($user_ID)) {
+            Session::set('document_warning', "Error: el campo usuario es obligatorio");
+            echo "<script>$(location).attr('href', 'admin_home.php?page=commissions');</script>";
+            exit;
         }
+
+        if ($this->CommissionsModel->addComision($data, $this->table_name)) {
+            Session::set('document_success', 'Comisión registrada correctamente.');
+        } else {
+            Session::set('document_warning', 'No se pudo registrar la comisión.');
+        }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=commissions');</script>";
     }
 
     public function updateCommission($data) {
         if ($this->CommissionsModel->updateComision($data, $this->table_name)) {
-            Session::set('user_success', 'Comisión registrada correctamente.');
+            Session::set('document_success', 'Comisión registrada correctamente.');
         } else {
-            Session::set('user_error', 'No se pudo registrar la comisión.');
+            Session::set('document_warning', 'No se pudo registrar la comisión.');
         }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=commissions');</script>";
     }
 
     public function describeTable($name)

@@ -7,6 +7,19 @@
 <link rel="stylesheet" href="assets/css/admin/see_user.css">
 <link rel="stylesheet" href="assets/css/admin/manage_users.css">
 
+<?php if (!empty($users)) : ?>
+    <script>
+        const users = <?php echo json_encode(array_values($users ?? [])); ?>;
+    </script>
+<?php else : ?>
+    <script>
+        const users = [];
+    </script>
+<?php endif; ?>
+
+
+
+
 
 <style>
     .form_row {
@@ -21,7 +34,8 @@
     }
     </style>
 
-
+    <script>
+    </script>
 
     <script>
     function confirmDelete(id, data) {
@@ -67,8 +81,9 @@
         }
     }
 
+    <!-- absence_list.php -->
+
     function addRol() {
-        //todo cachar usuarios
         const options = users.map(user => `<option value="${user.usuario_id}">${user.usuario_nombre}</option>`).join('');
 
         const modalContent = `
@@ -243,11 +258,6 @@
         </div>
     </div>
     </div>
-
-<?php
-
-?>
-
 <script src="assets/js/search_document.js"></script>
 <script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>

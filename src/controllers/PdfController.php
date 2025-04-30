@@ -21,8 +21,7 @@ Class PdfController{
     }
 
     public function generarPdfTimeByTime($id) {
-        //print_r($data); exit;
-        //print_r($id); exit;
+
         if($id === null) {
             Session::set('document_warning', 'Error al generar el documento');
             echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
@@ -48,10 +47,8 @@ Class PdfController{
         }
         $pagosMismoDia = array_unique($pagosMismoDia);
         $registro['pagos_mismo_dia'] = $pagosMismoDia;
-        //print_r($registro); exit;
-
         $nombreArchivo = "{$registro['usuario_nombre']} {$registro['usuario_nomina']} Folio {$registro['folio']}";
-        
+        $usuario = Session::get('user_role');
         ob_start();
         include __DIR__ . '/../pdf_templates/template-4.php'; // ruta relativa al archivo actual
         $html = ob_get_clean();
@@ -61,7 +58,7 @@ Class PdfController{
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
         $options->set('isPhpEnabled', true);
-        $options->setChroot('C:/laragon/www/SGD');
+        $options->setChroot(__DIR__. '/../assets');
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);

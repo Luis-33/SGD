@@ -26,3 +26,20 @@ function closeAlert(type) {
         alertElement.hide();
     }
 }
+
+function deleteAlert(formId, usuario_nombre, folio) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Eliminar archivo de ${usuario_nombre} con Folio: ${folio}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}

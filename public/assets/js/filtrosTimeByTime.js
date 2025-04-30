@@ -16,24 +16,41 @@ document.addEventListener("DOMContentLoaded", function () {
     // Filtro por texto
     searchInput.addEventListener("input", function () {
         const value = normalizeText(this.value);
-
+    
+        const texto = /^[\p{L} ]+$/u.test(value);
+        const numeros = /^[0-9]+$/.test(value);
+        const contieneGuion = value.includes("-");
+    
         tableItems().forEach(item => {
             let match = false;
-
+    
+            const folio = normalizeText(item.querySelector(".row_folio")?.textContent || "");
+            const fecha = normalizeText(item.querySelector(".row_fecha")?.textContent || "");
+            const nombre = normalizeText(item.querySelector(".user_name")?.textContent || "");
+    
             if (typeof role !== "undefined" && role === 3) {
-                const folio = normalizeText(item.querySelector(".row_folio")?.textContent || "");
-                const fecha = normalizeText(item.querySelector(".row_fecha")?.textContent || "");
-                match = folio.includes(value) || fecha.includes(value);
+                if (numeros && !contieneGuion) {
+                    match = folio.startsWith(value); // o `folio === value` si quieres exacto
+                } else if (contieneGuion) {
+                    match = fecha.includes(value);
+                }
             } else {
-                const nombre = normalizeText(item.querySelector(".user_name")?.textContent || "");
-                match = nombre.includes(value);
+                if (contieneGuion) {
+                    match = fecha.includes(value);
+                } else if (numeros && !contieneGuion) {
+                    match = folio.startsWith(value);
+                } else if (texto) {
+                    match = nombre.includes(value);
+                }
             }
-
+            console.log("Texto a buscar:", value, " - Coincide:", match);
+    
             item.style.display = match ? "" : "none";
         });
-
+    
         toggleNoResultsMessage();
     });
+    
 
     // Botón para limpiar búsqueda
     clearInput.addEventListener("click", function () {

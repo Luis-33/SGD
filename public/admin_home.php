@@ -204,7 +204,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 'end_date'     => $_POST['end_date'],
                                 'total_days'   => $_POST['total_days'],
                                 'is_open'      => $_POST['is_open'],
-                                'document'     => null // valor por defecto si no se sube archivo
+                                'document'     => null // se llena solo si el archivo se sube correctamente
                             ];
 
                             // Verificar si se subió archivo

@@ -46,13 +46,13 @@
                 <input type="hidden" name="absence_id" value="${id}">
                  <div class="modal_header">
                     <h2>Confirmar Eliminación</h2>
-                        <button onclick="closeModal('confirmDelete')">Cerrar</button>
+                        <button type="button" onclick="closeModal('confirmDelete')">Cerrar</button>
                     </div>
                     <div class="modal_body">
                         <p>¿Estás seguro de que deseas eliminar el registro de: <strong>${data}</strong>?</p>
                         <div class="modal_actions">
                             <button type="submit" class="btn_confirm">Eliminar</button>
-                            <button onclick="closeModal('confirmDelete')" class="btn_cancel">Cancelar</button>
+                            <button type="button" onclick="closeModal('confirmDelete')" class="btn_cancel">Cancelar</button>
                         </div>
                     </div>
                 </form>
@@ -145,7 +145,7 @@
                         </div>
                     </div>
 
-                    <input type="hidden" name="parent_id" value="">
+                    <input type="text" name="parent_id" value="">
 
                     <div class="modal_actions">
                         <button type="submit" class="btn_confirm">Agregar</button>
@@ -162,35 +162,56 @@
 
 
 
-    function editRol(rolId, rolName) {
+    function editAbsence(absenceId, folioNumber, startDate, endDate, isOpen) {
         const modalContent = `
-        <div class="modal editRol">
+        <div class="modal editAbsence">
             <div class="modal_content">
                 <div class="modal_header">
-                    <h2>Editar Rol</h2>
-                    <button onclick="closeModal('editRol')">Cerrar</button>
+                    <h2>Editar Incapacidad</h2>
+                    <button type="button" onclick="closeModal('editAbsence')">Cerrar</button>
                 </div>
                 <div class="modal_body">
-                    <form action="admin_home.php?page=roles&action=editRol" method="POST" id="editRolForm">
-                        <input type="hidden" name="rolId" value="${rolId}">
+                    <form action="admin_home.php?page=absences&action=edit" method="POST" id="editAbsenceForm">
+                        <input type="hidden" name="absence_id" value="${absenceId}">
                         <div class="form_group">
-                            <label for="rolNombre">Nombre del Rol</label>
+                            <label for="folio_number">Folio</label>
                             <div class="input_group">
-                                <input class="search_input" type="text" name="rolNombre" id="rolNombre" value="${rolName}" required>
+                                <input class="search_input" type="text" name="folio_number" id="folio_number" value="${folioNumber}" required>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <label for="start_date">Fecha de Inicio</label>
+                            <div class="input_group">
+                                <input class="search_input" type="date" name="start_date" id="start_date" value="${startDate}" required>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <label for="end_date">Fecha Final</label>
+                            <div class="input_group">
+                                <input class="search_input" type="date" name="end_date" id="end_date" value="${endDate}" required>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <label for="is_open">Estado</label>
+                            <div class="input_group">
+                                <select class="search_input" name="is_open" id="is_open" required>
+                                    <option value="1" ${isOpen === '1' ? 'selected' : ''}>Abierto</option>
+                                    <option value="0" ${isOpen === '0' ? 'selected' : ''}>Cerrado</option>
+                                </select>
                             </div>
                         </div>
                         <div class="modal_actions">
                             <button type="submit" class="btn_confirm">Guardar cambios</button>
-                            <button type="button" onclick="closeModal('editRol')" class="btn_cancel">Cancelar</button>
+                            <button type="button" onclick="closeModal('editAbsence')" class="btn_cancel">Cancelar</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     `;
-        document.body.insertAdjacentHTML('beforeend', modalContent);
-        openModal('editRol');
-    }
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+    openModal('editAbsence');
+}
 
 </script>
 
@@ -232,16 +253,16 @@
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
                                 <i class="fa-solid fa-pen-to-square"
-                                   title="Modificar"
-                                   data-id="<?= $absence['absence_id']; ?>"
-                                   onclick="editAbsence(
-                                   <?= $absence['absence_id']; ?>,
-                                           '<?= addslashes($absence['folio_number']); ?>',
-                                           '<?= $absence['start_date']; ?>',
-                                           '<?= $absence['end_date']; ?>',
-                                           '<?= $absence['is_open']; ?>'
-                                           )">
-                                </i>
+                                title="Modificar"
+                                data_id="<?= $absence['absence_id']; ?>"
+                                onclick="editAbsence(
+                                <?= $absence['absence_id']; ?>,
+                                        '<?= addslashes($absence['folio_number']); ?>',
+                                        '<?= $absence['start_date']; ?>',
+                                        '<?= $absence['end_date']; ?>',
+                                        '<?= $absence['is_open']; ?>'
+                                        )">
+                            </i>
                                 <i class="fa-solid fa-trash-can"
                                    title="Eliminar"
                                    onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
@@ -285,4 +306,3 @@ echo showAlert('error', Session::get('document_error'));
 echo "<script>hideAlert('error');</script>";
 Session::delete('document_error');
 }
-?>

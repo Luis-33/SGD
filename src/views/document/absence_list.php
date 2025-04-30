@@ -67,7 +67,7 @@
         }
     }
 
-    function addRol(users) {
+    function addabsence(users) {
         const options = users.map(user => `<option value="${user.usuario_id}">${user.usuario_nombre}</option>`).join('');
 
         const modalContent = `
@@ -110,7 +110,7 @@
                             <div class="form_group">
                                 <label for="is_open">Estado</label>
                                 <div class="input_group">
-                                    <select class="search_input" name="is_open" id="is_open" required>
+                                    <select class="selection" name="is_open" id="is_open" required>
                                         <option value="1">Abierto</option>
                                         <option value="0">Cerrado</option>
                                     </select>
@@ -122,7 +122,7 @@
                             <div class="form_group">
                                 <label for="user_select">Usuario</label>
                                 <div class="input_group">
-                                    <select class="search_input" name="user_id" id="user_select" required>
+                                    <select class="selection" name="user_id" id="user_select" required>
                                         ${options}
                                     </select>
                                 </div>
@@ -156,39 +156,58 @@
         <div class="modal editAbsence">
             <div class="modal_content">
                 <div class="modal_header">
-                    <h2>Editar Incapacidad</h2>
+                    <h2>Editar Ausencia</h2>
                     <button type="button" onclick="closeModal('editAbsence')">Cerrar</button>
                 </div>
                 <div class="modal_body">
-                    <form action="admin_home.php?page=absences&action=edit" method="POST" id="editAbsenceForm">
+                    <form action="index.php?page=absences&action=edit" method="POST" id="editAbsenceForm" enctype="multipart/form-data">
                         <input type="hidden" name="absence_id" value="${absenceId}">
-                        <div class="form_group">
-                            <label for="folio_number">Folio</label>
-                            <div class="input_group">
-                                <input class="search_input" type="text" name="folio_number" id="folio_number" value="${folioNumber}" required>
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="folio_number">Folio</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="text" name="folio_number" id="folio_number" value="${folioNumber}" required>
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="start_date">Fecha de Inicio</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="date" name="start_date" id="start_date" value="${startDate}" required onchange="calculateDays()">
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="end_date">Fecha Final</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="date" name="end_date" id="end_date" value="${endDate}" required onchange="calculateDays()">
+                                </div>
                             </div>
                         </div>
-                        <div class="form_group">
-                            <label for="start_date">Fecha de Inicio</label>
-                            <div class="input_group">
-                                <input class="search_input" type="date" name="start_date" id="start_date" value="${startDate}" required>
+
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="total_days">Días</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="number" name="total_days" id="total_days" readonly>
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="is_open">Estado</label>
+                                <div class="input_group">
+                                    <select class="selection" name="is_open" id="is_open" required>
+                                        <option value="1" ${isOpen === '1' ? 'selected' : ''}>Abierto</option>
+                                        <option value="0" ${isOpen === '0' ? 'selected' : ''}>Cerrado</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
+
                         <div class="form_group">
-                            <label for="end_date">Fecha Final</label>
+                            <label for="file">Documento</label>
                             <div class="input_group">
-                                <input class="search_input" type="date" name="end_date" id="end_date" value="${endDate}" required>
+                                <input class="search_input" type="file" name="document" id="file">
                             </div>
                         </div>
-                        <div class="form_group">
-                            <label for="is_open">Estado</label>
-                            <div class="input_group">
-                                <select class="search_input" name="is_open" id="is_open" required>
-                                    <option value="1" ${isOpen === '1' ? 'selected' : ''}>Abierto</option>
-                                    <option value="0" ${isOpen === '0' ? 'selected' : ''}>Cerrado</option>
-                                </select>
-                            </div>
-                        </div>
+
                         <div class="modal_actions">
                             <button type="submit" class="btn_confirm">Guardar cambios</button>
                             <button type="button" onclick="closeModal('editAbsence')" class="btn_cancel">Cancelar</button>
@@ -211,7 +230,7 @@
         <div class="card_table_header">
             <h2>Incapacidades</h2>
             <div class="card_header_actions">
-                <button class="btn_documento" onclick="addRol(<?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>)">Agregar</button>
+                <button class="btn_documento" onclick="addabsence(<?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>)">Agregar</button>
             </div>
         </div>
         <div class="card_table_body">

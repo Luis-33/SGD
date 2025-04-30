@@ -50,9 +50,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $AbsencesController= new AbsenceController($db);
 
             switch ($page) {
-
                 case 'dashboard':
-
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
                             $permiso = $_POST['permiso'];
@@ -189,12 +187,49 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     $CommissionController->showCommission($userRole, $userID);
                     break;
                 case 'absences':
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'remove') {
-                        if (isset($_POST['absence_id'])) {
-                            $id = $_POST['absence_id'];
-                            $AbsencesController->remove($id);
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if($action === 'remove'){
+                            if (isset($_POST['absence_id'])) {
+                                $id = $_POST['absence_id'];
+                                $AbsencesController->remove($id);
+                            }
+                            break;
                         }
-                        break;
+
+                        if ($action === 'save') {
+                            $data = [
+                                'user_id'      => $_POST['user_id'],
+                                'folio_number' => $_POST['folio_number'],
+                                'start_date'   => $_POST['start_date'],
+                                'end_date'     => $_POST['end_date'],
+                                'total_days'   => $_POST['total_days'],
+                                'is_open'      => $_POST['is_open'],
+                                'document'     => null // valor por defecto si no se sube archivo
+                            ];
+
+                            // Verificar si se subió archivo
+                            if (isset($_FILES['document']) && $_FILES['document']['error'] === UPLOAD_ERR_OK) {
+                                $fileTmp = $_FILES['document']['tmp_name'];
+                                $fileName = basename($_FILES['document']['name']);
+                                $filePath = 'uploads/' . $fileName;
+
+                                // Mover archivo
+                                if (move_uploaded_file($fileTmp, $filePath)) {
+                                    $data['document'] = $filePath;
+                                } else {
+                                    echo "Error al subir el archivo.";
+                                    break;
+                                }
+                            } else {
+                                echo "Archivo no válido.";
+                                break;
+                            }
+
+                            // Guardar usando el controlador
+                            $AbsencesController->save($data);
+                            break;
+                        }
+
                     } else {
                         $AbsencesController->show();
                     }

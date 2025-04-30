@@ -7,20 +7,6 @@
 <link rel="stylesheet" href="assets/css/admin/see_user.css">
 <link rel="stylesheet" href="assets/css/admin/manage_users.css">
 
-<?php if (!empty($users)) : ?>
-    <script>
-        const users = <?php echo json_encode(array_values($users ?? [])); ?>;
-    </script>
-<?php else : ?>
-    <script>
-        const users = [];
-    </script>
-<?php endif; ?>
-
-
-
-
-
 <style>
     .form_row {
         display: flex;
@@ -81,81 +67,84 @@
         }
     }
 
-    <!-- absence_list.php -->
-
-    function addRol() {
+    function addRol(users) {
         const options = users.map(user => `<option value="${user.usuario_id}">${user.usuario_nombre}</option>`).join('');
 
         const modalContent = `
-    <div class="modal addAbsence">
-        <div class="modal_content">
-            <div class="modal_header">
-                <h2>Agregar Ausencia</h2>
-                <button onclick="closeModal('addAbsence')">Cerrar</button>
-            </div>
-            <div class="modal_body">
-                <form action="index.php?page=absences" method="POST" id="addAbsenceForm">
-                    <div class="form_row">
-                        <div class="form_group">
-                            <label for="folio_number">Folio</label>
-                            <div class="input_group">
-                                <input class="search_input" type="text" name="folio_number" id="folio_number" required>
-                            </div>
-                        </div>
-                        <div class="form_group">
-                            <label for="start_date">Fecha de Inicio</label>
-                            <div class="input_group">
-                                <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()">
-                            </div>
-                        </div>
-                        <div class="form_group">
-                            <label for="end_date">Fecha Final</label>
-                            <div class="input_group">
-                                <input class="search_input" type="date" name="end_date" id="end_date" required onchange="calculateDays()">
-                            </div>
-                        </div>
+            <div class="modal addAbsence">
+                <div class="modal_content">
+                    <div class="modal_header">
+                        <h2>Agregar Ausencia</h2>
+                        <button onclick="closeModal('addAbsence')">Cerrar</button>
                     </div>
-
-                    <div class="form_row">
-                        <div class="form_group">
-                            <label for="total_days">Días</label>
-                            <div class="input_group">
-                                <input class="search_input" type="number" name="total_days" id="total_days" readonly>
+                <div class="modal_body">
+                    <form action="index.php?page=absences&action=save" method="POST" id="addAbsenceForm" enctype="multipart/form-data">
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="folio_number">Folio</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="text" name="folio_number" id="folio_number" required>
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="start_date">Fecha de Inicio</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()">
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="end_date">Fecha Final</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="date" name="end_date" id="end_date" required onchange="calculateDays()">
+                                </div>
                             </div>
                         </div>
-                        <div class="form_group">
-                            <label for="is_open">Estado</label>
-                            <div class="input_group">
-                                <select class="search_input" name="is_open" id="is_open" required>
-                                    <option value="1">Abierto</option>
-                                    <option value="0">Cerrado</option>
-                                </select>
+
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="total_days">Días</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="number" name="total_days" id="total_days" readonly>
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="is_open">Estado</label>
+                                <div class="input_group">
+                                    <select class="search_input" name="is_open" id="is_open" required>
+                                        <option value="1">Abierto</option>
+                                        <option value="0">Cerrado</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form_row">
-                        <div class="form_group">
-                            <label for="user_select">Usuario</label>
-                            <div class="input_group">
-                                <select class="search_input" name="user_id" id="user_select" required>
-                                    ${options}
-                                </select>
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="user_select">Usuario</label>
+                                <div class="input_group">
+                                    <select class="search_input" name="user_id" id="user_select" required>
+                                        ${options}
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <input type="text" name="parent_id" value="">
+                        <div class="form_group">
+                            <label for="file">Documento</label>
+                            <div class="input_group">
+                                <input class="search_input" type="file" name="document" id="file" required>
+                            </div>
+                        </div>
 
-                    <div class="modal_actions">
-                        <button type="submit" class="btn_confirm">Agregar</button>
-                        <button type="button" onclick="closeModal('addAbsence')" class="btn_cancel">Cancelar</button>
-                    </div>
-                </form>
+                        <div class="modal_actions">
+                            <button type="submit" class="btn_confirm">Agregar</button>
+                            <button type="button" onclick="closeModal('addAbsence')" class="btn_cancel">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-`;
+        `;
         document.body.insertAdjacentHTML('beforeend', modalContent);
         openModal('addAbsence');
     }
@@ -222,7 +211,7 @@
         <div class="card_table_header">
             <h2>Incapacidades</h2>
             <div class="card_header_actions">
-                <button class="btn_documento" onclick="addRol()">Agregar</button>
+                <button class="btn_documento" onclick="addRol(<?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>)">Agregar</button>
             </div>
         </div>
         <div class="card_table_body">
@@ -250,27 +239,27 @@
                         <span class="row_fecha">
                 <?php echo $absence["is_open"] === '1' ? 'Abierto' : 'Cerrado'; ?>
             </span>
-                        <?php if ($_SESSION['user_role'] == 1) : ?>
-                            <div class="row_actions">
-                                <i class="fa-solid fa-pen-to-square"
-                                title="Modificar"
-                                data_id="<?= $absence['absence_id']; ?>"
-                                onclick="editAbsence(
-                                <?= $absence['absence_id']; ?>,
-                                        '<?= addslashes($absence['folio_number']); ?>',
-                                        '<?= $absence['start_date']; ?>',
-                                        '<?= $absence['end_date']; ?>',
-                                        '<?= $absence['is_open']; ?>'
-                                        )">
-                            </i>
-                                <i class="fa-solid fa-trash-can"
-                                   title="Eliminar"
-                                   onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
-                                </i>
-                            </div>
-                        <?php endif; ?>
+                <?php if ($_SESSION['user_role'] == 1) : ?>
+                    <div class="row_actions">
+                        <i class="fa-solid fa-pen-to-square"
+                        title="Modificar"
+                        data_id="<?= $absence['absence_id']; ?>"
+                        onclick="editAbsence(
+                        <?= $absence['absence_id']; ?>,
+                                '<?= addslashes($absence['folio_number']); ?>',
+                                '<?= $absence['start_date']; ?>',
+                                '<?= $absence['end_date']; ?>',
+                                '<?= $absence['is_open']; ?>'
+                                )">
+                    </i>
+                        <i class="fa-solid fa-trash-can"
+                           title="Eliminar"
+                           onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
+                        </i>
                     </div>
-                <?php endforeach; ?>
+                <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
             </div>
 
         <div class="no_result_message" id="noResultsMessage" style="display: none;">

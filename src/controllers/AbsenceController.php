@@ -22,7 +22,8 @@ class AbsenceController
     public function show()
     {
         $return_data = $this->absenceModel->getAll();
-        $users = $this->userModel->getAllUsers(1);
+        $users = $this->userModel->getAll();
+
         require VIEW_PATH . 'document/absence_list.php';
     }
 
@@ -33,6 +34,15 @@ class AbsenceController
             header('Location: admin_home.php?page=absences');
         } else {
             Session::set('document_error', 'Error al eliminar la incapacidad.');
+        }
+    }
+
+    public function save($data){
+        if ($this->absenceModel->save($data)) {
+            Session::set('document_success', 'Incapacidad guardada exitosamente.');
+            header('Location: admin_home.php?page=absences');
+        } else {
+            Session::set('document_error', 'Error al guardar la incapacidad.');
         }
     }
 }

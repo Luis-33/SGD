@@ -54,6 +54,17 @@ class UserModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    public function getAll()
+    {
+        $query = "SELECT usuario.usuario_id, usuario.usuario_nombre
+                  FROM usuario";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getUsersList()
     {
         $query = "SELECT * FROM usuario ORDER BY usuario_nombre";

@@ -74,11 +74,17 @@
                         <?php if ($_SESSION['user_role'] == 1) : ?>
                             <div class="row_actions">
                                 <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $registro["usuario_nombre"]; ?>" data-id="<?php echo $registro['id']; ?>" onclick="openModal('timebytimeEdit<?php echo $registro['id']; ?>')"></i>
-                                <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"]);?>  
+                                <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"], $registro["estatus"], $registro["usuario_id"]);?>  
                                 <i class="fa-solid fa-upload" title="Subir archivo de <?= $registro["usuario_nombre"]; ?>" onclick="openModal('timebytimeUploadFile<?php echo $registro['id']; ?>')"></i>
                                 <?php echo generateModalUploadFile($registro['id'], $registro['folio'], $registro['usuario_nombre']); ?>
                                 <i class="fa-solid fa-trash-can" title="Eliminar archivo de <?= $registro["usuario_nombre"]; ?>" onclick="openModal('timebytimeDeleteFile<?php echo $registro['id']; ?>')"></i>
                                 <?php echo generateModalDeleteTimeByTime($registro['id'], $registro['folio'], $registro['usuario_nombre']); ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($_SESSION['user_role'] == 4) : ?>
+                            <div class="row_actions">
+                                <i class="fa-solid fa-pen-to-square" title="Modificar de <?= $registro["usuario_nombre"]; ?>" data-id="<?php echo $registro['id']; ?>" onclick="openModal('timebytimeEdit<?php echo $registro['id']; ?>')"></i>
+                                <?php echo generateModalEditTimeByTime($registro["id"], $registro["folio"], $registro["estatus"], $registro["usuario_id"]);?>  
                             </div>
                         <?php endif; ?>
                     </div>

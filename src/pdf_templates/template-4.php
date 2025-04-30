@@ -246,7 +246,6 @@
                             <td><?= htmlspecialchars($pago['fechaP']) ?></td>
                             <td><?= htmlspecialchars($pago['horaP']) ?></td>
                             <?php if ($usuario == 1): ?>
-                                <?php if ($usuario == 1): ?>
                                     <td class ="td-img">
                                         <?php if ($pago['estatusP'] == 1): ?>
                                             <img src="/images/check.jpg">
@@ -254,7 +253,6 @@
                                             <img src="/images/cross.jpg">
                                         <?php endif; ?>
                                     </td>
-                                <?php endif; ?>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>

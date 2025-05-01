@@ -45,5 +45,39 @@ class AbsenceController
             Session::set('document_error', 'Error al guardar la incapacidad.');
         }
     }
+
+    public function viewChain($absenceId)
+    {
+        $chain = $this->absenceModel->getAbsenceChain($absenceId);
+
+        echo "<h1>Cadena de ausencias para la incapacidad ID: $absenceId</h1>";
+
+        if (!empty($chain)) {
+            echo "<table border='1' cellpadding='5' cellspacing='0'>";
+            echo "<thead><tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Folio</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Estado</th>
+              </tr></thead>";
+            echo "<tbody>";
+            foreach (array_reverse($chain) as $item) {
+                echo "<tr>
+                    <td>{$item['absence_id']}</td>
+                    <td>" . htmlspecialchars($item['full_name']) . "</td>
+                    <td>" . htmlspecialchars($item['folio_number']) . "</td>
+                    <td>{$item['start_date']}</td>
+                    <td>{$item['end_date']}</td>
+                    <td>" . ($item['is_open'] === '1' ? 'Abierto' : 'Cerrado') . "</td>
+                  </tr>";
+            }
+            echo "</tbody></table>";
+        } else {
+            echo "<p>No se encontró la cadena de ausencias</p>";
+        }
+    }
+
 }
 ?>   

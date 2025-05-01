@@ -231,6 +231,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
 
                     } else {
+                        if ($action === 'view_chain' && isset($_GET['id'])) {
+                            $id = $_GET['id'];
+                            $AbsencesController->viewChain($id); // nueva función que debes agregar
+                            break;
+                        }
+
                         $AbsencesController->show();
                     }
                     break;

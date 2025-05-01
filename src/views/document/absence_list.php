@@ -223,6 +223,42 @@
 
 </script>
 
+<script>
+    function viewAbsence(absenceId) {
+        console.log("Entró a viewAbsence con ID:", absenceId); // << añade esta línea
+        fetch(`admin_home.php?page=absences&action=view_chain&id=${absenceId}`)
+            .then(response => response.text())
+            .then(html => {
+                console.log("HTML recibido:", html); // << verifica aquí también
+                const modal = document.createElement('div');
+                modal.className = 'modal viewAbsence';
+                modal.innerHTML = `
+                <div class="modal_content">
+                    <div class="modal_header">
+                        <h2>Detalle de Incapacidad</h2>
+                        <button onclick="closeModal('viewAbsence')">Cerrar</button>
+                    </div>
+                    <div class="modal_body">${html}</div>
+                </div>
+            `;
+                document.body.appendChild(modal);
+            })
+            .catch(error => {
+                alert('Error al cargar el detalle');
+                console.error(error);
+            });
+    }
+
+
+    function closeModal(className) {
+        const modal = document.querySelector('.modal.' + className);
+        if (modal) {
+            modal.remove();
+        }
+    }
+</script>
+
+
 
 <?php if (!empty($return_data)) : ?>
 
@@ -275,6 +311,13 @@
                            title="Eliminar"
                            onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
                         </i>
+                        <?php if ($absence['parent_id'] !== null) : ?>
+                            <i class="fa-solid fa-eye"
+                               title="Ver detalle"
+                               onclick="viewAbsence(<?= $absence['absence_id']; ?>)">
+                            </i>
+                        <?php endif; ?>
+
                     </div>
                 <?php endif; ?>
                 </div>

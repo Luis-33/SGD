@@ -112,4 +112,27 @@ class absenceModel
         return $stmt->execute();
     }
 
+    public function getAbsenceChain($absenceId)
+    {
+        $chain = [];
+        var_dump($absenceId); // 👈 Agrega esto para ver el resultado
+
+        while ($absenceId !== null) {
+            $stmt = $this->db->prepare("SELECT * FROM absences WHERE absence_id = :id AND is_deleted = '0'");
+            $stmt->execute(['id' => $absenceId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            var_dump($row); // 👈 Agrega esto para ver el resultado
+
+            if (!$row) break;
+
+            $chain[] = $row;
+            $absenceId = $row['parent_id']; // continuar hacia arriba
+        }
+
+        return $chain;
+    }
+
+
+
 }

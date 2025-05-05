@@ -5,72 +5,51 @@
             <div class="card_header_actions">
 
             <?php 
-                $fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
-                $fechaActual = new DateTime();
-                $diferenciadias = $fechaIngreso->diff($fechaActual)->days; 
+$fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
+$fechaActual = new DateTime();
+$diferenciadias = $fechaIngreso->diff($fechaActual)->days; 
 
-                $diasHabiles = 0;
+$diasHabiles = 0;
+$anioActual = $fechaActual->format('Y');
+$inicioAnio = new DateTime($anioActual . '-01-01');
 
-                // Calcular último aniversario
-                $anioActual = $fechaActual->format('Y');
-                $aniversario = DateTime::createFromFormat('Y-m-d', $anioActual . '-' . $fechaIngreso->format('m-d'));
-                if ($fechaActual < $aniversario) {
-                    $aniversario->modify('-1 year');
-                }
+foreach ($documents as $licencia) {
+    if (
+        $licencia['usuario_id'] == $user['usuario_id'] && 
+        
 
-                // DEBUG:
-                //echo "Aniversario considerado: " . $aniversario->format('Y-m-d') . "<br>";
+        $licencia['status'] === 'Entregado' &&
+        isset($licencia['fecha_elaboracion']) &&
+        (new DateTime($licencia['fecha_elaboracion'])) >= $inicioAnio
+    ) {
+        $fechaSalida = new DateTime($licencia['fecha_salida']);
+        $fechaRegreso = new DateTime($licencia['fecha_regreso']);
 
-                foreach ($documents as $licencia) {
-                    if ($licencia['usuario_id'] == $user['usuario_id'] && $licencia['status'] === 'Entregado') {
-                        $fechaSalida = new DateTime($licencia['fecha_salida']);
-                        $fechaRegreso = new DateTime($licencia['fecha_regreso']);
+        while ($fechaSalida <= $fechaRegreso && $fechaSalida <= $fechaActual) {
+            $diaSemana = $fechaSalida->format('N'); // 1 = lunes, ..., 7 = domingo
+            if ($diaSemana < 6) { // Lunes a viernes
+                $diasHabiles++;
+            }
+            $fechaSalida->modify('+1 day');
+        }
+    }
+}
+print_r($licencia['usuario_id']);
+if ($diferenciadias < 90 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 91 && $diferenciadias < 180 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 181 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias < 90) { 
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 91 && $diferenciadias < 180) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 181) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+}
+?>
 
-                        //echo "Licencia de " . $fechaSalida->format('Y-m-d') . " a " . $fechaRegreso->format('Y-m-d') . "<br>";
-
-                        if ($fechaRegreso >= $aniversario) {
-
-                            if ($fechaSalida < $aniversario) {
-                                $fechaSalida = clone $aniversario;
-                            }
-
-                            //echo "Se ajusta salida a: " . $fechaSalida->format('Y-m-d') . "<br>";
-
-                            while ($fechaSalida <= $fechaRegreso && $fechaSalida <= $fechaActual) {
-                                $diaSemana = $fechaSalida->format('N'); // 1 (lunes) a 7 (domingo)
-                                //echo "Revisando día: " . $fechaSalida->format('Y-m-d') . " (Día semana: $diaSemana)<br>";
-
-                                if ($diaSemana < 6) { // Lunes a viernes
-                                    $diasHabiles++;
-                                    //echo "Es día hábil! ++ <br>";
-                                }
-                                $fechaSalida->modify('+1 day');
-                            }
-                        } else {
-                            //echo "Licencia ignorada porque terminó antes del aniversario.<br>";
-                        }
-                    }
-                }
-
-                //print_r($diferenciadias);
-                //print_r($licencia['puesto_id']);
-
-                if ($diferenciadias < 90 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciadias >= 91 && $diferenciadias < 180 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciadias >= 181 && $diferenciadias < 365 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciadias > 366 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/180 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciadias < 90 && !in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciadias >= 91 && $diferenciadias < 180 && !in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciadias >= 181 && !in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                }
-                ?>
 
                 <button class="btn_entregadoo" data-status="Entregado" onclick="filterLicenciass('Entregado')">Entregados</button>
                 <button class="btn_Pendiente" data-status="Pendiente" onclick="filterLicenciass('Pendiente')">Pendientes</button>

@@ -236,7 +236,7 @@
                         <th>Fecha de pago</th>
                         <th>Horas</th>
                         <?php if ($usuario == 1): ?>
-                            <th>Check</th>
+                            <th>Validacion</th>
                         <?php endif; ?>
                     </tr>
                 </thead>

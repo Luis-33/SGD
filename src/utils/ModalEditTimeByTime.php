@@ -27,8 +27,13 @@ function generateModalEditTimeByTime($docID, $folio, $estatusRegistro, $userID)
     $modal = "
     <div class=\"modal timebytimeEdit{$docID}\">
         <div class=\"modal_content\">
-            <div class=\"modal_header\">
-                <h2>Validar Registro Folio - {$folio}</h2>
+            <div class=\"modal_header\">";
+            if ($isUser) {
+                $modal .= "<h2>Editar Registro Folio - {$folio}</h2>";
+            } else {
+                $modal .= "<h2>Validar Registro Folio - {$folio}</h2>";
+            }
+    $modal .= "
                 <button onclick=\"closeModal('timebytimeEdit{$docID}')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
@@ -59,7 +64,7 @@ function generateModalEditTimeByTime($docID, $folio, $estatusRegistro, $userID)
         $modal .= "
                             <tr>
                                 <td><input type=\"date\" name=\"fechaF_{$falta['id']}\" value=\"{$falta['fechaF']}\" required {$inputDisabled}></td>
-                                <td><input class=\"horasFalta\" type=\"number\" step=\"1\" min=\"1\" max=\"24\" name=\"horasF_{$falta['id']}\" value=\"{$falta['horasF']}\" required {$inputDisabled}></td>
+                                <td><input class=\"horasFalta\" type=\"number\" step=\"1\" min=\"1\" max=\"24\" name=\"horasF_{$falta['id']}\" value=\"{$falta['horasF']}\" required {$inputDisabled} pattern=\"[0-9]+\" oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\"></td>
                             </tr>";
     }
 
@@ -74,32 +79,32 @@ function generateModalEditTimeByTime($docID, $folio, $estatusRegistro, $userID)
                     <label><strong>Total de horas faltadas:</strong> <span id=\"totalHorasFalta{$docID}\">{$totalHorasFaltas}</span></label>";
     // Tabla de Pagos
     $modal .= "
-                    <h3>Pagos</h3>
-                    <table border=\"1\">
-                        <thead>
-                            <tr>
-                                <th>Fecha de Pago</th>
-                                <th>Horas de Pago</th>
-                                <th>Estatus</th>
-                            </tr>
-                        </thead>
-                        <tbody>";
+    <h3>Pagos</h3>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Fecha de Pago</th>
+                <th>Horas de Pago</th>
+                <th>Validar</th>
+            </tr>
+        </thead>
+        <tbody>";
 
     foreach ($pagos as $index => $pago) {
         $inputDisabled = ($isUser && $estatusRegistro == 'entregado') ? 'disabled' : (($isEditable) ? '' : 'disabled');
-        $checkboxDisabled = ($estatusRegistro == 'entregado') ? 'disabled' : '';
+        $checkboxDisabled = ($estatusRegistro == 'entregado' || $isUser) ? 'disabled' : '';
 
         $isChecked = ($pago['estatusP'] == 1) ? 'checked' : '';
 
         $modal .= "
-                            <tr>
-                                <td><input type=\"date\" name=\"fechaP_{$pago['id']}\" value=\"{$pago['fechaP']}\" required {$inputDisabled}></td>
-                                <td><input class=\"horasPago\" type=\"number\" step=\"1\" min=\"1\" max=\"24\" name=\"horaP_{$pago['id']}\" value=\"{$pago['horaP']}\" required {$inputDisabled}></td>
-                                <td>
-                                    <input type=\"hidden\" name=\"estatusP_{$pago['id']}\" value=\"" . ($pago['estatusP'] == 1 ? 1 : 0) . "\">
-                                    <input type=\"checkbox\" class=\"estatusP\" id=\"checkbox_{$docID}_{$index}\" data-horas=\"{$pago['horaP']}\" {$isChecked} {$checkboxDisabled}>
-                                </td>
-                            </tr>";
+            <tr>
+                <td><input type=\"date\" name=\"fechaP_{$pago['id']}\" value=\"{$pago['fechaP']}\" {$inputDisabled} required></td>
+                <td><input class=\"horasPago\" type=\"number\" step=\"1\" min=\"1\" max=\"24\" name=\"horaP_{$pago['id']}\" value=\"{$pago['horaP']}\" {$inputDisabled} required pattern=\"[0-9]+\" oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\"></td>
+                <td>
+                    <input type=\"hidden\" name=\"estatusP_{$pago['id']}\" value=\"" . ($pago['estatusP'] == 1 ? 1 : 0) . "\">
+                    <input type=\"checkbox\" class=\"estatusP\" id=\"checkbox_{$docID}_{$index}\" data-horas=\"{$pago['horaP']}\" {$isChecked} {$checkboxDisabled}>
+                </td>
+            </tr>";
     }
 
     $modal .= "
@@ -201,6 +206,11 @@ function generateModalEditTimeByTime($docID, $folio, $estatusRegistro, $userID)
                 inputHorasF.name = 'horasF[]';
                 inputHorasF.className = 'horasFalta';
                 inputHorasF.required = true;
+                inputHorasF.pattern = '[0-9]+';
+                inputHorasF.oninput = function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                };
+
                 inputHorasF.addEventListener(\"input\", function() {
                     const modal = document.querySelector(modalSelector);
                     if (!modal) return;
@@ -240,6 +250,10 @@ function generateModalEditTimeByTime($docID, $folio, $estatusRegistro, $userID)
                 inputHorasP.name = 'horasP[]';
                 inputHorasP.required = true;
                 inputHorasP.className = 'horasPago';
+                inputHorasP.pattern = '[0-9]+';
+                inputHorasP.oninput = function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                };
 
                 const hiddenEstatusP = document.createElement('input');
                 hiddenEstatusP.type = 'hidden';

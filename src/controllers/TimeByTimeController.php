@@ -94,7 +94,15 @@ class TimeByTimeController
             echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
             exit;
         }
-        
+        $allFechas = array_merge($fechasF, $fechasP);
+        $fechasDatabase = $this->TimeByTimeModel->getAllFechasUsuario($user_ID);
+        $compruebaFechas = array_intersect($allFechas, $fechasDatabase);
+        print_r($compruebaFechas);exit;
+        if (!empty($compruebaFechas)) {
+            Session::set('document_warning', 'Error: las fechas ya existen en la base de datos.');
+            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+            exit;
+        }
         if ($this->TimeByTimeModel->createRegistro(
             $user_ID, $folio, $fechaR, $num_registros, $fechasF, $horasF, $fechasP, $horasP)) {
             Session::set('document_success', 'Registro generado correctamente.');
@@ -151,49 +159,62 @@ class TimeByTimeController
                 $oldEstatusPago[$pagoID] = intval($value);
             }
         }
-        //print_r($oldEstatusPago);exit;
+        //validaciones cuando se agregan y  se modifican los valores
         if (is_array($oldFechasFalta) && is_array($newFechasFalta)) {
+            //unir en un solo array los valores de fechasFalta y fechasPago cuando se agregan nuevos valores
             $totalFechasFalta = array_merge($oldFechasFalta, $newFechasFalta);
             $totalFechasPago = array_merge($oldFechasPago, $newFechasPago);
-        } else{ // Podrías inicializar uno como un array vacío si es null, por ejemplo:
-            $totalFechasFalta = array_merge($oldFechasFalta, (array) $newFechasFalta);
-            $totalFechasPago = array_merge($oldFechasPago, (array) $newFechasPago);
-        }
-
-        if (is_array($oldFechasFalta) && is_array($newFechasFalta)) {
+            $allFechas= array_merge($totalFechasFalta, $totalFechasPago);
+            //comprobar si las fechas nuevas y/o modificadas ya existen en el base de datos
+            $fechasDatabase = $this->TimeByTimeModel->getAllFechasUsuario($userID, $docID);
+            $compruebaFechas = array_intersect($allFechas, $fechasDatabase);
+            //print_r($compruebaFechas);exit;
+            if (!empty($compruebaFechas)) {
+                Session::set('document_warning', "Error: las fechas nuevas ingresadas o modificadas en el registro  con folio: {$docID} ya existen en la base de datos.");
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }
+            //comprobar si las fechas ingresadas no sean iguales entre si mismas
             $duplicateFechasFalta = array_intersect($newFechasFalta, $oldFechasFalta);
             $duplicateFechasPago = array_intersect($newFechasPago, $oldFechasPago);
-        } else{ 
+            if (!empty($duplicateFechasFalta )) {
+                Session::set('document_warning', 'No puedes ingresar mas de una vez la misma fecha de falta.');
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }else if (!empty($duplicateFechasPago)) {
+                Session::set('document_warning', 'No puedes ingresar mas de una vez la misma fecha de pago.');
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }   
+        } 
+        //validaciones cuando solo se modifican los valores
+        else{
+            //unir en un solo array los valores de fechasFalta y fechasPago cuando solo se mofican los valores
+            $totalFechasFalta = array_merge($oldFechasFalta, (array) $newFechasFalta);
+            $totalFechasPago = array_merge($oldFechasPago, (array) $newFechasPago);
+            $allFechas1= array_merge($totalFechasFalta, $totalFechasPago);
+            //comprobar que las fehas modificadas no existan en la base de datos
+            $fechasDatabase = $this->TimeByTimeModel->getAllFechasUsuario($userID, $docID);
+            $compruebaFechas = array_intersect($allFechas1, $fechasDatabase);
+            if (!empty($compruebaFechas)) {
+                Session::set('document_warning', "Error: las fechas modificadas en el registro: {$docID} ya existen en la base de datos. Verficar registros");
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }
+            //comprobar si las fechas ingresadas no sean iguales entre si mismas
             $duplicateFechasFalta = array_intersect( (array) $newFechasFalta, $oldFechasFalta);
             $duplicateFechasPago = array_intersect( (array) $newFechasPago, $oldFechasPago);
-        }
-        
-
-        if (!empty($duplicateFechasFalta)) {
-            Session::set('document_warning', 'No puedes ingresar mas de una vez la misma fecha de falta.');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
-            exit;
-        }
-
-        if (!empty($duplicateFechasPago)) {
-            Session::set('document_warning', 'No puedes ingresar mas de una vesz la misma fecha de pago.');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
-            exit;
-        }
-        $existingFechasFalta = $this->TimeByTimeModel->getAllFechasUsuario($userID);
-        print_r($existingFechasFalta);exit;
-        
-        if (!empty($existingFechasFalta)) {
-            Session::set('document_warning', 'Error: los nuevos registro de fecha de falta o las fechas modificadas ya existen en la base de datos.');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
-            exit;
+            if (!empty($duplicateFechasFalta )) {
+                Session::set('document_warning', 'No puedes ingresar mas de una vez la misma fecha de falta.');
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }else if (!empty($duplicateFechasPago)) {
+                Session::set('document_warning', 'No puedes ingresar mas de una vez la misma fecha de pago.');
+                echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
+                exit;
+            }
         }
 
-        if (!empty($existingFechasPago)) {
-            Session::set('document_warning', 'Error: los nuevos registro de fecha de pagoo o las fechas modificadas ya existen en la base de datos.');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";
-            exit;
-        }
         if ($this->TimeByTimeModel->updateEstatusTimebyTimePagos($docID, 
         $newFechasFalta, $newHorasFalta, $newFechasPago, $newHorasPago, 
         $oldFechasFalta, $oldHorasFalta, $oldFechasPago, $oldHorasPago, $oldEstatusPago)) {

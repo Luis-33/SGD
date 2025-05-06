@@ -247,7 +247,7 @@ class TimeByTimeModel
         }
     }
 
-    public function getAllFechasUsuario($userID)
+    public function getAllFechasUsuario($userID, $registro_id=null)
     {
         try {
             $query = "
@@ -256,6 +256,7 @@ class TimeByTimeModel
                 INNER JOIN timebytime t ON tf.timebytime_id = t.id
                 WHERE t.usuario_id = :userID
                 AND t.estatus IN ('pendiente', 'entregado')
+                 " . ($registro_id !== null ? "AND tf.timebytime_id != :registroID" : "") . "
                 
                 UNION
                 
@@ -264,12 +265,16 @@ class TimeByTimeModel
                 INNER JOIN timebytime t ON tp.timebytime_id = t.id
                 WHERE t.usuario_id = :userID
                 AND t.estatus IN ('pendiente', 'entregado')
+                " . ($registro_id !== null ? "AND tp.timebytime_id != :registroID" : "") . "
                 ORDER BY fecha
             ";
 
             $stmt = $this->db->prepare($query);
             $stmt->bindValue(':userID', $userID, PDO::PARAM_INT);
 
+            if ($registro_id !== null) {
+                $stmt->bindValue(':registroID', $registro_id, PDO::PARAM_INT);
+            }
             if (!$stmt->execute()) {
                 error_log("Error en getAllFechasUsuario: " . implode(", ", $stmt->errorInfo()));
                 return false;

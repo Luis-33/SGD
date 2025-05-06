@@ -14,7 +14,7 @@
         </div>
         <div class="card_table_body">
             <div class="search_input" id="searchForm">
-                <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar por Folio o Fecha de registro" : "Buscar por nombre de empleado" ?>">
+                <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar por Folio o Fecha de registro" : "Buscar por nombre de empleado - Folio - Fecha de Registro" ?>">
                 <i class="fa-solid fa-xmark" id="clear_input"></i>
             </div>
             <div class="table_header">

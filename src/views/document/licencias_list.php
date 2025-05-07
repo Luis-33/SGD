@@ -1,37 +1,56 @@
-
 <?php if (!empty($documents)) : ?>
     <div class="card_table">
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Licencias" : "Licencias"; ?></h2>
             <div class="card_header_actions">
 
-                <?php 
-                $fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
-                $fechaActual = new DateTime();
-                $diferenciaAnios = $fechaIngreso->diff($fechaActual)->y;
-                $diasHabiles = 0;
-                foreach ($documents as $licencia) {
-                    if ($licencia['usuario_id'] == $user['usuario_id'] && $licencia['status'] === 'Entregado') {
-                        $fechaSalida = new DateTime($licencia['fecha_salida']);
-                        $fechaRegreso = new DateTime($licencia['fecha_regreso']);
-                        while ($fechaSalida <= $fechaRegreso) {
-                            $diaSemana = $fechaSalida->format('N'); 
-                            if ($diaSemana < 6) {
-                                $diasHabiles++;
-                            }
-                            $fechaSalida->modify('+1 day');
-                        }
-                    }
-                }
+            <?php 
+$fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
+$fechaActual = new DateTime();
+$diferenciadias = $fechaIngreso->diff($fechaActual)->days; 
 
-                if ($diferenciaAnios >= 1 && $diferenciaAnios < 3) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciaAnios >= 3 && $diferenciaAnios < 6) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                } elseif ($diferenciaAnios >= 6) {
-                    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-                }
-                ?>
+$diasHabiles = 0;
+$anioActual = $fechaActual->format('Y');
+$inicioAnio = new DateTime($anioActual . '-01-01');
+
+foreach ($documents as $licencia) {
+    if (
+        $licencia['usuario_id'] == $user['usuario_id'] && 
+        
+
+        $licencia['status'] === 'Entregado' &&
+        isset($licencia['fecha_elaboracion']) &&
+        (new DateTime($licencia['fecha_elaboracion'])) >= $inicioAnio
+    ) {
+        $fechaSalida = new DateTime($licencia['fecha_salida']);
+        $fechaRegreso = new DateTime($licencia['fecha_regreso']);
+
+        while ($fechaSalida <= $fechaRegreso && $fechaSalida <= $fechaActual) {
+            $diaSemana = $fechaSalida->format('N'); // 1 = lunes, ..., 7 = domingo
+            if ($diaSemana < 6) { // Lunes a viernes
+                $diasHabiles++;
+            }
+            $fechaSalida->modify('+1 day');
+        }
+    }
+}
+print_r($licencia['usuario_id']);
+if ($diferenciadias < 90 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 91 && $diferenciadias < 180 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 181 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias < 90) { 
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 91 && $diferenciadias < 180) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+} elseif ($diferenciadias >= 181) {
+    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+}
+?>
+
+
                 <button class="btn_entregadoo" data-status="Entregado" onclick="filterLicenciass('Entregado')">Entregados</button>
                 <button class="btn_Pendiente" data-status="Pendiente" onclick="filterLicenciass('Pendiente')">Pendientes</button>
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>
@@ -157,8 +176,9 @@
     
 <?php endif;  
 ?>
-
+<script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>
+
 <script>
 let currentStatusFilter = 'Pendiente';
 
@@ -205,20 +225,20 @@ if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['use
     echo generateModalLicencias($_SESSION['user_area']);
 }
 
-if (Session::exists('Licencias_success')) {
-    echo showAlert('success', Session::get('Licencias_success'));
-    echo "<script>hideAlert('success');</script>";
-    Session::delete('Licencias_success');
+if (Session::exists('document_success')) {
+echo showAlert('success', Session::get('document_success'));
+echo "<script>hideAlert('success');</script>";
+Session::delete('document_success');
 }
-if (Session::exists('Licencias_warning')) {
-    echo showAlert('warning', Session::get('Licencias_warning'));
-    echo "<script>hideAlert('warning');</script>";
-    Session::delete('Licencias_warning');
-}
-if (Session::exists('Licencias_error')) {
-    echo showAlert('error', Session::get('Licencias_error'));
-    echo "<script>hideAlert('error');</script>";
-    Session::delete('Licencias_error');
-}
-?>
 
+if (Session::exists('document_warning')) {
+echo showAlert('warning', Session::get('document_warning'));
+echo "<script>hideAlert('warning');</script>";
+Session::delete('document_warning');
+}
+
+if (Session::exists('document_error')) {
+echo showAlert('error', Session::get('document_error'));
+echo "<script>hideAlert('error');</script>";
+Session::delete('document_error');
+}

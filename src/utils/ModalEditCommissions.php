@@ -20,7 +20,7 @@ function generateModalEditComision($id)
                     <input type=\"hidden\" name=\"id\" value=\"{$Commissions['id']}\">
                     <div class=\"input_group\">
                         <label>Adjuntar documento</label>
-                        <input type=\"file\" name=\"pdf\" accept=\"application/pdf\">
+                        <input type=\"file\" name=\"pdf\" accept=\"application/pdf\"required>
                     </div>
                     <button type=\"submit\">Actualizar Comision</button>
                 </form>

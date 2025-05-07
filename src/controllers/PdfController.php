@@ -109,22 +109,24 @@ Class PdfController{
     }
 
     public function generarPdfLicencias($id) {
+        
+
         if($id === null) {
             Session::set('document_warning', 'Error al generar el documento');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=Commissions');</script>";
+            echo "<script>$(location).attr('href', 'admin_home.php?page=licencias');</script>";
             exit;
         }
-
+        //print_r("entro"); exit;
         $Licencias = $this->LicenciasModel->getLicenciasById($id);
         if(!$Licencias){
            Session::set('document_warning', 'Error al generar el documento, no se ha encontrado el registro en la base de datos');
-           echo "<script>$(location).attr('href', 'admin_home.php?page=Commissions');</script>";
+           echo "<script>$(location).attr('href', 'admin_home.php?page=licencias');</script>";
             exit; 
         }
         $nombreArchivo = "{$Licencias['nombre']} {$Licencias['usuario_nomina']} Folio {$Licencias['id']}";
         //print_r($registro); exit;
         ob_start();
-        include __DIR__ . '/../pdf_templates/template-5.php'; 
+        include __DIR__ . '/../pdf_templates/template-5.php'; // ruta relativa al archivo actual
         $html = ob_get_clean();
 
         $options = new Options();

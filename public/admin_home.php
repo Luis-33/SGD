@@ -352,7 +352,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfLicencias') {
-                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $id = isset($_GET['Licencias_id']) && !empty($_GET['Licencias_id']) ? intval($_GET['Licencias_id']) : null;
+                            // print_r($_GET['Licencias_id']);
+                            // exit;   
                             $PdfController->generarPdfLicencias($id);
                         } else {
                             $licenciasController->showLicencias($userRole, $userID);

@@ -20,8 +20,6 @@ function generateModalComision($areaAdscripcion_id)
                     <label for=\"empleado\">Empleado</label>
                     <div class=\"select_menu\" id=\"usuario_id_menu\">
                         <div class=\"select_btn\">
-                        
-                        
                             <span class=\"sBtn_text\">Selecciona al empleado</span>
                             <i class=\"fa-solid fa-chevron-down\"></i>
                         </div>
@@ -32,26 +30,27 @@ function generateModalComision($areaAdscripcion_id)
 
                         
 
-    $db = new DB();
-    $userModel = new UserModel($db);
-    $jefeInmediato = $userModel->getJefeInmediato($areaAdscripcion_id);
-    $jefeInmediatoId = is_array($jefeInmediato) && isset($jefeInmediato[0]) ? $jefeInmediato[0] : null;
-    if($jefeInmediatoId == 0){
-        $usersList = $userModel->getUsersList1();
-    }else{
-        $usersList = $userModel->getUsersListJefeInmediato($jefeInmediatoId);
-    }
-    
-
-
-    
-
-    foreach ($usersList as $usuario) {
-        $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
-                       " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
-                       <span>" . $usuario["usuario_nombre"] . "</span>
-                   </li>";
-    }
+                        $db = new DB();
+                        $userModel = new UserModel($db);
+                        $usersList = $userModel->getUsersList();
+                        $areaAdscripcionId = $_SESSION['user_area'];
+                        $useName = $_SESSION['user_name'];
+                        $userRoleId = $_SESSION['user_role'];
+                        
+                        
+                        foreach ($usersList as $usuario) {
+                            if (($userRoleId != 1 && $userRoleId != 2) && $usuario['usuario_nombre'] == $useName) {
+                                continue;   
+                            }
+                            if ($userRoleId == 4 && $usuario['areaAdscripcion_id'] != $areaAdscripcionId) {
+                                continue;
+                            }
+                    
+                            $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
+                                           " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
+                                           <span>" . $usuario["usuario_nombre"] . "</span>
+                                       </li>";
+                        }
 
     $modal .= "
                         </ul>
@@ -94,13 +93,13 @@ function generateModalComision($areaAdscripcion_id)
                             <li class=\"option\" data-value=\"Si\">Sí</li>
                         </ul>
                     </div>
-                    <input type=\"hidden\" name=\"viaticos\" id=\"viaticos\" required>
+                    <input type=\"hidden\" name=\"viaticos\" id=\"viaticos\" value=\"No\" required onblur=\"if(this.value === '') this.value = 'No';\">
                 </div>
 
                 <div class=\"input_group\" id=\"especificacion_viaticos_field\" style=\"display: none;\">
                     <label for=\"especificacion_viaticos\">Especificación de Viáticos</label>
                     <br>
-                    <input type=\"text\" id=\"especificacion_viaticos\" name=\"especificacion_viaticos\">
+                    <input type=\"text\" id=\"especificacion_viaticos\" name=\"especificacion_viaticos\"value=\"No\">
                 </div>
 
                 <div class=\"input_group\" id=\"observaciones\">
@@ -132,7 +131,7 @@ function generateModalComision($areaAdscripcion_id)
                             <li class=\"option\" data-value=\"Si\">Sí</li>
                         </ul>
                     </div>
-                    <input type=\"hidden\" name=\"transporte\" id=\"transporte\" required>
+                    <input type=\"hidden\" name=\"transporte\" id=\"transporte\" value=\"No\" required onblur=\"if(this.value === '') this.value = 'No';\">
                 </div>
 
                 <div id=\"transporte_fields\" style=\"display: none;\">
@@ -148,7 +147,7 @@ function generateModalComision($areaAdscripcion_id)
                                 <li class=\"option\" data-value=\"Si\">Sí</li>
                             </ul>
                         </div>
-                        <input type=\"hidden\" name=\"transporte_propio\" id=\"transporte_propio\">
+                        <input type=\"hidden\" name=\"transporte_propio\" id=\"transporte_propio\"value=\"No\" >
                     </div>
 
                     <div class=\"input_group\">

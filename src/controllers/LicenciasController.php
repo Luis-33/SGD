@@ -37,29 +37,30 @@ class LicenciasController
     }
 
     public function addLicencias($data) {
-        if ($this->LicenciasModel->addLicencias($data, $this->table_name)) {
-            Session::set('user_success', 'Licencia registrada correctamente.');
-        } else {
-            Session::set('user_error', 'No se pudo registrar la Licencia.');
+        $user_ID = isset($data["usuario_id"]) ? intval($data["usuario_id"]) : null;
+
+        if (empty($user_ID) || !is_int($user_ID)) {
+            Session::set('document_warning', "Error: el campo usuario es obligatorio");
+            echo "<script>$(location).attr('href', 'admin_home.php?page=licencias');</script>";
+            exit;
         }
+
+        if ($this->LicenciasModel->addLicencias($data, $this->table_name)) {
+            Session::set('document_success', 'Licencia registrada correctamente.');
+        } else {
+            Session::set('document_warning', 'No se pudo registrar la Licencia.');
+        }
+
+        echo "<script>$(location).attr('href', 'admin_home.php?page=licencias');</script>";
     }
 
     public function updateLicencias($data) {
         if ($this->LicenciasModel->updateLicencias($data, $this->table_name)) {
-            Session::set('user_success', 'Licencia registrada correctamente.');
+            Session::set('document_success', 'Licencia registrada correctamente.');
         } else {
-            Session::set('user_error', 'No se pudo registrar la Licencia.');
+            Session::set('document_warning', 'No se pudo registrar la Licencia.');
         }
-    }
-
-    public function DeleteLicencias($data) {
-       
-        
-        if ($this->LicenciasModel->updateLicencias($data, $this->table_name)) {
-            Session::set('user_success', 'Licencia registrada correctamente.');
-        } else {
-            Session::set('user_error', 'No se pudo registrar la Licencia.');
-        }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=licencias');</script>";
     }
 
     public function describeTable($name)

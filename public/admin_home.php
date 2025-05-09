@@ -305,9 +305,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
 
-                                print_r($return_data);
-                                exit;
-
                                 $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 

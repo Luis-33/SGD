@@ -17,13 +17,13 @@ function generateModalEditLicencias($id)
                 <button onclick=\"closeModal('editlicencias{$id}')\">Cerrar</button> 
             </div>
             <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=Licencias&action=editlicencias\" method=\"POST\" enctype=\"multipart/form-data\">
+                <form action=\"admin_home.php?page=licencias&action=editlicencias\" method=\"POST\" enctype=\"multipart/form-data\">
                 
 
                     <input type=\"hidden\" name=\"id\" value=\"{$Licencias['id']}\">
                     <div class=\"input_group\">
                         <label>Adjuntar documento</label>
-                        <input type=\"file\" name=\"pdf\" accept=\"application/pdf\">
+                        <input type=\"file\" name=\"pdf\" accept=\"application/pdf\"required>
                     </div>
                     <button type=\"submit\">Actualizar licencia</button>
                 </form>

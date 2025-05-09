@@ -87,8 +87,7 @@ function generateModalDocumentForTime()
             </div>
 
             <div id=\"Pagos\"></div>
-           
-                        
+              
             <input type=\"hidden\" name=\"usuario_id\" id=\"user\">
             <button class=\"insert_documento_btn\">Subir documento</button>
             </form>
@@ -128,11 +127,11 @@ function generatePagos(num) {
         row.classList.add('record_row');
         row.innerHTML = `
             <div class=\"input_group\">
-                <label>Fecha de falta</label>
+                <label>Fecha de Pago</label>
                 <input type=\"date\" name=\"fechaP[]\" required>
             </div>
             <div class=\"input_group\">
-                <label>Horas de falta</label>
+                <label>Horas de Pago</label>
                 <input type=\"number\" name=\"horasP[]\" min=\"1\" required pattern=\"[0-9]+\" 
                 oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\" title=\"Solo se permiten números del 0 al 9\">
             </div>

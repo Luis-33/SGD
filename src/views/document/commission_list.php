@@ -29,6 +29,7 @@
             </div>
             <div class="table_body" id="tableContainer">
                 <?php foreach ($documents as $Commission) : ?>
+                    <?php if ($Commission['status'] === 'Cancelado') continue; ?>
                     <div class="table_body_item" data-status="<?php echo $Commission['status']; ?>">
                         <span class="row_pdf" title="Descargar Comisión">
                             <?php if ($Commission['status'] === 'Entregado') : ?>
@@ -36,12 +37,7 @@
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
                             <?php else : ?>
-                                <a href="generar_pdf.php?docID_timebytime=<?php echo $Commission['id']; ?>&template=3" target ="_blank" onclick="enviarFormulario(<?php echo $Commission['id']; ?>)" title="Generar PDF de <?= $Commission["usuario_nombre"];?> Folio: <?= $Commission['id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
-                                <!-- <a class="btn_documento" 
-                                   onclick="console.log(<?php echo $Commission['id']; ?>); generarPDF2(3, <?php echo $Commission['id']; ?>)">
-                                   
-                                   <i class="fa-solid fa-file-pdf"></i>
-                                </a> -->
+                                <a href="admin_home.php?registro_id=<?php echo $Commission['id']; ?>&action=generarPdfComissions&page=commissions" target="_blank" title="Generar PDF de <?= $Commission["usuario_nombre"];?>"><i class="fa-solid fa-file-pdf"></i></a>
                             <?php endif; ?>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>
@@ -73,16 +69,24 @@
                                 break;
                         }
                         echo "<span class=\"row_estatus {$estatusClass}\">{$Commission['status']}</span>"; ?>
-                        <?php if ($_SESSION['user_role'] == 1 && $Commission['status'] != 'Entregado') : ?>
+                        <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 2 && $Commission['status'] != 'Entregado') : ?>
                             <div class="row_actions">
                                 
                                 <i class="fa-solid fa-pen-to-square" 
                                     title="Modificar Comisión de <?= $Commission["usuario_nombre"]; ?> " 
                                     data-id="<?php echo $Commission['id']; ?>" 
                                     onclick="openModal('editCommissions<?php echo $Commission['id']; ?>')">
-                                </i>        
+                                </i> 
+                                <i class="fa-solid fa-trash-can" 
+                                    title="Eliminar Licencia de <?= $Commission["usuario_nombre"]; ?> " 
+                                    data-id="<?php echo $Commission['id']; ?>" 
+                                    onclick="openModal('ModalDeleteCommissions<?php echo $Commission['id']; ?>')">
+                                    
+                                    
+                                </i>       
                             </div>
                         <?php endif; ?>
+                        <?php echo generateModalDeleteCommissions($Commission["id"]); ?>
                         <?php echo generateModalEditComision($Commission["id"]); ?>
                     </div>
                 <?php endforeach; ?>
@@ -115,7 +119,7 @@
     
 <?php endif;  
 ?>
-
+<script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>
 <script>
 let currentStatusFilter = 'Pendiente';
@@ -163,19 +167,20 @@ if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['use
     echo generateModalComision($_SESSION['user_area']);
 }
 
-if (Session::exists('Commission_success')) {
-    echo showAlert('success', Session::get('Commission_success'));
+if (Session::exists('document_success')) {
+    echo showAlert('success', Session::get('document_success'));
     echo "<script>hideAlert('success');</script>";
-    Session::delete('Commission_success');
-}
-if (Session::exists('Commission_warning')) {
-    echo showAlert('warning', Session::get('Commission_warning'));
+    Session::delete('document_success');
+    }
+    
+    if (Session::exists('document_warning')) {
+    echo showAlert('warning', Session::get('document_warning'));
     echo "<script>hideAlert('warning');</script>";
-    Session::delete('Commission_warning');
-}
-if (Session::exists('Commission_error')) {
-    echo showAlert('error', Session::get('Commission_error'));
+    Session::delete('document_warning');
+    }
+    
+    if (Session::exists('document_error')) {
+    echo showAlert('error', Session::get('document_error'));
     echo "<script>hideAlert('error');</script>";
-    Session::delete('Commission_error');
-}
-?>
+    Session::delete('document_error');
+    }

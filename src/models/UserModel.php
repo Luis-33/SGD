@@ -108,6 +108,37 @@ class UserModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getDirectorName2()
+    {
+        $query = "SELECT usuario.*, rol.*, puesto.*, areaAdscripcion.*, jefeinmediato.*, sindicato.* 
+                  FROM usuario 
+                  LEFT JOIN rol ON usuario.rol_id = rol.rol_id 
+                  LEFT JOIN puesto ON usuario.puesto_id = puesto.puesto_id 
+                  LEFT JOIN areaAdscripcion ON usuario.areaAdscripcion_id = areaAdscripcion.areaAdscripcion_id 
+                  LEFT JOIN jefeinmediato ON usuario.jefeInmediato_id = jefeinmediato.jefeInmediato_id 
+                  LEFT JOIN sindicato ON usuario.sindicato_id = sindicato.sindicato_id
+                  WHERE usuario.rol_id = 2";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getJefeInmediato3($areaAdscripcion_id)
+    {
+        $query = "SELECT usuario.*, rol.*, puesto.*, areaAdscripcion.*, jefeinmediato.*, sindicato.* 
+                  FROM usuario 
+                  LEFT JOIN rol ON usuario.rol_id = rol.rol_id 
+                  LEFT JOIN puesto ON usuario.puesto_id = puesto.puesto_id 
+                  LEFT JOIN areaAdscripcion ON usuario.areaAdscripcion_id = areaAdscripcion.areaAdscripcion_id 
+                  LEFT JOIN jefeinmediato ON usuario.jefeInmediato_id = jefeinmediato.jefeInmediato_id 
+                  LEFT JOIN sindicato ON usuario.sindicato_id = sindicato.sindicato_id
+                  WHERE usuario.rol_id = 4 AND usuario.areaAdscripcion_id = :areaAdscripcion_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':areaAdscripcion_id', $areaAdscripcion_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol)
     {
         $query = "INSERT INTO usuario (usuario_nomina, usuario_nombre, usuario_curp, usuario_rfc, usuario_email, usuario_password, usuario_genero, usuario_fechaIngreso, usuario_fechaCumpleaños, puesto_id, areaAdscripcion_id, jefeInmediato_id, sindicato_id, rol_id, usuario_estatus) 
@@ -187,5 +218,14 @@ class UserModel
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         return $stmt->execute();
+    }
+
+    public function getLicenciasByUsuarioId($userID)
+    {
+        $query = "SELECT * FROM licencias WHERE usuario_id = :userID";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

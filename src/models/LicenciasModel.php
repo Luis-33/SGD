@@ -125,7 +125,12 @@ class LicenciasModel
 
     public function getLicenciasById($id)
     {
-        $query = "SELECT * FROM licencias WHERE id = :id";
+        $query = "
+            SELECT licencias.*, usuario.*
+            FROM licencias
+            LEFT JOIN usuario ON licencias.usuario_id = usuario.usuario_id
+            WHERE licencias.id = :id
+        ";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -140,5 +145,7 @@ class LicenciasModel
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+
 }
 ?>

@@ -215,13 +215,13 @@ function generateModalLicencias($areaAdscripcion_id)
             }
         });
 
-        $('form').on('submit', function (e) {
-            const usuarioInput = $('#usuario_id').val();
-            if (!usuarioInput) {
-                alert('Por favor selecciona un empleado.');
-                e.preventDefault();
-            }
-        });
+        // $('form').on('submit', function (e) {
+        //     const usuarioInput = $('#usuario_id').val();
+        //     if (!usuarioInput) {
+        //         alert('Por favor selecciona un empleado.');
+        //         e.preventDefault();
+        //     }
+        // });
     });
 </script>
 

@@ -90,7 +90,7 @@ function generateModalLicencias($areaAdscripcion_id)
 
                 <div id="seis_meses_group" class="input_group" style="display:none;">
                     <label for="viaticos">¿Se tomarán 6 meses?</label>
-                    <div class="select_menu" id="meses">
+                    <div class="select_menu" id="meses_menu">
                         <div class="select_btn">
                             <span class="sBtn_text">Selecciona</span>
                             <i class="fa-solid fa-chevron-down"></i>
@@ -125,17 +125,19 @@ function generateModalLicencias($areaAdscripcion_id)
     const puestosEspeciales = <?= $puestosEspecialesJson ?>;
     let diasRestantes = 0;
     let puestoActual = null;
-$(document).on("input", ".search_input", function () {
-    const searchTerm = $(this).val().toLowerCase();
-    $(this).closest(".options").find(".option").each(function () {
-        const text = $(this).text().toLowerCase();
-        if (text.includes(searchTerm)) {
-            $(this).show();
-        } else if (!$(this).hasClass("input_group")) {
-            $(this).hide();
-        }
+
+    $(document).on("input", ".search_input", function () {
+        const searchTerm = $(this).val().toLowerCase();
+        $(this).closest(".options").find(".option").each(function () {
+            const text = $(this).text().toLowerCase();
+            if (text.includes(searchTerm)) {
+                $(this).show();
+            } else if (!$(this).hasClass("input_group")) {
+                $(this).hide();
+            }
+        });
     });
-});
+
     $(document).ready(function () {
         $(document).on("click", ".select_menu .select_btn", function () {
             $(this).closest(".select_menu").toggleClass("active");
@@ -143,40 +145,36 @@ $(document).on("input", ".search_input", function () {
 
         $(document).on("click", ".options .option", function (e) {
             e.stopPropagation();
-            $(this).closest('.options').find('.option').removeClass('selected');
-            $(this).addClass('selected');
+            const menu = $(this).closest(".select_menu");
+            const selectedOption = $(this).find("h3, span").first().text() || $(this).text().trim();
+            const selectedValue = $(this).data("value");
+            const puestoId = $(this).data("puesto");
 
-            let selectedOption = $(this).find("h3, span").first().text() || $(this).text().trim();
-            let selectedValue = $(this).data('value');
-            puestoActual = parseInt($(this).data('puesto'));
+            menu.find(".option").removeClass("selected");
+            $(this).addClass("selected");
+            menu.find(".sBtn_text").text(selectedOption);
+            menu.removeClass("active");
 
-            $(this).closest(".select_menu").find(".sBtn_text").text(selectedOption);
-            $(this).closest(".select_menu").removeClass("active");
-            $('#usuario_id').val(selectedValue);
-
-            if (puestosEspeciales.includes(puestoActual)) {
-                $('#seis_meses_group').show();
-            } else {
-                $('#seis_meses_group').hide();
+            if (menu.attr("id") === "usuario_id_menu") {
+                $("#usuario_id").val(selectedValue);
+                puestoActual = parseInt(puestoId);
+                if (puestosEspeciales.includes(puestoActual)) {
+                    $("#seis_meses_group").show();
+                } else {
+                    $("#seis_meses_group").hide();
+                    $("#viaticos").val("No");
+                    diasRestantes = diasRestantesPorUsuario[selectedValue] || 0;
+                    $("#dias_restantes_info").text("Días restantes: " + diasRestantes);
+                }
                 diasRestantes = diasRestantesPorUsuario[selectedValue] || 0;
-                document.getElementById('dias_restantes_info').innerText = 'Días restantes: ' + diasRestantes;
+                $("#dias_restantes_info").text("Días restantes: " + diasRestantes);
             }
 
-            diasRestantes = diasRestantesPorUsuario[selectedValue] || 0;
-            document.getElementById('dias_restantes_info').innerText = 'Días restantes: ' + diasRestantes;
-        });
-
-        $(document).on("click", "#meses .option", function () {
-            const valor = $(this).data("value");
-            $('#viaticos').val(valor);
-
-            if (valor === "Si") {
-                diasRestantes = 180;
-            } else {
-                diasRestantes = 60;
+            if (menu.attr("id") === "meses_menu") {
+                $("#viaticos").val(selectedValue);
+                diasRestantes = selectedValue === "Si" ? 180 : 60;
+                $("#dias_restantes_info").text("Días restantes: " + diasRestantes);
             }
-
-            $('#dias_restantes_info').text('Días restantes: ' + diasRestantes);
         });
 
         $('#fecha_salida').on('change', function () {

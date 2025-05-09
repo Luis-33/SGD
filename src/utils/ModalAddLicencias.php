@@ -11,8 +11,9 @@ function generateModalLicencias($areaAdscripcion_id)
     $useName = $_SESSION['user_name'];
     $userRoleId = $_SESSION['user_role'];
 
-    
     $diasRestantesPorUsuario = [];
+    $puestosEspeciales = [16, 17, 18, 19, 20, 21];
+    $puestosEspecialesJson = json_encode($puestosEspeciales);
 
     foreach ($usersList as $usuario) {
         $usuarioId = $usuario["usuario_id"];
@@ -20,7 +21,6 @@ function generateModalLicencias($areaAdscripcion_id)
         $fechaActual = new DateTime();
         $diferenciaDias = $fechaIngreso->diff($fechaActual)->days;
 
-        $puestosEspeciales = [16, 17, 18, 19, 20, 21];
         $diasTotales = 0;
         if (in_array($usuario['puesto_id'], $puestosEspeciales)) {
             if ($diferenciaDias < 90) $diasTotales = 15;
@@ -52,160 +52,182 @@ function generateModalLicencias($areaAdscripcion_id)
 
     $diasRestantesJson = json_encode($diasRestantesPorUsuario);
 
-    $modal = "
-    <div class=\"modal licencias\">
-        <div class=\"modal_content\">
-            <div class=\"modal_header\">
-                <h2>Crear Licencias</h2>
-                <button onclick=\"closeModal('licencias')\">Cerrar</button>
-            </div>
-            <div class=\"modal_body\">
-                <form action=\"admin_home.php?page=licencias&action=licencias\" method=\"POST\" enctype=\"multipart/form-data\">
+    ob_start();
+    ?>
 
-                <div class=\"input_group\">
-                    <label for=\"empleado\">Empleado</label>
-                    <div class=\"select_menu\" id=\"usuario_id_menu\">
-                        <div class=\"select_btn\">
-                            <span class=\"sBtn_text\">Selecciona al empleado</span>
-                            <i class=\"fa-solid fa-chevron-down\"></i>
+<div class="modal licencias">
+    <div class="modal_content">
+        <div class="modal_header">
+            <h2>Crear Licencias</h2>
+            <button onclick="closeModal('licencias')">Cerrar</button>
+        </div>
+        <div class="modal_body">
+            <form action="admin_home.php?page=licencias&action=licencias" method="POST" enctype="multipart/form-data">
+                <div class="input_group">
+                    <label for="empleado">Empleado</label>
+                    <div class="select_menu" id="usuario_id_menu">
+                        <div class="select_btn">
+                            <span class="sBtn_text">Selecciona al empleado</span>
+                            <i class="fa-solid fa-chevron-down"></i>
                         </div>
-                        <ul class=\"options\">
-                            <li class=\"input_group\">
-                                <input type=\"text\" class=\"search_input\" placeholder=\"Buscar empleado...\" />
-                            </li>";
-    foreach ($usersList as $usuario) {
-        if (($userRoleId != 1 && $userRoleId != 2) && $usuario['usuario_nombre'] == $useName) {
-            continue;
-        }
-        if ($userRoleId == 4 && $usuario['areaAdscripcion_id'] != $areaAdscripcionId) {
-            continue;
-        }
-
-        $modal .= "<li class=\"option\" data-value=\"" . $usuario["usuario_id"] . "\">
-                       " . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >') . "
-                       <span>" . $usuario["usuario_nombre"] . "</span>
-                   </li>";
-    }
-
-    $modal .= "
+                        <ul class="options">
+                            <li class="input_group">
+                                <input type="text" class="search_input" placeholder="Buscar empleado..." />
+                            </li>
+                            <?php foreach ($usersList as $usuario) {
+                                if (($userRoleId != 1 && $userRoleId != 2) && $usuario['usuario_nombre'] == $useName) continue;
+                                if ($userRoleId == 4 && $usuario['areaAdscripcion_id'] != $areaAdscripcionId) continue;
+                                echo '<li class="option" data-value="' . $usuario["usuario_id"] . '" data-puesto="' . $usuario["puesto_id"] . '">'
+                                    . (empty($usuario["usuario_foto"]) ? '<img src="assets/images/avatar.png">' : '<img src="data:image;base64,' . base64_encode($usuario['usuario_foto']) . '" >')
+                                    . '<span>' . $usuario["usuario_nombre"] . '</span></li>';
+                            } ?>
                         </ul>
                     </div>
-                    <input type=\"hidden\" name=\"usuario_id\" id=\"usuario_id\" required>
+                    <input type="hidden" name="usuario_id" id="usuario_id" required>
                 </div>
 
-                <div id=\"dias_restantes_info\" style=\"margin-bottom:10px; font-weight:bold;\"></div>
+                <div id="dias_restantes_info" style="margin-bottom:10px; font-weight:bold;"></div>
 
-                <div class=\"input_group\">
-                    <label for=\"fecha_salida\">Fecha de Salida</label>
-                    <input type=\"date\" id=\"fecha_salida\" name=\"fecha_salida\" required>
+                <div id="seis_meses_group" class="input_group" style="display:none;">
+                    <label for="viaticos">¿Se tomarán 6 meses?</label>
+                    <div class="select_menu" id="meses">
+                        <div class="select_btn">
+                            <span class="sBtn_text">Selecciona</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <ul class="options">
+                            <li class="option" data-value="No">No</li>
+                            <li class="option" data-value="Si">Sí</li>
+                        </ul>
+                    </div>
+                    <input type="hidden" name="viaticos" id="viaticos" value="No" required>
                 </div>
 
-                <div class=\"input_group\">
-                    <label for=\"fecha_regreso\">Fecha de Regreso</label>
-                    <input type=\"date\" id=\"fecha_regreso\" name=\"fecha_regreso\" required>
+                <div class="input_group">
+                    <label for="fecha_salida">Fecha de Salida</label>
+                    <input type="date" id="fecha_salida" name="fecha_salida" required>
                 </div>
 
-                <input type=\"hidden\" name=\"status\" id=\"status\">
-                <button class=\"insert_Licencias_btn\">Crear Licencias</button>
-                </form>
-            </div>
+                <div class="input_group">
+                    <label for="fecha_regreso">Fecha de Regreso</label>
+                    <input type="date" id="fecha_regreso" name="fecha_regreso" required>
+                </div>
+
+                <input type="hidden" name="status" id="status">
+                <button class="insert_Licencias_btn">Crear Licencias</button>
+            </form>
         </div>
     </div>
+</div>
 
-    <script>
-        const diasRestantesPorUsuario = $diasRestantesJson;
-        let diasRestantes = 0;
+<script>
+    const diasRestantesPorUsuario = <?= $diasRestantesJson ?>;
+    const puestosEspeciales = <?= $puestosEspecialesJson ?>;
+    let diasRestantes = 0;
+    let puestoActual = null;
+$(document).on("input", ".search_input", function () {
+    const searchTerm = $(this).val().toLowerCase();
+    $(this).closest(".options").find(".option").each(function () {
+        const text = $(this).text().toLowerCase();
+        if (text.includes(searchTerm)) {
+            $(this).show();
+        } else if (!$(this).hasClass("input_group")) {
+            $(this).hide();
+        }
+    });
+});
+    $(document).ready(function () {
+        $(document).on("click", ".select_menu .select_btn", function () {
+            $(this).closest(".select_menu").toggleClass("active");
+        });
 
-        $(document).ready(function () {
-            $(document).on(\"click\", \".select_menu .select_btn\", function () {
-                $(this).closest(\".select_menu\").toggleClass(\"active\");
-            });
+        $(document).on("click", ".options .option", function (e) {
+            e.stopPropagation();
+            $(this).closest('.options').find('.option').removeClass('selected');
+            $(this).addClass('selected');
 
-            $(document).on(\"click\", \".options .option\", function (e) {
-                e.stopPropagation();
+            let selectedOption = $(this).find("h3, span").first().text() || $(this).text().trim();
+            let selectedValue = $(this).data('value');
+            puestoActual = parseInt($(this).data('puesto'));
 
-                $(this).closest('.options').find('.option').removeClass('selected');
-                $(this).addClass('selected');
+            $(this).closest(".select_menu").find(".sBtn_text").text(selectedOption);
+            $(this).closest(".select_menu").removeClass("active");
+            $('#usuario_id').val(selectedValue);
 
-                let selectedOption = $(this).find(\"h3, span\").first().text() || $(this).text().trim();
-                let selectedValue = $(this).data('value');
-
-                $(this).closest(\".select_menu\").find(\".sBtn_text\").text(selectedOption);
-                $(this).closest(\".select_menu\").toggleClass(\"active\");
-                $('#usuario_id').val(selectedValue);
-
+            if (puestosEspeciales.includes(puestoActual)) {
+                $('#seis_meses_group').show();
+            } else {
+                $('#seis_meses_group').hide();
                 diasRestantes = diasRestantesPorUsuario[selectedValue] || 0;
                 document.getElementById('dias_restantes_info').innerText = 'Días restantes: ' + diasRestantes;
-            });
+            }
 
-            const searchInput = document.querySelector(\"#usuario_id_menu .search_input\");
-            const options = document.querySelectorAll(\"#usuario_id_menu .option\");
-            searchInput.addEventListener(\"input\", function () {
-                const filter = this.value.toLowerCase().normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\");
-                options.forEach(option => {
-                    const text = option.textContent.toLowerCase().normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\");
-                    option.style.display = text.includes(filter) ? \"\" : \"none\";
-                });
-            });
-
-            const fechaSalidaInput = document.getElementById('fecha_salida');
-            const fechaRegresoInput = document.getElementById('fecha_regreso');
-
-            fechaSalidaInput.addEventListener('change', function () {
-                const fechaSalida = new Date(this.value);
-                if (isNaN(fechaSalida.getTime())) return;
-
-                let diasDisponibles = diasRestantes;
-                let fechaMaxima = new Date(fechaSalida);
-                while (diasDisponibles > 0) {
-                    fechaMaxima.setDate(fechaMaxima.getDate() + 1);
-                    const diaSemana = fechaMaxima.getDay();
-                    if (diaSemana !== 0 && diaSemana !== 6) {
-                        diasDisponibles--;
-                    }
-                }
-
-                fechaRegresoInput.max = fechaMaxima.toISOString().split('T')[0];
-            });
-
-            fechaRegresoInput.addEventListener('change', function () {
-    const fechaSalida = new Date(fechaSalidaInput.value);
-    const fechaRegreso = new Date(this.value);
-    if (isNaN(fechaSalida.getTime()) || isNaN(fechaRegreso.getTime())) return;
-
-    if (fechaRegreso < fechaSalida) {
-        alert('La fecha de regreso no puede ser anterior a la fecha de salida.');
-        this.value = '';
-        return;
-    }
-
-    let diasSeleccionados = 0;
-    let fechaTemp = new Date(fechaSalida);
-    while (fechaTemp <= fechaRegreso) {
-        const diaSemana = fechaTemp.getDay();
-        if (diaSemana !== 0 && diaSemana !== 6) {
-            diasSeleccionados++;
-        }
-        fechaTemp.setDate(fechaTemp.getDate() + 1);
-    }
-
-    if (diasSeleccionados > diasRestantes) {
-        alert('No puedes seleccionar más días de los disponibles. Te quedan ' + diasRestantes + ' días.');
-        this.value = '';
-    }
-});
-
-            document.querySelector('form').addEventListener('submit', function (event) {
-                const usuarioInput = document.getElementById('usuario_id');
-                const sBtnText = document.querySelector('#usuario_id_menu .sBtn_text');
-                if (sBtnText.innerText.trim() === 'Selecciona al empleado' || !usuarioInput.value.trim()) {
-                    alert('Por favor selecciona un empleado antes de enviar el formulario.');
-                    event.preventDefault();
-                }
-            });
+            diasRestantes = diasRestantesPorUsuario[selectedValue] || 0;
+            document.getElementById('dias_restantes_info').innerText = 'Días restantes: ' + diasRestantes;
         });
-    </script>
-    ";
 
-    return $modal;
+        $(document).on("click", "#meses .option", function () {
+            const valor = $(this).data("value");
+            $('#viaticos').val(valor);
+
+            if (valor === "Si") {
+                diasRestantes = 180;
+            } else {
+                diasRestantes = 60;
+            }
+
+            $('#dias_restantes_info').text('Días restantes: ' + diasRestantes);
+        });
+
+        $('#fecha_salida').on('change', function () {
+            const fechaSalida = new Date(this.value);
+            if (isNaN(fechaSalida.getTime())) return;
+
+            let diasDisponibles = diasRestantes;
+            let fechaMaxima = new Date(fechaSalida);
+            while (diasDisponibles > 0) {
+                fechaMaxima.setDate(fechaMaxima.getDate() + 1);
+                const diaSemana = fechaMaxima.getDay();
+                if (diaSemana !== 0 && diaSemana !== 6) diasDisponibles--;
+            }
+
+            $('#fecha_regreso').attr('max', fechaMaxima.toISOString().split('T')[0]);
+        });
+
+        $('#fecha_regreso').on('change', function () {
+            const fechaSalida = new Date($('#fecha_salida').val());
+            const fechaRegreso = new Date(this.value);
+            if (fechaRegreso < fechaSalida) {
+                alert('La fecha de regreso no puede ser anterior a la fecha de salida.');
+                this.value = '';
+                return;
+            }
+
+            let diasSeleccionados = 0;
+            let fechaTemp = new Date(fechaSalida);
+            while (fechaTemp <= fechaRegreso) {
+                const diaSemana = fechaTemp.getDay();
+                if (diaSemana !== 0 && diaSemana !== 6) diasSeleccionados++;
+                fechaTemp.setDate(fechaTemp.getDate() + 1);
+            }
+
+            if (diasSeleccionados > diasRestantes) {
+                alert('No puedes seleccionar más días de los disponibles. Te quedan ' + diasRestantes + ' días.');
+                this.value = '';
+            }
+        });
+
+        $('form').on('submit', function (e) {
+            const usuarioInput = $('#usuario_id').val();
+            if (!usuarioInput) {
+                alert('Por favor selecciona un empleado.');
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
+<?php
+    return ob_get_clean();
 }
+?>

@@ -26,15 +26,15 @@ foreach ($documents as $licencia) {
         $fechaRegreso = new DateTime($licencia['fecha_regreso']);
 
         while ($fechaSalida <= $fechaRegreso && $fechaSalida <= $fechaActual) {
-            $diaSemana = $fechaSalida->format('N'); // 1 = lunes, ..., 7 = domingo
-            if ($diaSemana < 6) { // Lunes a viernes
+            $diaSemana = $fechaSalida->format('N'); 
+            if ($diaSemana < 6) { 
                 $diasHabiles++;
             }
             $fechaSalida->modify('+1 day');
         }
     }
 }
-print_r($licencia['usuario_id']);
+
 if ($diferenciadias < 90 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
     echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
 } elseif ($diferenciadias >= 91 && $diferenciadias < 180 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {

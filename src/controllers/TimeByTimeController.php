@@ -97,7 +97,7 @@ class TimeByTimeController
         $allFechas = array_merge($fechasF, $fechasP);
         $fechasDatabase = $this->TimeByTimeModel->getAllFechasUsuario($user_ID);
         $compruebaFechas = array_intersect($allFechas, $fechasDatabase);
-        print_r($compruebaFechas);exit;
+        //print_r($compruebaFechas);exit;
         if (!empty($compruebaFechas)) {
             Session::set('document_warning', 'Error: las fechas ya existen en la base de datos.');
             echo "<script>$(location).attr('href', 'admin_home.php?page=TimeByTime');</script>";

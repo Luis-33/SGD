@@ -103,6 +103,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoJefe'])
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
+                            && isset($_POST['userDiasEconomicos'])
+
+                            
                         ) {
                             $userNomina = $_POST['empleadoNomina'];
                             $userName = $_POST['empleadoNombre'];
@@ -117,7 +120,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $userJefe = $_POST['empleadoJefe'];
                             $userSindicato = $_POST['empleadoSindicato'];
                             $userRol = $_POST['empleadoRol'];
-                            $userController->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol);
+                            $userDiasEconomicos = $_POST['userDiasEconomicos'];
+                            $userController->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol,$userDiasEconomicos);
                         } else if (
                             $action === 'editUser'
                             && isset($_POST['empleadoID'])
@@ -132,6 +136,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                             && isset($_POST['empleadoEstatus'])
+                            && isset($_POST['userDiasEconomicos'])
                         ) {
                             $userID = $_POST['empleadoID'];
                             $userNomina = $_POST['empleadoNomina'];
@@ -145,7 +150,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $userSindicato = $_POST['empleadoSindicato'];
                             $userRol = $_POST['empleadoRol'];
                             $userStatus = $_POST['empleadoEstatus'];
-                            $userController->updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus);
+                            $userDiasEconomicos = $_POST['userDiasEconomicos'];
+
+                            $userController->updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus, $userDiasEconomicos);
                         } else {
                             $userController->showAllUsers($userRole);
                         }

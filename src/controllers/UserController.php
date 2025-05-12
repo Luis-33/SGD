@@ -30,9 +30,9 @@ class UserController
         require VIEW_PATH . 'manage_users/seeUser.php';
     }
 
-    public function addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol)
+    public function addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userDiasEconomicos)
     {
-        if ($this->userModel->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol)) {
+        if ($this->userModel->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userDiasEconomicos)) {
             Session::set('user_success', 'Empleado registrado correctamente.');
         } else {
             Session::set('user_error', 'No se pudo registrar al empleado.');
@@ -66,14 +66,13 @@ class UserController
         echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
     }
 
-    public function updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus)
+    public function updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus, $userDiasEconomicos)
     {
-        if ($this->userModel->updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus)) {
+        if ($this->userModel->updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus, $userDiasEconomicos)) {
             Session::set('user_success', 'Empleado actualizado correctamente.');
         } else {
             Session::set('user_error', 'No se pudo actualizar al empleado.');
         }
-
         echo "<script>$(location).attr('href', 'admin_home.php?page=manage_users');</script>";
     }
 }

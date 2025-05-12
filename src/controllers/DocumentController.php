@@ -14,19 +14,31 @@ use PHPMailer\PHPMailer\Exception;
 
 class DocumentController
 {
+    private $db; // Agregar la propiedad $db
     private $documentModel;
 
     public function __construct($db)
     {
+        $this->db = $db; // Inicializar $db
         $this->documentModel = new DocumentModel($db);
     }
 
     public function showAllDocuments($role, $userID)
     {
+        // Obtener documentos del usuario
         $documents = $this->documentModel->getAllDocuments($role, $userID);
+
+        // Contar días económicos, días de cumpleaños y reportes de incidencia
         $diasEconomicos = $this->documentModel->countDiasEconomicos($userID)['diasEconomicos'];
         $diaCumple = $this->documentModel->countDiaCumple($userID)['diaCumple'];
         $reportesIncidencia = $this->documentModel->countReportesIncidencia($userID)['reportesIncidencia'];
+
+        // Obtener el máximo de días económicos permitido desde la columna 'dias_economicos'
+        $userModel = new UserModel($this->db);
+        $userInfo = $userModel->getUserById($userID);
+        $maxDiasEconomicos = $userInfo['dias_economicos']; // Nueva columna
+
+        // Pasar los datos a la vista
         require VIEW_PATH . 'document/list.php';
     }
 
@@ -59,17 +71,25 @@ class DocumentController
     public function generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso)
     {
 
-        $result = $this->documentModel->countDiasEconomicos($userID);
+        // Obtener el número actual de días económicos usados
+    $result = $this->documentModel->countDiasEconomicos($userID);
 
-        if ($result['diasEconomicos'] >= 8) {
+    // Obtener el límite de días económicos permitido desde la columna 'dias_economicos'
+    $userModel = new UserModel($db);
+    $userInfo = $userModel->getUserById($userID);
+    $maxDiasEconomicos = $userInfo['dias_economicos']; // Nueva columna
 
-            Session::set('document_warning', 'Has alcanzado tu limite de dias economicos.');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
-        } else {
+    // Validar si el número de días económicos usados supera el límite
+    if ($result['diasEconomicos'] >= $maxDiasEconomicos) {
+        Session::set('document_warning', 'Has alcanzado tu límite de días económicos.');
+        echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
+        return;
+    } else {
 
             $actualDate = date("Y-m-d");
             $userModel = new UserModel($db);
             $userInfo = $userModel->getUserById($userID);
+            
             $directorName = $userModel->getDirectorName();
 
             $pdf = new PDF();

@@ -217,31 +217,41 @@
             </div>
         </div>
     `;
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-    openModal('editAbsence');
+
+        document.body.appendChild(modal);
+        openModal('viewAbsence'); // <- Aquí estaba el error de nombre
 }
 
 </script>
 
 <script>
     function viewAbsence(absenceId) {
-        console.log("Entró a viewAbsence con ID:", absenceId); // << añade esta línea
         fetch(`admin_home.php?page=absences&action=view_chain&id=${absenceId}`)
             .then(response => response.text())
             .then(html => {
-                console.log("HTML recibido:", html); // << verifica aquí también
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const content = doc.querySelector('.content');
+
+                if (!content) {
+                    alert('No se encontró contenido para mostrar');
+                    return;
+                }
+
                 const modal = document.createElement('div');
                 modal.className = 'modal viewAbsence';
                 modal.innerHTML = `
                 <div class="modal_content">
                     <div class="modal_header">
-                        <h2>Detalle de Incapacidad</h2>
+                        <h2>Detalle de Incapacidad </h2>
                         <button onclick="closeModal('viewAbsence')">Cerrar</button>
                     </div>
-                    <div class="modal_body">${html}</div>
+                    <div class="modal_body">${content.innerHTML}</div>
                 </div>
             `;
+
                 document.body.appendChild(modal);
+                openModal('viewAbsence');
             })
             .catch(error => {
                 alert('Error al cargar el detalle');
@@ -249,13 +259,6 @@
             });
     }
 
-
-    function closeModal(className) {
-        const modal = document.querySelector('.modal.' + className);
-        if (modal) {
-            modal.remove();
-        }
-    }
 </script>
 
 
@@ -280,6 +283,7 @@
                 <span class="header_fecha">Folio</span>
                 <span class="header_fecha">Inicio</span>
                 <span class="header_fecha">Fin</span>
+                <span class="header_fecha">Días de incapacidad</span>
                 <span class="header_fecha">Estado</span>
                 <span class="header_actions">Acciones</span>
             </div>
@@ -291,6 +295,7 @@
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["folio_number"]); ?></span>
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["start_date"]); ?></span>
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["end_date"]); ?></span>
+                        <span class="row_fecha"><?php echo htmlspecialchars($absence["total_days"]); ?></span>
                         <span class="row_fecha">
                 <?php echo $absence["is_open"] === '1' ? 'Abierto' : 'Cerrado'; ?>
             </span>
@@ -314,7 +319,7 @@
                         <?php if ($absence['parent_id'] !== null) : ?>
                             <i class="fa-solid fa-eye"
                                title="Ver detalle"
-                               onclick="viewAbsence(<?= $absence['absence_id']; ?>)">
+                               onclick="viewAbsence(<?= $absence['parent_id']; ?>)">
                             </i>
                         <?php endif; ?>
 

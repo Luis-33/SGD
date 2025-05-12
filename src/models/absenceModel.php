@@ -16,7 +16,8 @@ class absenceModel
                     usuario.usuario_nombre AS full_name
                 FROM absences
                 LEFT JOIN usuario ON usuario.usuario_id = absences.user_id
-                WHERE absences.is_deleted = '0'";
+                WHERE absences.is_deleted = '0'
+                AND is_open = '1'";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -115,14 +116,17 @@ class absenceModel
     public function getAbsenceChain($absenceId)
     {
         $chain = [];
-        var_dump($absenceId); // 👈 Agrega esto para ver el resultado
 
         while ($absenceId !== null) {
-            $stmt = $this->db->prepare("SELECT * FROM absences WHERE absence_id = :id AND is_deleted = '0'");
+            $query = "SELECT absences.*, usuario.usuario_nombre FROM absences 
+         LEFT JOIN usuario on usuario.usuario_id = absences.user_id
+         WHERE absence_id = :id AND is_deleted = '0'";
+
+
+
+            $stmt = $this->db->prepare($query);
             $stmt->execute(['id' => $absenceId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            var_dump($row); // 👈 Agrega esto para ver el resultado
 
             if (!$row) break;
 

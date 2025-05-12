@@ -78,7 +78,7 @@
                         <button onclick="closeModal('addAbsence')">Cerrar</button>
                     </div>
                 <div class="modal_body">
-                    <form action="index.php?page=absences&action=save" method="POST" id="addAbsenceForm" enctype="multipart/form-data">
+                    <form action="admin_home.php?page=absences&action=save" method="POST" id="addAbsenceForm" enctype="multipart/form-data">
                         <div class="form_row">
                             <div class="form_group">
                                 <label for="folio_number">Folio</label>
@@ -102,24 +102,6 @@
 
                         <div class="form_row">
                             <div class="form_group">
-                                <label for="total_days">Días</label>
-                                <div class="input_group">
-                                    <input class="search_input" type="number" name="total_days" id="total_days" readonly>
-                                </div>
-                            </div>
-                            <div class="form_group">
-                                <label for="is_open">Estado</label>
-                                <div class="input_group">
-                                    <select class="selection" name="is_open" id="is_open" required>
-                                        <option value="1">Abierto</option>
-                                        <option value="0">Cerrado</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form_row">
-                            <div class="form_group">
                                 <label for="user_select">Usuario</label>
                                 <div class="input_group">
                                     <select class="selection" name="user_id" id="user_select" required>
@@ -127,8 +109,13 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form_group">
+                                <label for="total_days">Días</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="number" name="total_days" id="total_days" readonly>
+                                </div>
+                            </div>
                         </div>
-
                         <div class="form_group">
                             <label for="file">Documento</label>
                             <div class="input_group">
@@ -188,15 +175,6 @@
                                 <label for="total_days">Días</label>
                                 <div class="input_group">
                                     <input class="search_input" type="number" name="total_days" id="total_days" readonly>
-                                </div>
-                            </div>
-                            <div class="form_group">
-                                <label for="is_open">Estado</label>
-                                <div class="input_group">
-                                    <select class="selection" name="is_open" id="is_open" required>
-                                        <option value="1" ${isOpen === '1' ? 'selected' : ''}>Abierto</option>
-                                        <option value="0" ${isOpen === '0' ? 'selected' : ''}>Cerrado</option>
-                                    </select>
                                 </div>
                             </div>
                         </div>

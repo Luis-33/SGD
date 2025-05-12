@@ -210,7 +210,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 'start_date'   => $_POST['start_date'],
                                 'end_date'     => $_POST['end_date'],
                                 'total_days'   => $_POST['total_days'],
-                                'is_open'      => $_POST['is_open'],
+                                'is_open'      => '1', // '1' para abierto, '0' para cerrado
                                 'document'     => null // se llena solo si el archivo se sube correctamente
                             ];
 

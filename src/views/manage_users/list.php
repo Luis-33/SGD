@@ -1,9 +1,12 @@
-<?php if (!empty($users)) : ?>
+<?php 
+
+if (!empty($users)) : ?>
 
     <div class="card_table">
         <div class="card_table_header">
             <h2>Administrar empleados</h2>
             <?php if ($_SESSION['user_role'] == 1) : ?>
+                <div id="btn_diecomasivo" onclick="openModal('addUser')" title="Cargar días economicos masivo">Excel</div>
                 <div class="btn_insert" onclick="openModal('addUser')">Agregar empleado</div>
             <?php endif; ?>
         </div>
@@ -77,6 +80,7 @@
             <h2>Administrar empleados</h2>
             <?php if ($_SESSION['user_role'] == 1) : ?>
                 <div class="btn_insert">Agregar empleado</div>
+                <div class="btn_insert"></div>
             <?php endif; ?>
         </div>
         <div class="card_table_body">

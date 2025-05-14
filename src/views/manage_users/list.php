@@ -6,7 +6,7 @@ if (!empty($users)) : ?>
         <div class="card_table_header">
             <h2>Administrar empleados</h2>
             <?php if ($_SESSION['user_role'] == 1) : ?> 
-                <div id="btn_diecomasivo" onclick="openModal('exceldiaseco')" title="Cargar días economicos masivo">Excel</div>
+                <div id="btn_diecomasivo" onclick="openModal('exceldiaseco')" title="Cargar días economicos masivo">CSV</div>
                 <div class="btn_insert" onclick="openModal('addUser')">Agregar empleado</div>
             <?php endif; ?>
         </div>

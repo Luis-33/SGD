@@ -124,6 +124,7 @@ function generateModalLicencias($areaAdscripcion_id)
     const diasRestantesPorUsuario = <?= $diasRestantesJson ?>;
     const puestosEspeciales = <?= $puestosEspecialesJson ?>;
     let diasRestantes = 0;
+    let diasRestantess = 0;
     let puestoActual = null;
 
     $(document).on("input", ".search_input", function () {
@@ -172,8 +173,8 @@ function generateModalLicencias($areaAdscripcion_id)
 
             if (menu.attr("id") === "meses_menu") {
                 $("#viaticos").val(selectedValue);
-                diasRestantes = selectedValue === "Si" ? 180 : 60;
-                $("#dias_restantes_info").text("Días restantes: " + diasRestantes);
+                diasRestantess = selectedValue === "Si" ? 180 : diasRestantes;
+                $("#dias_restantes_info").text("Días restantes: " + diasRestantess);
             }
         });
 
@@ -217,7 +218,7 @@ function generateModalLicencias($areaAdscripcion_id)
 
         // $('form').on('submit', function (e) {
         //     const usuarioInput = $('#usuario_id').val();
-        //     if (!usuarioInput) {
+        //     if (!usuarioInput) {z
         //         alert('Por favor selecciona un empleado.');
         //         e.preventDefault();
         //     }

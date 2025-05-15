@@ -211,7 +211,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 'end_date'     => $_POST['end_date'],
                                 'total_days'   => $_POST['total_days'],
                                 'is_open'      => '1', // '1' para abierto, '0' para cerrado
-                                'document'     => null // se llena solo si el archivo se sube correctamente
+                                'document'     => null, // se llena solo si el archivo se sube correctamente
+                                'parent_id'    => !empty($_POST['absence_id']) ? $_POST['absence_id'] : null
                             ];
 
                             // Verificar si se subió archivo
@@ -233,8 +234,16 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             }
 
                             // Guardar usando el controlador
-                            $AbsencesController->save($data);
-                            break;
+                            // Verificar si el formulario envió un absence_id (para saber si es update o save)
+                            if (!empty($_POST['absence_id'])) {
+                                // Es una edición, actualizamos
+                                $absenceId = $_POST['absence_id'];
+                                $AbsencesController->update($absenceId, $data);
+                            } else {
+                                // Es un nuevo registro
+                                $AbsencesController->save($data);
+                            }
+                            break;                            break;
                         }
 
                     } else {

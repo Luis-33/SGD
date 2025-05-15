@@ -46,6 +46,15 @@ class AbsenceController
         }
     }
 
+    public function update($absenceId, $data){
+        if ($this->absenceModel->update($absenceId, $data)) {
+            Session::set('document_success', 'Incapacidad guardada exitosamente.');
+            header('Location: admin_home.php?page=absences');
+        } else {
+            Session::set('document_error', 'Error al guardar la incapacidad.');
+        }
+    }
+
     public function viewChain($absenceId)
     {
         $chain = $this->absenceModel->getAbsenceChain($absenceId);

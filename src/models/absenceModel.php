@@ -105,11 +105,25 @@ class absenceModel
 
     public function delete($absenceId)
     {
+        // 1. Obtener el path del documento relacionado
+        $query = "SELECT document FROM absences WHERE absence_id = :absence_id LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);
+        $stmt->execute();
+        $document = $stmt->fetchColumn(); // Obtiene solo el valor del campo 'document'
+
+        // 2. Eliminar físicamente el archivo si existe
+        if ($document && file_exists($document)) {
+            unlink($document);
+        }
+
+        // 3. Actualizar la base de datos (marcar como eliminado)
         $query = "UPDATE absences 
               SET is_deleted = '1', is_open = '0', deleted_at = NOW() 
               WHERE absence_id = :absence_id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);
+
         return $stmt->execute();
     }
 

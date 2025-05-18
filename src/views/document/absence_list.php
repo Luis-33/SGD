@@ -21,9 +21,6 @@
     </style>
 
     <script>
-    </script>
-
-    <script>
     function confirmDelete(id, data) {
         const modalContent = `
         <div class="modal confirmDelete">
@@ -237,7 +234,7 @@
             });
     }
 
-    function addAbsence(users, absence_id = null, selectedUserId = null) {
+    function addAbsence(users, absence_id = null, selectedUserId = null, end_date = null) {
         const options = users.map(user => {
             const selected = selectedUserId !== null && user.usuario_id == selectedUserId ? 'selected' : '';
             return `<option value="${user.usuario_id}" ${selected}>${user.usuario_nombre}</option>`;
@@ -267,8 +264,7 @@
                             <div class="form_group">
                                 <label for="start_date">Fecha de Inicio</label>
                                 <div class="input_group">
-                                    <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()">
-                                </div>
+                                <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()" value="${end_date ? end_date : ''}" readonly>                                </div>
                             </div>
                             <div class="form_group">
                                 <label for="end_date">Fecha Final</label>
@@ -282,7 +278,7 @@
                             <div class="form_group">
                                 <label for="user_select">Usuario</label>
                                 <div class="input_group">
-                                    <select class="selection" name="user_id" id="user_select" required>
+                                    <select class="selection" name="user_id" id="user_select" disabled required>
                                         ${options}
                                     </select>
                                 </div>
@@ -360,8 +356,9 @@
                            onclick="addAbsence(
                            <?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>,
                            <?= $absence['absence_id']; ?>,
-                           <?= $absence['user_id']; ?>
-                                   )">
+                           <?= $absence['user_id']; ?>,
+                           '<?= $absence['end_date']; ?>'
+                        )">
                         </i>
                         <i class="fa-solid fa-trash-can"
                            title="Eliminar"

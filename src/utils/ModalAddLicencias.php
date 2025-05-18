@@ -26,7 +26,7 @@ function generateModalLicencias($areaAdscripcion_id)
             if ($diferenciaDias < 90) $diasTotales = 15;
             elseif ($diferenciaDias < 180) $diasTotales = 30;
             elseif ($diferenciaDias < 365) $diasTotales = 60;
-            else $diasTotales = 180;
+            else $diasTotales = 60;
         } else {
             if ($diferenciaDias < 90) $diasTotales = 15;
             elseif ($diferenciaDias < 180) $diasTotales = 30;

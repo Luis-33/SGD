@@ -3,54 +3,60 @@
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Licencias" : "Licencias"; ?></h2>
             <div class="card_header_actions">
+            <?php
+            $fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
+            $fechaActual = new DateTime();
+            $diferenciadias = $fechaIngreso->diff($fechaActual)->days;
 
-            <?php 
-$fechaIngreso = new DateTime($user['usuario_fechaIngreso']);
-$fechaActual = new DateTime();
-$diferenciadias = $fechaIngreso->diff($fechaActual)->days; 
+            $anioActual = $fechaActual->format('Y');
+            $inicioAnio = new DateTime($anioActual . '-01-01');
 
-$diasHabiles = 0;
-$anioActual = $fechaActual->format('Y');
-$inicioAnio = new DateTime($anioActual . '-01-01');
+            $fechasHabiles = [];
 
-foreach ($documents as $licencia) {
-    if (
-        $licencia['usuario_id'] == $user['usuario_id'] && 
-        
+            foreach ($documents as $licencia) {
+                if (
+                    $licencia['usuario_id'] == $user['usuario_id'] &&
+                    $licencia['status'] === 'Entregado' &&
+                    isset($licencia['fecha_elaboracion']) &&
+                    (new DateTime($licencia['fecha_elaboracion'])) >= $inicioAnio
+                ) {
+                    $fechaInicio = new DateTime($licencia['fecha_salida']);
+                    $fechaFin = new DateTime($licencia['fecha_regreso']);
 
-        $licencia['status'] === 'Entregado' &&
-        isset($licencia['fecha_elaboracion']) &&
-        (new DateTime($licencia['fecha_elaboracion'])) >= $inicioAnio
-    ) {
-        $fechaSalida = new DateTime($licencia['fecha_salida']);
-        $fechaRegreso = new DateTime($licencia['fecha_regreso']);
-
-        while ($fechaSalida <= $fechaRegreso && $fechaSalida <= $fechaActual) {
-            $diaSemana = $fechaSalida->format('N'); 
-            if ($diaSemana < 6) { 
-                $diasHabiles++;
+                    $fechaIterar = clone $fechaInicio;
+                    while ($fechaIterar <= $fechaFin) {
+                        $diaSemana = $fechaIterar->format('N');
+                        if ($diaSemana <= 5) {
+                            $fechaStr = $fechaIterar->format('Y-m-d');
+                            $fechasHabiles[] = $fechaStr;
+                        }
+                        $fechaIterar->modify('+1 day');
+                    }
+                } 
             }
-            $fechaSalida->modify('+1 day');
-        }
-    }
-}
-
-if ($diferenciadias < 90 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) { 
-    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-} elseif ($diferenciadias >= 91 && $diferenciadias < 180 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-} elseif ($diferenciadias >= 181 && in_array($licencia['puesto_id'], [16, 17, 18, 19, 20, 21])) {
-    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-} elseif ($diferenciadias < 90) { 
-    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/15 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-} elseif ($diferenciadias >= 91 && $diferenciadias < 180) {
-    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/30 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-} elseif ($diferenciadias >= 181) {
-    echo '<span class="dias_economicos"><span>' . $diasHabiles . '/60 días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
-}
-?>
 
 
+            $diasHabiles = count($fechasHabiles);
+
+            $puestosEspeciales = [16, 17, 18, 19, 20, 21];
+            $puestoEspecial = in_array($user['puesto_id'], $puestosEspeciales);
+
+            if ($diferenciadias < 90 && $puestoEspecial) { 
+                $totalDias = 15;
+            } elseif ($diferenciadias >= 90 && $diferenciadias < 180 && $puestoEspecial) {
+                $totalDias = 30;
+            } elseif ($diferenciadias >= 180 && $puestoEspecial) {
+                $totalDias = 180;
+            } elseif ($diferenciadias < 90) {
+                $totalDias = 15;
+            } elseif ($diferenciadias >= 90 && $diferenciadias < 180) {
+                $totalDias = 30;
+            } else {
+                $totalDias = 60;
+            }
+
+            echo '<span class="dias_economicos"><span>' . $diasHabiles . '/' . $totalDias . ' días</span><i class="fa-solid fa-file-lines" title="Licencias"></i></span>';
+            ?>
                 <button class="btn_entregadoo" data-status="Entregado" onclick="filterLicenciass('Entregado')">Entregados</button>
                 <button class="btn_Pendiente" data-status="Pendiente" onclick="filterLicenciass('Pendiente')">Pendientes</button>
                 <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>

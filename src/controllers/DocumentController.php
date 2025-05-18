@@ -323,6 +323,7 @@ class DocumentController
             // Establecer mensaje de error si no se pudo eliminar el documento
             Session::set('document_error', 'No se pudo eliminar el documento.');
         }
+
     } else {
         // Establecer mensaje de error si el documento no existe
         Session::set('document_error', 'Documento no encontrado.');
@@ -858,7 +859,7 @@ class PDF extends FPDF
             $this->Line(50, 131, 120, 131);
             $this->Ln(13);
             $this->SetXY(10, 140);
-            $this->MultiCell(0, 8, utf8_decode("OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil\n siguiente" . (($dayOption === "before") ? '____X____' : '_________')  .  " día hábil anterior " . (($dayOption === "after") ? '____X____' : '_________')), 1);
+            $this->MultiCell(0, 8, utf8_decode("OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil\n siguiente" . (($dayOption === "after") ? '____X____' : '_________')  .  " día hábil anterior " . (($dayOption === "before") ? '____X____' : '_________')), 1);
             $this->Ln(1);
             $this->Ln(1);
             $this->SetFontSize(9);
@@ -923,24 +924,20 @@ class PDF extends FPDF
             $this->Line(50, 131, 120, 131);
             $this->Ln(13);
             $this->SetXY(10, 140);
-            $this->MultiCell(0, 8, utf8_decode("OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil\n siguiente      _______      día hábil anterior _______."), 1);
+            $this->MultiCell(0, 8, utf8_decode("OBSERVACIÓN: La fecha de cumpleaños será día inhábil, motivo por el cual el día se cambia al día hábil\n siguiente" . (($dayOption === "after") ? '____X____' : '_________')  .  " día hábil anterior " . (($dayOption === "before") ? '____X____' : '_________')), 1);
+            $this->Ln(1);
             $this->Ln(1);
             $this->SetFontSize(9);
             $this->Cell(0, 5, utf8_decode("Sin otro particular, me reitero a sus órdenes."));
-            $this->SetXY(15, 173);
+            $this->SetXY(80, 183);
             $this->Cell(0, 10, utf8_decode($user_name));
-            $this->SetXY(135, 173);
-            $this->Cell(0, 10, utf8_decode($sindicato_gestor));
             $this->SetXY(80, 208);
             $this->Cell(0, 10, utf8_decode($jefe_name));
             $this->SetXY(80, 235);
             $this->Cell(0, 10, utf8_decode($director_name));
-            $this->Line(10, 180, 80, 180);
-            $this->SetXY(30, 180);
+            $this->Line(70, 190, 140, 190);
+            $this->SetXY(90, 190);
             $this->MultiCell(30, 4, utf8_decode("Nombre y Firma\nSolicitante"), 0, 'C');
-            $this->Line(130, 180, 200, 180);
-            $this->SetXY(150, 180);
-            $this->MultiCell(30, 4, utf8_decode("Nombre y Firma\nSindicato Gestor"), 0, 'C');
             $this->Line(70, 215, 140, 215);
             $this->SetXY(84.5, 215);
             $this->MultiCell(40, 4, utf8_decode("Nombre y firma\nVo.Bo. Jefe (a) Inmediato"), 0, 'C');

@@ -29,7 +29,7 @@
             generateSidebarItem('licencias', 'fa-solid fa-id-card', 'licencias');
             generateSidebarItem('roles', 'fa-solid fa-user-tag', 'Roles');
             if ($_SESSION['user_role'] == 1) {
-                generateSidebarItem('absences', 'fa-user-md', 'imss');
+                generateSidebarItem('absences', 'fa-user-md', 'Incapacidades');
             }
 
 

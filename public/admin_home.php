@@ -245,14 +245,23 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
 
                         if ($action === 'save') {
+                            // Si el usuario está logueado, usa el ID de la sesión
+                            $userId = isset($_POST['user_id']) ? $_POST['user_id'] : (Session::get('user_id') ?? null);
+
+                            // Valida que user_id no sea null
+                            if (!$userId) {
+                                echo "Error: No se encontró el usuario.";
+                                exit;
+                            }
+
                             $data = [
-                                'user_id'      => $_POST['user_id'],
-                                'folio_number' => $_POST['folio_number'],
-                                'start_date'   => $_POST['start_date'],
-                                'end_date'     => $_POST['end_date'],
-                                'total_days'   => $_POST['total_days'],
-                                'is_open'      => '1', // '1' para abierto, '0' para cerrado
-                                'document'     => null, // se llena solo si el archivo se sube correctamente
+                                'user_id'      => $userId,
+                                'folio_number' => $_POST['folio_number'] ?? null,
+                                'start_date'   => $_POST['start_date'] ?? null,
+                                'end_date'     => $_POST['end_date'] ?? null,
+                                'total_days'   => $_POST['total_days'] ?? null,
+                                'is_open'      => '1',
+                                'document'     => null,
                                 'parent_id'    => !empty($_POST['absence_id']) ? $_POST['absence_id'] : null
                             ];
 

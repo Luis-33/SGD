@@ -235,6 +235,14 @@
     }
 
     function addAbsence(users, absence_id = null, selectedUserId = null, end_date = null) {
+        let nextStartDate = '';
+        if (end_date) {
+            const date = new Date(end_date);
+            date.setDate(date.getDate() + 1);
+            // Format as YYYY-MM-DD
+            nextStartDate = date.toISOString().split('T')[0];
+        }
+
         const options = users.map(user => {
             const selected = selectedUserId !== null && user.usuario_id == selectedUserId ? 'selected' : '';
             return `<option value="${user.usuario_id}" ${selected}>${user.usuario_nombre}</option>`;
@@ -264,7 +272,8 @@
                             <div class="form_group">
                                 <label for="start_date">Fecha de Inicio</label>
                                 <div class="input_group">
-                                <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()" value="${end_date ? end_date : ''}" readonly>                                </div>
+<!--                                <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()" value="${end_date ? end_date : ''}" readonly>                              -->
+                                <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()" value="${nextStartDate}" readonly>  </div>
                             </div>
                             <div class="form_group">
                                 <label for="end_date">Fecha Final</label>

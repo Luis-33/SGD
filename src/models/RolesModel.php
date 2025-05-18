@@ -46,10 +46,18 @@ class RolesModel
 
     public function deleteRol($rolID)
     {
-        $query = "DELETE FROM rol WHERE rol_id = :rolID";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':rolID', $rolID, PDO::PARAM_INT);
-        return $stmt->execute();
+        try {
+            $query = "DELETE FROM rol WHERE rol_id = :rolID";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':rolID', $rolID, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                // Foreign key constraint violation
+                return 'constraint';
+            }
+            return false;
+        }
     }
 
 }

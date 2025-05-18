@@ -7,6 +7,20 @@
 <link rel="stylesheet" href="assets/css/admin/see_user.css">
 <link rel="stylesheet" href="assets/css/admin/manage_users.css">
 
+<style>
+    .card_table .table_body .table_body_item {
+        justify-content: center;
+        text-align: center;
+    }
+    .card_table .table_body .table_body_item > span {
+        flex: 1;
+        text-align: center;
+    }
+</style>
+
+
+
+
 <script>
     function confirmDelete(rolId, rolName) {
         const modalContent = `
@@ -118,10 +132,10 @@
             <input type="text" id="searchInput" placeholder="Buscar Rol">
             <i class="fa-solid fa-xmark" id="clear_input"></i>
         </div>
-        <div class="table_header">
-            <span class="header_tipo">ID</span>
-            <span class="header_fecha">Nombre</span>
-            <span class="header_actions">Acciones</span>
+        <div class="table_header" style="text-align: center; display: flex; justify-content: center;">
+            <span class="header_tipo" style="flex:1; text-align:center;">ID</span>
+            <span class="header_fecha" style="flex:1; text-align:center;">Nombre</span>
+            <span class="header_actions" style="flex:1; text-align:center;">Acciones</span>
         </div>
         <div class="table_body" id="tableContainer">
             <?php foreach ($roles as $rol) : ?>

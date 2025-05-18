@@ -19,7 +19,7 @@ if (!Session::isLoggedIn()) {
     exit;
 }
 
-$page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+$page = $_GET['page'] ?? 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 ?>
@@ -30,7 +30,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 <head>
     <?php include VIEW_PATH . 'content/include/header.php'; ?>
 
-</head>
+    <title></title></head>
 
 <body>
 
@@ -224,7 +224,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
                     }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
                         if ($action === 'timebytimeGenerarPdf') {
-                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $id = !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
                             $PdfController->generarPdfTimeByTime($id);
                         }else {
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
@@ -284,7 +284,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 // Es un nuevo registro
                                 $AbsencesController->save($data);
                             }
-                            break;                            break;
+                            break;
                         }
 
                     } else {
@@ -296,6 +296,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
                         $AbsencesController->show();
                     }
+                    break;
 
                 case 'commissions':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -352,7 +353,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfComissions') {
-                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $id = !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
                             $PdfController->generarPdfComision($id);
                         } else {
                             $CommissionController->showCommission($userRole, $userID);
@@ -420,7 +421,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfLicencias') {
-                            $id = isset($_GET['Licencias_id']) && !empty($_GET['Licencias_id']) ? intval($_GET['Licencias_id']) : null;
+                            $id = !empty($_GET['Licencias_id']) ? intval($_GET['Licencias_id']) : null;
                             // print_r($_GET['Licencias_id']);
                             // exit;
                             $PdfController->generarPdfLicencias($id);

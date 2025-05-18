@@ -22,16 +22,33 @@ class RolesController
         require VIEW_PATH . 'document/roles_list.php';
     }
 
-    public function deleteRol($rolId)
+    public function addRole($rolNombre)
     {
-        $response = ['success' => false];
-        if ($this->rolModel->deleteRol($rolId)) {
-            $response['success'] = true;
-            Session::set('document_success', 'Rol eliminado exitosamente.');
+        if ($this->rolModel->insertRol($rolNombre)) {
+            Session::set('rol_success', 'Rol agregado exitosamente.');
         } else {
-            Session::set('document_error', 'Error al eliminar el rol.');
+            Session::set('rol_error', 'Error al agregar el rol.');
         }
-        echo json_encode($response);
-        exit;
+        echo "<script>$(location).attr('href', 'admin_home.php?page=roles');</script>";
+    }
+
+    public function deleteRole($rolId)
+    {
+        if ($this->rolModel->deleteRol($rolId)) {
+            Session::set('rol_success', 'Rol eliminado exitosamente.');
+        } else {
+            Session::set('rol_error', 'Error al eliminar el rol.');
+        }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=roles');</script>";
+    }
+
+    public function updateRole($rolId, $rolNombre)
+    {
+        if ($this->rolModel->updateRol($rolId, $rolNombre)) {
+            Session::set('rol_success', 'Rol actualizado exitosamente.');
+        } else {
+            Session::set('rol_error', 'Error al actualizar el rol.');
+        }
+        echo "<script>$(location).attr('href', 'admin_home.php?page=roles');</script>";
     }
 }

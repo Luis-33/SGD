@@ -2,12 +2,15 @@
 
 require_once '../src/config/config.php';
 require_once CONTROLLER_PATH . 'DocumentController.php';
+require_once CONTROLLER_PATH . 'TimeByTimeController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
 require_once CONTROLLER_PATH . 'AbsenceController.php';
+require_once CONTROLLER_PATH . 'PdfController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
+require_once CONTROLLER_PATH . 'LicenciasController.php';
 
 // Verify if session is active
 Session::start();
@@ -48,6 +51,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
             $AbsencesController= new AbsenceController($db);
+            $TimeByTimeController = new TimeByTimeController($db);
+            $licenciasController = new LicenciasController($db);
+            $PdfController = new PdfController($db);
 
             switch ($page) {
                 case 'dashboard':
@@ -105,7 +111,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoRol'])
                             && isset($_POST['userDiasEconomicos'])
 
-                            
+
                         ) {
                             $userNomina = $_POST['empleadoNomina'];
                             $userName = $_POST['empleadoNombre'];
@@ -185,10 +191,48 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 
 
                 case 'roles':
-                    $RolesController->showRoles($userRole, $userID);
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'save' && isset($_POST['rolNombre'])) {
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->addRole($rolNombre);
+                        } else if ($action === 'delete' && isset($_POST['rolId'])) {
+                            $rolId = $_POST['rolId'];
+                            $RolesController->deleteRole($rolId);
+                        } else if ($action === 'editRol' && isset($_POST['rolId'], $_POST['rolNombre'])) {
+                            $rolId = $_POST['rolId'];
+                            $rolNombre = $_POST['rolNombre'];
+                            $RolesController->updateRole($rolId, $rolNombre);
+                        } else {
+                            $RolesController->showRoles($userRole, $userID);
+                        }
+                    } else {
+                        $RolesController->showRoles($userRole, $userID);
+                    }
                     break;
                 case 'TimeByTime':
-                        $CommissionController->showCommission($userRole, $userID);
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
+                        if ($action === 'timebytime') {
+                        $TimeByTimeController->generarRegistro($_POST);
+                        }else if ($action === 'timebytimeEdit') {
+                            $TimeByTimeController->updateTimebyTimePagos($_POST);
+                        }elseif ($action === 'timebytimeUploadFile') {
+                            $TimeByTimeController->uploadFile($_POST, $_FILES);
+                        }elseif ($action === 'timebytimeDeleteFile') {
+                            $TimeByTimeController->deleteLogical($_POST);
+                        }else {
+                            $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        }
+                    }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+                        if ($action === 'timebytimeGenerarPdf') {
+                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $PdfController->generarPdfTimeByTime($id);
+                        }else {
+                            $TimeByTimeController->showTimeByTime($userRole, $userID);
+                        }
+
+                    }else{
+                        $TimeByTimeController->showTimeByTime($userRole, $userID);
+                    }
                     break;
                  case 'commissions':
                     $CommissionController->showCommission($userRole, $userID);
@@ -211,7 +255,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                                 'end_date'     => $_POST['end_date'],
                                 'total_days'   => $_POST['total_days'],
                                 'is_open'      => '1', // '1' para abierto, '0' para cerrado
-                                'document'     => null // se llena solo si el archivo se sube correctamente
+                                'document'     => null, // se llena solo si el archivo se sube correctamente
+                                'parent_id'    => !empty($_POST['absence_id']) ? $_POST['absence_id'] : null
                             ];
 
                             // Verificar si se subió archivo
@@ -233,8 +278,16 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             }
 
                             // Guardar usando el controlador
-                            $AbsencesController->save($data);
-                            break;
+                            // Verificar si el formulario envió un absence_id (para saber si es update o save)
+                            if (!empty($_POST['absence_id'])) {
+                                // Es una edición, actualizamos
+                                $absenceId = $_POST['absence_id'];
+                                $AbsencesController->update($absenceId, $data);
+                            } else {
+                                // Es un nuevo registro
+                                $AbsencesController->save($data);
+                            }
+                            break;                            break;
                         }
 
                     } else {
@@ -246,13 +299,149 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
                         $AbsencesController->show();
                     }
+
+                case 'commissions':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'comision') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+
+
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $CommissionController->addComision($return_data);
+                            }
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        } else if ($action === 'editCommissions') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+                                $CommissionController->updateCommission($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        }else if ($action === 'deleteCommissions') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("comisiones");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Cancelado";
+                                $CommissionController->updateCommission($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=commissions');
+                            exit;
+                        }
+                    } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                        if ($action === 'generarPdfComissions') {
+                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $PdfController->generarPdfComision($id);
+                        } else {
+                            $CommissionController->showCommission($userRole, $userID);
+                        }
+                    }else{
+                        $CommissionController->showCommission($userRole, $userID);
+                    }
+                    break;
+                case 'licencias':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if ($action === 'licencias') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $CommissionController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["fecha_elaboracion"] = date("Y-m-d");
+                                $return_data["status"] = "Pendiente";
+
+                                $licenciasController->addLicencias($return_data);
+                            }
+
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                        } else if ($action === 'editlicencias') {
+
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $licenciasController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Entregado";
+                                $licenciasController->updateLicencias($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+
+                        }
+                        if ($action === 'deleteLicencia') {
+                            $return_data = array("success" => "0"); $fields = array();
+                            $data = $licenciasController->describeTable("licencias");
+                            if (!empty($data)) {
+                                $fields = array_column($data, 'Field');
+
+                                foreach ($fields as $field) {
+                                    $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
+                                }
+
+                                $return_data["status"] = "Cancelado";
+
+
+                                $licenciasController->updateLicencias($return_data);
+                            }
+                            header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
+                            exit;
+                        }
+
+                    } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                        if ($action === 'generarPdfLicencias') {
+                            $id = isset($_GET['Licencias_id']) && !empty($_GET['Licencias_id']) ? intval($_GET['Licencias_id']) : null;
+                            // print_r($_GET['Licencias_id']);
+                            // exit;
+                            $PdfController->generarPdfLicencias($id);
+                        } else {
+                            $licenciasController->showLicencias($userRole, $userID);
+                        }
+                    } else {
+                        $licenciasController->showLicencias($userRole, $userID);
+
+                    }
                     break;
                 case 'configs':
                     break;
+
                 default:
                     include VIEW_PATH . 'content/404.php';
                     break;
-            }
+                }
             ?>
         </div>
     </div>

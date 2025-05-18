@@ -1,6 +1,6 @@
 <?php
 
-class CommissionsModel
+class ComunModel
 {
     private $db;
 
@@ -9,7 +9,7 @@ class CommissionsModel
         $this->db = $db;
     }
 
-    public function getAllCommissions($role, $userID, $table_name)
+    public function getAll($role, $userID, $table_name)
     {
         $query = "SELECT " . $table_name . ".*, usuario.* FROM " . $table_name . " LEFT JOIN usuario ON usuario.usuario_id = " . $table_name . ".Usuario_id";
 
@@ -35,7 +35,7 @@ class CommissionsModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addComision($data, $table_name) {
+    public function add($data, $table_name) {
         $describe = $this->describeTable($table_name);
         $fields = array_column($describe, 'Field');
         $data = array_map('trim', $data);
@@ -67,7 +67,21 @@ class CommissionsModel
         }
     }
 
-    public function updateComision($data, $table_name) {
+    public function describeTable($name) {
+        $name = preg_replace('/[^a-zA-Z0-9_]/', '', $name);
+        $query = "DESCRIBE `$name`";
+        $stmt = $this->db->prepare($query);
+
+        try {
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    public function update($data, $table_name) {
         $describe = $this->describeTable($table_name);
         $fields = array_column($describe, 'Field');
         $data = array_map('trim', $data);
@@ -107,43 +121,6 @@ class CommissionsModel
             echo "Error: " . $e->getMessage();
             return false;
         }
-    }
-
-    public function describeTable($name) {
-        $name = preg_replace('/[^a-zA-Z0-9_]/', '', $name);
-        $query = "DESCRIBE `$name`";
-        $stmt = $this->db->prepare($query);
-
-        try {
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
-            return false;
-        }
-    }
-
-    public function getCommissionsById($id)
-    {
-        $query = "
-            SELECT comisiones.*, usuario.*
-            FROM comisiones
-            LEFT JOIN usuario ON comisiones.usuario_id = usuario.usuario_id
-            WHERE comisiones.id = :id
-        ";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function updateCommissionPdf($id, $pdfContent)
-    {
-        $query = "UPDATE comisiones SET pdf = :pdf WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':pdf', $pdfContent, PDO::PARAM_LOB);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
     }
 }
 ?>

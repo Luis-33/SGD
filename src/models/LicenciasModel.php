@@ -1,6 +1,6 @@
 <?php
 
-class CommissionsModel
+class LicenciasModel
 {
     private $db;
 
@@ -9,7 +9,7 @@ class CommissionsModel
         $this->db = $db;
     }
 
-    public function getAllCommissions($role, $userID, $table_name)
+    public function getAllLicencias($role, $userID, $table_name)
     {
         $query = "SELECT " . $table_name . ".*, usuario.* FROM " . $table_name . " LEFT JOIN usuario ON usuario.usuario_id = " . $table_name . ".Usuario_id";
 
@@ -35,7 +35,7 @@ class CommissionsModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addComision($data, $table_name) {
+    public function addLicencias($data, $table_name) {
         $describe = $this->describeTable($table_name);
         $fields = array_column($describe, 'Field');
         $data = array_map('trim', $data);
@@ -67,7 +67,7 @@ class CommissionsModel
         }
     }
 
-    public function updateComision($data, $table_name) {
+    public function updateLicencias($data, $table_name) {
         $describe = $this->describeTable($table_name);
         $fields = array_column($describe, 'Field');
         $data = array_map('trim', $data);
@@ -123,13 +123,13 @@ class CommissionsModel
         }
     }
 
-    public function getCommissionsById($id)
+    public function getLicenciasById($id)
     {
         $query = "
-            SELECT comisiones.*, usuario.*
-            FROM comisiones
-            LEFT JOIN usuario ON comisiones.usuario_id = usuario.usuario_id
-            WHERE comisiones.id = :id
+            SELECT licencias.*, usuario.*
+            FROM licencias
+            LEFT JOIN usuario ON licencias.usuario_id = usuario.usuario_id
+            WHERE licencias.id = :id
         ";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -137,13 +137,15 @@ class CommissionsModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateCommissionPdf($id, $pdfContent)
+    public function updateLicenciasPdf($id, $pdfContent)
     {
-        $query = "UPDATE comisiones SET pdf = :pdf WHERE id = :id";
+        $query = "UPDATE licencias SET pdf = :pdf WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':pdf', $pdfContent, PDO::PARAM_LOB);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+
 }
 ?>

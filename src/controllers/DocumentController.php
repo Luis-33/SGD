@@ -208,51 +208,188 @@ class DocumentController
 
     public function deleteDocument($db, $docID)
     {
-
         $userModel = new UserModel($db);
         $document = $this->documentModel->getDocumentById($docID);
 
         if ($document) {
             $file_path = $document['documento_file'];
             if (file_exists($file_path)) {
-                unlink($file_path);
+                unlink($file_path); // Eliminar el archivo físico
             }
 
-            if ($this->documentModel->deleteDocument($docID)) {
-                Session::set('document_success', 'Documento eliminado con éxito.');
+            $response = $this->documentModel->deleteDocument($docID);
 
-                $subject = "Eliminacion del documento";
-
+            if ($response) {
+                // Configuración del correo
+                $subject = "Eliminación del documento";
                 $docUserInfo = $userModel->getUserById($document['usuario_id']);
-                
                 $userEmail = $docUserInfo['usuario_email'];
                 $userName = $docUserInfo['usuario_nombre'];
 
                 $mail = new PHPMailer(true);
 
                 try {
-                    //Server settings
-                    $mail->SMTPDebug = 0;                               //Enable verbose debug output
-                    $mail->isSMTP();                                    //Send using SMTP
-                    $mail->Host       = 'smtp.gmail.com';               //Set the SMTP server to send through
-                    $mail->SMTPAuth   = true;                           //Enable SMTP authentication
-                    $mail->Username   = 'axelsolorzano53@gmail.com';    //SMTP username ( Correo De Antonio )
-                    $mail->Password   = 'ztdc pnmu rtan vvic';          //SMTP password
-                    $mail->SMTPSecure = 'tls';                          //Enable implicit TLS encryption
-                    $mail->Port       = 587;                            //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+                    // Configuración del servidor SMTP
+                    $mail->SMTPDebug = 0;                               // Desactivar salida de depuración
+                    $mail->isSMTP();                                    // Usar SMTP
+                    $mail->Host       = 'smtp.gmail.com';               // Servidor SMTP
+                    $mail->SMTPAuth   = true;                           // Habilitar autenticación SMTP
+                    $mail->Username   = 'axelsolorzano53@gmail.com';    // Correo del remitente
+                    $mail->Password   = 'ztdc pnmu rtan vvic';          // Contraseña del remitente
+                    $mail->SMTPSecure = 'tls';                          // Cifrado TLS
+                    $mail->Port       = 587;                            // Puerto SMTP
 
-                    //Recipients
+                    // Destinatarios
                     $mail->setFrom('axelsolorzano53@gmail.com', 'Luis Antonio Muñoz Gonzáles');
-                    //$mail->addAddress($userEmail);     //Add a recipient
+                    // $mail->addAddress($userEmail);     // Destinatario
 
-                    //Content
-                    $mail->isHTML(true);                                  //Set email format to HTML
+                    // Contenido del correo
+                    $mail->isHTML(true);                                  // Formato HTML
                     $mail->Subject = $subject;
-
-                    $mail->addEmbeddedImage('header.jpg', 'header_cid', 'header.jpg', 'base64', 'header/jpg');
 
                     $mail->Body = "
                     <!DOCTYPE html>
+                    <html lang='en'>
+                    <head>
+                        <meta charset='UTF-8'>
+                        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                        <title>SGDRH</title>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
+                            * {
+                                box-sizing: border-box;
+                                font-family: 'Oswald', sans-serif;
+                                margin: 0;
+                                padding: 0;
+                            }
+                            .body_container {
+                                background: #00A29A;
+                                padding: 20px;
+                                width: 100%;
+                            }
+                            .body_container .title_container h1 {
+                                color: #FFFFFF;
+                                font-size: 2.5rem;
+                            }
+                            .body_container .body h3 {
+                                color: #FFFFFF;
+                                font-size: 1.5rem;
+                                padding: 10px;
+                            }
+                            .body_container .body p {
+                                color: #FFFFFF;
+                                font-size: 1.2rem;
+                                padding: 10px;
+                            }
+                            .body_container .body .legend {
+                                align-items: center;
+                                color: #FFFFFF;
+                                display: flex;
+                                gap: 10px;
+                                justify-content: center;
+                                padding: 10px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class='body_container'>
+                            <div class='title_container'>
+                                <h1>Eliminación de documento</h1>
+                            </div>
+                            <div class='body'>
+                                <h3>Estimado " . $userName . "</h3>
+                                <p>Queremos informarte que tu documento ha sido eliminado.</p>
+                                <span>Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en contactarme personalmente o
+                                    por medio de este correo.</span>
+                                <div class='legend'>
+                                    <span class='asterisk'>*******************</span>
+                                    <span class='asterisk' style='font-weight: bold;'>ESTE CORREO ES SOLO INFORMATIVO</span>
+                                    <span class='asterisk'>*******************</span>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>";
+
+                $mail->send();
+
+                // Establecer mensaje de éxito
+                Session::set('document_success', 'Documento eliminado con éxito.');
+            } catch (Exception $e) {
+                // Establecer mensaje de error si el correo no se envía
+                Session::set('document_error', 'Documento eliminado pero no se pudo enviar el correo. Detalles: ' . $mail->ErrorInfo);
+            }
+        } else {
+            // Establecer mensaje de error si no se pudo eliminar el documento
+            Session::set('document_error', 'No se pudo eliminar el documento.');
+        }
+    } else {
+        // Establecer mensaje de error si el documento no existe
+        Session::set('document_error', 'Documento no encontrado.');
+    }
+
+    // Redirigir al dashboard
+    header("Location: http://localhost/SGD/public/admin_home.php?page=dashboard");
+    exit;
+    }
+
+    public function updateDocument($docID, $status)
+    {
+        $document = $this->documentModel->getDocumentById($docID);
+
+        if ($document) {
+            if ($this->documentModel->updateDocument($docID, $status)) {
+                Session::set('document_success', 'Documento actualizado con éxito.');
+            } else {
+                Session::set('document_error', 'No se pudo actualizar el documento.');
+            }
+        } else {
+            Session::set('document_error', 'Documento no encontrado.');
+        }
+
+        echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
+    }
+
+    public function sendEmail($db, $userID, $docID, $emailType, $subject, $docType, $docStatus)
+    {
+
+        $mail = new PHPMailer(true);
+
+        $userModel = new UserModel($db);
+        $userInfo = $userModel->getUserById($userID);
+        $docInfo = $this->documentModel->getDocumentById($docID);
+
+        $userEmail = $userInfo['usuario_email'];
+        $userName = $userInfo['usuario_nombre'];
+        $type = $docInfo['documento_tipo'];
+        $docUserInfo = $userModel->getUserById($docInfo['usuario_id']);
+        $user = $docUserInfo['usuario_nombre'];
+
+
+        try {
+            //Server settings
+            $mail->SMTPDebug = 2;                               //Enable verbose debug output
+            $mail->isSMTP();                                    //Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';               //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                           //Enable SMTP authentication
+            $mail->Username   = 'axelsolorzano53@gmail.com';    //SMTP username ( Correo De Antonio )
+            $mail->Password   = 'ztdc pnmu rtan vvic';          //SMTP password
+            $mail->SMTPSecure = 'tls';                          //Enable implicit TLS encryption
+            $mail->Port       = 587;                            //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('axelsolorzano53@gmail.com', 'Luis Antonio Muñoz Gonzales');
+        //    $mail->addAddress($userEmail);     //Add a recipient
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = $subject;
+
+            $mail->addEmbeddedImage('header.jpg', 'header_cid', 'header.jpg', 'base64', 'header/jpg');
+
+            switch ($emailType) {
+                case "created":
+                    $mail->Body = "<!DOCTYPE html>
                     <html lang='en'>
 
                     <head>
@@ -329,11 +466,11 @@ class DocumentController
                     <body>
                         <div class='body_container'>
                             <div class='title_container'>
-                                <h1>Cambio de estatus</h1>
+                                <h1>Creacion de documento</h1>
                             </div>
                             <div class='body'>
                                 <h3>Estimado " . $userName . "</h3>
-                                <p>Queremos informarte que tu documento ha sido eliminado por no llenarlo correctamente, te pedimos que verifiques la información y vuelvas a llenarlo.</p>
+                                <p>Documento creado exitosamente".$docInfo['documento_tipo'].".</p>
 
                                 <span>Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en contactarme personalmente o
                                     por medio de este correo.</span>
@@ -351,85 +488,6 @@ class DocumentController
                     </body>
 
                     </html>";
-
-                    $mail->send();
-                    echo 'Message has been sent';
-                } catch (Exception $e) {
-    
-                    echo "<div style='padding: 20px; border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; border-radius: 5px; margin: 20px auto; width: 50%; text-align: center;'>
-                    <p><strong>Error:</strong> Documento eliminado pero no se pudo enviar el correo. Detalles: {$mail->ErrorInfo}</p>
-                    <a href='admin_home.php' style='display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;'>Regresar a la página principal</a>
-                  </div>";
-                   
-                  
-                }
-            } else {
-                Session::set('document_error', 'No se pudo eliminar el documento.');
-            }
-        } else {
-            Session::set('document_error', 'Documento no encontrado.');
-        }
-
-        echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
-    }
-
-    public function updateDocument($docID, $status)
-    {
-        $document = $this->documentModel->getDocumentById($docID);
-
-        if ($document) {
-            if ($this->documentModel->updateDocument($docID, $status)) {
-                Session::set('document_success', 'Documento actualizado con éxito.');
-            } else {
-                Session::set('document_error', 'No se pudo actualizar el documento.');
-            }
-        } else {
-            Session::set('document_error', 'Documento no encontrado.');
-        }
-
-        echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
-    }
-
-    public function sendEmail($db, $userID, $docID, $emailType, $subject, $docType, $docStatus)
-    {
-
-        $mail = new PHPMailer(true);
-
-        $userModel = new UserModel($db);
-        $userInfo = $userModel->getUserById($userID);
-        $docInfo = $this->documentModel->getDocumentById($docID);
-
-        $userEmail = $userInfo['usuario_email'];
-        $userName = $userInfo['usuario_nombre'];
-        $type = $docInfo['documento_tipo'];
-        $docUserInfo = $userModel->getUserById($docInfo['usuario_id']);
-        $user = $docUserInfo['usuario_nombre'];
-
-
-        try {
-            //Server settings
-            $mail->SMTPDebug = 2;                               //Enable verbose debug output
-            $mail->isSMTP();                                    //Send using SMTP
-            $mail->Host       = 'smtp.gmail.com';               //Set the SMTP server to send through
-            $mail->SMTPAuth   = true;                           //Enable SMTP authentication
-            $mail->Username   = 'axelsolorzano53@gmail.com';    //SMTP username ( Correo De Antonio )
-            $mail->Password   = 'ztdc pnmu rtan vvic';          //SMTP password
-            $mail->SMTPSecure = 'tls';                          //Enable implicit TLS encryption
-            $mail->Port       = 587;                            //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-            //Recipients
-            $mail->setFrom('axelsolorzano53@gmail.com', 'Luis Antonio Muñoz Gonzáles');
-           // $mail->addAddress($userEmail);     //Add a recipient
-
-            //Content
-            $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = $subject;
-
-            $mail->addEmbeddedImage('header.jpg', 'header_cid', 'header.jpg', 'base64', 'header/jpg');
-
-            switch ($emailType) {
-                case "created":
-                    $mail->Body = "Ola xd";
                     break;
                 case "updated":
                     $mail->Body = "
@@ -749,7 +807,7 @@ class PDF extends FPDF
             $this->MultiCell(40, 4, utf8_decode("Nombre y firma\nVo.Bo. Jefe (a) Inmediato"), 0, 'C');
             $this->Line(70, 242, 140, 242);
             $this->SetXY(60, 242);
-            $this->Cell(95, 4, utf8_decode("Autorizó: Nombre y Firma del Director (a) de Unidad Académica"), 0, 'C');
+            $this->MultiCell(95, 4, utf8_decode("Nombre y Firma del Director (a) de Unidad Académica"), 0, 'C');
         }
     }
 

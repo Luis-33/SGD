@@ -39,6 +39,8 @@
 
 
     function addRol() {
+        const existing = document.querySelector('.modal.addRol');
+        if (existing) existing.remove();
         const modalContent = `
         <div class="modal addRol">
             <div class="modal_content">

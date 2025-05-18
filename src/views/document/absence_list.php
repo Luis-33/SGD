@@ -65,6 +65,8 @@
     }
 
     function addabsence(users) {
+        const existing = document.querySelector('.modal.addAbsence');
+        if (existing) existing.remove();
         const options = users.map(user => `<option value="${user.usuario_id}">${user.usuario_nombre}</option>`).join('');
 
         const modalContent = `

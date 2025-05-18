@@ -234,9 +234,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         $TimeByTimeController->showTimeByTime($userRole, $userID);
                     }
                     break;
-                 case 'commissions':
-                    $CommissionController->showCommission($userRole, $userID);
-                    break;
                 case 'absences':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if($action === 'remove'){

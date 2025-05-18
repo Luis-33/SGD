@@ -407,3 +407,17 @@ input::file-selector-button {
         padding: 20px;
     }
 }
+.selection{
+    padding: 20px;
+    font-size: 1.2rem;
+    border: 1px solid #00A290;
+    color: rgb(44, 43, 43);
+}
+.selection option{
+    padding: 10px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    border: 1px solid #00A290;
+    outline: none;
+    background-color: #FFFFFF;
+}

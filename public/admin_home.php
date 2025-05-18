@@ -6,6 +6,7 @@ require_once CONTROLLER_PATH . 'TimeByTimeController.php';
 require_once CONTROLLER_PATH . 'CommissionController.php';
 require_once CONTROLLER_PATH . 'UserController.php';
 require_once CONTROLLER_PATH . 'RolesController.php';
+require_once CONTROLLER_PATH . 'AbsenceController.php';
 require_once CONTROLLER_PATH . 'PdfController.php';
 require_once SERVER_PATH . 'DB.php';
 require_once UTIL_PATH . 'Session.php';
@@ -18,7 +19,7 @@ if (!Session::isLoggedIn()) {
     exit;
 }
 
-$page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+$page = $_GET['page'] ?? 'dashboard';
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 ?>
@@ -29,7 +30,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 <head>
     <?php include VIEW_PATH . 'content/include/header.php'; ?>
 
-</head>
+    <title></title></head>
 
 <body>
 
@@ -49,12 +50,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             $documentController = new DocumentController($db);
             $CommissionController = new CommissionController($db);
             $RolesController = new RolesController($db);
+            $AbsencesController= new AbsenceController($db);
             $TimeByTimeController = new TimeByTimeController($db);
             $licenciasController = new LicenciasController($db);
             $PdfController = new PdfController($db);
 
             switch ($page) {
-
                 case 'dashboard':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
@@ -93,7 +94,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                     break;
                 case 'manage_users':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        print_r("usera");
                         if (
                             $action === 'addUser'
                             && isset($_POST['empleadoNomina'])
@@ -109,8 +109,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoJefe'])
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
+                            && isset($_POST['userDiasEconomicos'])
+
+
                         ) {
-                            print_r("user");
                             $userNomina = $_POST['empleadoNomina'];
                             $userName = $_POST['empleadoNombre'];
                             $userCurp = $_POST['empleadoCurp'];
@@ -124,7 +126,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $userJefe = $_POST['empleadoJefe'];
                             $userSindicato = $_POST['empleadoSindicato'];
                             $userRol = $_POST['empleadoRol'];
-                            $userController->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol);
+                            $userDiasEconomicos = $_POST['userDiasEconomicos'];
+                            $userController->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol,$userDiasEconomicos);
                         } else if (
                             $action === 'editUser'
                             && isset($_POST['empleadoID'])
@@ -139,6 +142,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                             && isset($_POST['empleadoEstatus'])
+                            && isset($_POST['userDiasEconomicos'])
                         ) {
                             $userID = $_POST['empleadoID'];
                             $userNomina = $_POST['empleadoNomina'];
@@ -152,7 +156,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $userSindicato = $_POST['empleadoSindicato'];
                             $userRol = $_POST['empleadoRol'];
                             $userStatus = $_POST['empleadoEstatus'];
-                            $userController->updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus);
+                            $userDiasEconomicos = $_POST['userDiasEconomicos'];
+
+                            $userController->updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus, $userDiasEconomicos);
                         } else {
                             $userController->showAllUsers($userRole);
                         }
@@ -206,7 +212,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                 case 'TimeByTime':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST' ) {
                         if ($action === 'timebytime') {
-                        $TimeByTimeController->generarRegistro($_POST); 
+                        $TimeByTimeController->generarRegistro($_POST);
                         }else if ($action === 'timebytimeEdit') {
                             $TimeByTimeController->updateTimebyTimePagos($_POST);
                         }elseif ($action === 'timebytimeUploadFile') {
@@ -218,31 +224,94 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
                     }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
                         if ($action === 'timebytimeGenerarPdf') {
-                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $id = !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
                             $PdfController->generarPdfTimeByTime($id);
                         }else {
                             $TimeByTimeController->showTimeByTime($userRole, $userID);
                         }
-                     
+
                     }else{
                         $TimeByTimeController->showTimeByTime($userRole, $userID);
                     }
                     break;
-                
+                case 'absences':
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        if($action === 'remove'){
+                            if (isset($_POST['absence_id'])) {
+                                $id = $_POST['absence_id'];
+                                $AbsencesController->remove($id);
+                            }
+                            break;
+                        }
+
+                        if ($action === 'save') {
+                            $data = [
+                                'user_id'      => $_POST['user_id'],
+                                'folio_number' => $_POST['folio_number'],
+                                'start_date'   => $_POST['start_date'],
+                                'end_date'     => $_POST['end_date'],
+                                'total_days'   => $_POST['total_days'],
+                                'is_open'      => '1', // '1' para abierto, '0' para cerrado
+                                'document'     => null, // se llena solo si el archivo se sube correctamente
+                                'parent_id'    => !empty($_POST['absence_id']) ? $_POST['absence_id'] : null
+                            ];
+
+                            // Verificar si se subió archivo
+                            if (isset($_FILES['document']) && $_FILES['document']['error'] === UPLOAD_ERR_OK) {
+                                $fileTmp = $_FILES['document']['tmp_name'];
+                                $fileName = basename($_FILES['document']['name']);
+                                $filePath = 'uploads/' . $fileName;
+
+                                // Mover archivo
+                                if (move_uploaded_file($fileTmp, $filePath)) {
+                                    $data['document'] = $filePath;
+                                } else {
+                                    echo "Error al subir el archivo.";
+                                    break;
+                                }
+                            } else {
+                                echo "Archivo no válido.";
+                                break;
+                            }
+
+                            // Guardar usando el controlador
+                            // Verificar si el formulario envió un absence_id (para saber si es update o save)
+                            if (!empty($_POST['absence_id'])) {
+                                // Es una edición, actualizamos
+                                $absenceId = $_POST['absence_id'];
+                                $AbsencesController->update($absenceId, $data);
+                            } else {
+                                // Es un nuevo registro
+                                $AbsencesController->save($data);
+                            }
+                            break;
+                        }
+
+                    } else {
+                        if ($action === 'view_chain' && isset($_GET['id'])) {
+                            $id = $_GET['id'];
+                            $AbsencesController->viewChain($id); // nueva función que debes agregar
+                            break;
+                        }
+
+                        $AbsencesController->show();
+                    }
+                    break;
+
                 case 'commissions':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'comision') {
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $CommissionController->describeTable("comisiones");
 
-                            
+
                             if (!empty($data)) {
                                 $fields = array_column($data, 'Field');
-                                
+
                                 foreach ($fields as $field) {
                                     $return_data[$field] = (isset($_POST[$field])) ? $_POST[$field] : false;
                                 }
-                                
+
                                 $return_data["fecha_elaboracion"] = date("Y-m-d");
                                 $return_data["status"] = "Pendiente";
 
@@ -284,7 +353,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfComissions') {
-                            $id = isset($_GET['registro_id']) && !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
+                            $id = !empty($_GET['registro_id']) ? intval($_GET['registro_id']) : null;
                             $PdfController->generarPdfComision($id);
                         } else {
                             $CommissionController->showCommission($userRole, $userID);
@@ -314,7 +383,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
                         } else if ($action === 'editlicencias') {
-                            
+
                             $return_data = array("success" => "0"); $fields = array();
                             $data = $licenciasController->describeTable("licencias");
                             if (!empty($data)) {
@@ -329,7 +398,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             }
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
-                            
+
                         }
                         if ($action === 'deleteLicencia') {
                             $return_data = array("success" => "0"); $fields = array();
@@ -343,27 +412,27 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
                                 $return_data["status"] = "Cancelado";
 
-                                
+
                                 $licenciasController->updateLicencias($return_data);
                             }
                             header('Location: ' . $_SERVER['PHP_SELF'] . '?page=licencias');
                             exit;
                         }
-                    
+
                     } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         if ($action === 'generarPdfLicencias') {
-                            $id = isset($_GET['Licencias_id']) && !empty($_GET['Licencias_id']) ? intval($_GET['Licencias_id']) : null;
+                            $id = !empty($_GET['Licencias_id']) ? intval($_GET['Licencias_id']) : null;
                             // print_r($_GET['Licencias_id']);
-                            // exit;   
+                            // exit;
                             $PdfController->generarPdfLicencias($id);
                         } else {
                             $licenciasController->showLicencias($userRole, $userID);
                         }
                     } else {
                         $licenciasController->showLicencias($userRole, $userID);
-                        
+
                     }
-                    break;    
+                    break;
                 case 'configs':
                     break;
 

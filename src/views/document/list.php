@@ -1,7 +1,9 @@
 
 <?php
 include_once UTIL_PATH . 'ModalEditDocumento.php';
- if ($_SESSION['user_role'] == 1) : ?>
+
+ if ($_SESSION['user_role'] == 1) : 
+ ?>
 
     <script>
         function confirmDelete(docID, docTipo, userName) {
@@ -21,13 +23,14 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
 
 
 <?php if (!empty($documents)) : ?>
+    
 
     <div class="card_table">
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis documentos" : "Documentos"; ?></h2>
             <div class="card_header_actions">
                 <div class="dias_economicos">
-                    <span><?= $diasEconomicos; ?> / 8</span>
+                    <span><?= $diasEconomicos; ?> / <?= $maxDiasEconomicos; ?></span>
                     <i class="fa-solid fa-file-lines" title="Dia economico"></i>
                     <span><?= $diaCumple; ?> / 1</span>
                     <i class="fa-solid fa-birthday-cake" title="Dia de cumpleaños"></i>
@@ -35,8 +38,8 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                     <i class="fa-solid fa-file-circle-xmark" title="Reporte de incidencia"></i>
                 </div>
                 <?php if ($_SESSION['user_role'] == 1) : ?>
-                 
-                    <button class="btn_documento" onclick="generarPDF(1)">PDf prueba</button>
+                
+                    <!-- <button class="btn_documento" onclick="generarPDF(1)">PDf prueba</button> -->
                 <?php endif; ?>
             </div>
         </div>
@@ -63,7 +66,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
                     <?php   echo generateModalEditDocument($document["documento_id"]); ?>
                     <div class="table_body_item">
                         <span class="row_pdf" title="Descargar <?php echo $document['documento_tipo']; ?>">
-                            <a href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
+                            <a target="_blank"  href="download.php?docID=<?php echo $document['documento_id']; ?>"><i class="fa-solid fa-file-pdf"></i></a>
                         </span>
                         <?php if ($_SESSION['user_role'] != 3) : ?>
                             <div class="row_user_info">
@@ -118,7 +121,7 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis documentos" : "Documentos"; ?></h2>
             <div class="card_header_actions">
                 <div class="dias_economicos">
-                    <span><?= $diasEconomicos; ?> / 8</span>
+                    <span><?= $diasEconomicos; ?> / <?= $maxDiasEconomicos; ?></span>
                     <i class="fa-solid fa-file-lines" title="Dia economico"></i>
                     <span><?= $diaCumple; ?> / 1</span>
                     <i class="fa-solid fa-birthday-cake" title="Dia de cumpleaños"></i>

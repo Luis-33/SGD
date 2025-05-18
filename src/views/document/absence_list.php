@@ -340,7 +340,7 @@
             <div class="table_body" id="tableContainer">
                 <?php foreach ($return_data as $absence) : ?>
                     <div class="table_body_item">
-                        <span class="row_fecha">
+                        <span class="row_pdf">
                             <?php if (!empty($absence['document'])): ?>
                                 <a href="<?php echo htmlspecialchars($absence['document']); ?>" target="_blank" title="Ver documento">
                                                     <i class="fa-solid fa-file-pdf"></i></a>
@@ -398,10 +398,6 @@
 
 
 <?php
-
-if ($_SESSION['user_role'] == 1) {
-//echo generateModalRol();
-}
 
 if (Session::exists('document_success')) {
 echo showAlert('success', Session::get('document_success'));

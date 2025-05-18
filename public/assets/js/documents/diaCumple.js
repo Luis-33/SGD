@@ -51,6 +51,7 @@ export function addDiaCumple() {
         <div id="dayOptionContainer" style="display:none;">
             <div class="date_container_birthday">
                 <div class="date_input">
+                
                     <label for="before">Día antes</label>
                     <input type="radio" name="dayOption" id="before" value="before">
                     <label for="after">Día después</label>
@@ -65,7 +66,7 @@ export function addDiaCumple() {
     modal.find(".modal_body").html(
         `<form action="admin_home.php?page=dashboard&action=addDiaCumple" method="POST">
              <div class="input_group date">
-                <label id="titulo1">Selecciona el día que deseas tomar</label>
+                <label id="titulo1"></label>
                 ${dateInputHtml}
             </div>
             <button type="submit">Generar día de cumpleaños</button>

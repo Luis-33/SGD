@@ -162,7 +162,7 @@ class DocumentController
         }
     }
 
-    public function generateReporteIncidencia($db, $userID, $incidencia, $date)
+    public function generateReporteIncidencia($db, $userID, $incidencia, $date, $motivo)
     {
         $actualDate = date("Y-m-d");
         $userModel = new UserModel($db);
@@ -173,14 +173,23 @@ class DocumentController
         $pdf->AliasNbPages();
         $pdf->setHeaderTitle("JUSTIFICACIÓN DE INCIDENCIA");
         $pdf->AddPage();
-        $pdf->generateReporteIncidencia($userInfo['usuario_nombre'], $userInfo['usuario_nomina'], $userInfo['areaAdscripcion_nombre'], $userInfo['jefeInmediato_nombre'], $directorName['usuario_nombre'], $incidencia, $date);
+        $pdf->generateReporteIncidencia(
+            $userInfo['usuario_nombre'],
+            $userInfo['usuario_nomina'],
+            $userInfo['areaAdscripcion_nombre'],
+            $userInfo['jefeInmediato_nombre'],
+            $directorName['usuario_nombre'],
+            $incidencia,
+            $date,
+            $motivo // <-- Nuevo parámetro
+        );
 
         $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Reporte De Incidencia ' . $actualDate . ' ' . time() . '.pdf';
         $pdf->Output('F', $pathPDF, true);
 
-        $response = $this->documentModel->insertDocument($userID, 'Reporte de incidencia', $pathPDF, $actualDate, '','Pendiente');
+        $response = $this->documentModel->insertDocument($userID, 'Reporte de incidencia', $pathPDF, $actualDate, '', 'Pendiente');
 
-        Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Reporte de inicidencia generado con exito.' : 'No se pudo generar el reporte de incidencia.');
+        Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Reporte de incidencia generado con exito.' : 'No se pudo generar el reporte de incidencia.');
         echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
     }
 
@@ -950,7 +959,7 @@ class PDF extends FPDF
         }
     }
 
-    public function generateReporteIncidencia($user_name, $user_nomina, $user_adscripcion, $jefe_name, $director_name, $incidencia, $date)
+    public function generateReporteIncidencia($user_name, $user_nomina, $user_adscripcion, $jefe_name, $director_name, $incidencia, $date, $motivo)
     {
 
         $zapopan = array("Zapopan", date('d'), date('m'), date('Y'));
@@ -1022,7 +1031,7 @@ class PDF extends FPDF
         $this->SetXY(10, 145);
         $this->Cell(0, 5, utf8_decode('El día: _____ de _______ del año ________  '), 0, 1);
         $this->Ln(13);
-        $this->Cell(0, 5, utf8_decode('Motivo: ' . $incidencia), 0, 1);
+        $this->Cell(0, 5, utf8_decode('Motivo: ' . $motivo), 0, 1);
         $this->SetFont("Arial", "", 11);
         $this->SetXY(15, 205);
         $this->Cell(0, 5, utf8_decode($user_name), 0, 1);

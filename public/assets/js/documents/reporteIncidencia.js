@@ -55,24 +55,18 @@ export function addReporteIncidencia() {
         $inputFecha.attr('max', maxFecha);
     });
 
-    const chips = document.querySelectorAll('.chip');
-    const input = document.getElementById('incidencia');
-
-    chips.forEach(chip => {
-        chip.addEventListener('click', function () {
-            chips.forEach(c => {
-                c.classList.remove('selected');
-            });
-
-            this.classList.add('selected');
-            input.value = this.getAttribute('data-value');
-        });
+    $('.chip').on('click', function() {
+        $('.chip').removeClass('selected');
+        $(this).addClass('selected');
+        $('#incidencia').val($(this).data('value'));
     });
 
     document.getElementById('reporteIncidenciaForm').addEventListener('submit', function (event) {
         const fecha = document.getElementById('fecha').value;
         const motivo = document.getElementById('motivo').value;
         const incidencia = document.getElementById('incidencia').value;
+
+        console.log('fecha:', fecha, 'motivo:', motivo, 'incidencia:', incidencia);
 
         if (!fecha || !motivo || !incidencia) {
             event.preventDefault();

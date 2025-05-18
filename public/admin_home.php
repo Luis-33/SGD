@@ -72,7 +72,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $date = $_POST['fecha'];
                             $incidencia = $_POST['incidencia'];
                             $motivo = $_POST['motivo'];
-                            $documentController->generateReporteIncidencia($db, $userID, $incidencia, $date);
+                            $documentController->generateReporteIncidencia($db, $userID, $incidencia, $date, $motivo);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Reporte de incidencia', null);
                         } else if ($action === 'addDocument' && isset($_POST['user'], $_POST['documentType'], $_POST['date'], $_POST['status'])) {
                             $user = $_POST['user'];

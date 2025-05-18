@@ -11,22 +11,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'editDocument') {
         // Manejar la subida del archivo
         $documentoFile = null;
         if (isset($_FILES['documento']) && $_FILES['documento']['error'] === UPLOAD_ERR_OK) {
-            $fileType = mime_content_type($_FILES['documento']['tmp_name']); // Obtiene el tipo MIME del archivo
-            $allowedTypes = ['application/pdf']; // Tipos MIME permitidos
-
-            // Validar el tipo MIME
-            if (!in_array($fileType, $allowedTypes)) {
-                header("Location: admin_home.php?page=dashboard&status=invalid_file");
-                exit();
-            }
-
-            // Validar la extensión del archivo
-            $fileExtension = pathinfo($_FILES['documento']['name'], PATHINFO_EXTENSION);
-            if (strtolower($fileExtension) !== 'pdf') {
-                header("Location: admin_home.php?page=dashboard&status=invalid_file");
-                exit();
-            }
-
             $uploadDir = 'uploads/documents/'; // Directorio donde se guardarán los archivos
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true); // Crear el directorio si no existe

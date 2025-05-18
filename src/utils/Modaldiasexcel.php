@@ -71,61 +71,62 @@ function procesarArchivoCSV($db)
         session_start();
     }
 
-    if (isset($_FILES['archivo_csv']) && $_FILES['archivo_csv']['error'] == 0) {
-        // Ruta temporal del archivo subido
+    try {
+        if (!isset($_FILES['archivo_csv']) || $_FILES['archivo_csv']['error'] != 0) {
+            throw new Exception('Error al subir el archivo.');
+        }
+
         $archivoTmp = $_FILES['archivo_csv']['tmp_name'];
 
-        // Abrir el archivo CSV
-        if (($handle = fopen($archivoTmp, "r")) !== false) {
-            // Leer y descartar la primera fila (encabezados)
-            fgetcsv($handle);
-
-            $success = true; // Bandera para verificar si todo se procesó correctamente
-
-            // Leer cada fila del archivo CSV
-            while (($datos = fgetcsv($handle, 1000, ",")) !== false) {
-                // Validar que el archivo tenga al menos 3 columnas
-                if (count($datos) < 3) {
-                    $success = false;
-                    $_SESSION['user_error'] = 'Error: El archivo CSV no tiene el formato esperado.';
-                    continue;
-                }
-
-                $numeroNomina = trim($datos[1]); // Columna "Numero Nomina"
-                $diasEconomicos = trim($datos[2]); // Columna "Dias Economicos"
-
-                // Validar que los datos no estén vacíos
-                if (!empty($numeroNomina) && is_numeric($diasEconomicos)) {
-                    // Actualizar la base de datos
-                    $query = "UPDATE usuario 
-                              SET dias_economicos = :diasEconomicos 
-                              WHERE usuario_nomina = :numeroNomina";
-
-                    $stmt = $db->prepare($query);
-                    $stmt->bindParam(':diasEconomicos', $diasEconomicos, PDO::PARAM_INT);
-                    $stmt->bindParam(':numeroNomina', $numeroNomina, PDO::PARAM_STR);
-
-                    if (!$stmt->execute()) {
-                        $success = false;
-                        $_SESSION['user_error'] = "Error al actualizar el registro con Numero Nomina $numeroNomina.";
-                    }
-                } else {
-                    $success = false;
-                    $_SESSION['user_error'] = 'Datos inválidos en el archivo CSV: Numero Nomina o Días Económicos vacíos o incorrectos.';
-                }
-            }
-
-            // Cerrar el archivo
-            fclose($handle);
-
-            if ($success) {
-                $_SESSION['user_success'] = 'CSV procesado correctamente.';
-            }
-        } else {
-            $_SESSION['user_error'] = 'No se pudo abrir el archivo.';
+        if (($handle = fopen($archivoTmp, "r")) === false) {
+            throw new Exception('No se pudo abrir el archivo.');
         }
-    } else {
-        $_SESSION['user_error'] = 'Error al subir el archivo.';
+
+        // Leer y descartar la primera fila (encabezados)
+        $header = fgetcsv($handle);
+        if ($header === false || count($header) < 3) {
+            throw new Exception('El archivo CSV no tiene el formato esperado. Asegúrate de usar la plantilla.');
+        }
+
+        $success = true;
+
+        // Leer cada fila del archivo CSV
+        while (($datos = fgetcsv($handle, 1000, ",")) !== false) {
+            if (count($datos) < 3) {
+                $success = false;
+                $_SESSION['user_error'] = 'Error: El archivo CSV no tiene el formato esperado. Asegúrate de usar la plantilla.';
+                continue;
+            }
+
+            $numeroNomina = trim($datos[1]);
+            $diasEconomicos = trim($datos[2]);
+
+            if (!empty($numeroNomina) && is_numeric($diasEconomicos)) {
+                $query = "UPDATE usuario 
+                          SET dias_economicos = :diasEconomicos 
+                          WHERE usuario_nomina = :numeroNomina";
+
+                $stmt = $db->prepare($query);
+                $stmt->bindParam(':diasEconomicos', $diasEconomicos, PDO::PARAM_INT);
+                $stmt->bindParam(':numeroNomina', $numeroNomina, PDO::PARAM_STR);
+
+                if (!$stmt->execute()) {
+                    $success = false;
+                    $_SESSION['user_error'] = "Error al actualizar el registro con Numero Nomina $numeroNomina.";
+                }
+            } else {
+                $success = false;
+                $_SESSION['user_error'] = 'Datos inválidos en el archivo CSV: Numero Nomina o Días Económicos vacíos o incorrectos.';
+            }
+        }
+
+        fclose($handle);
+
+        if ($success) {
+            $_SESSION['user_success'] = 'CSV procesado correctamente.';
+        }
+    } catch (Exception $e) {
+        $_SESSION['user_error'] = 'Error: ' . $e->getMessage();
     }
 
     // Redirigir al usuario con PHP

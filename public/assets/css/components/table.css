@@ -115,6 +115,15 @@
     padding: 20px;
 }
 
+.card_table .table_body .table_body_item.row_pendiente {
+    align-items: center;
+    background: #f9e2e2;
+    border-radius: 10px;
+    display: flex;
+    margin: 10px 10px 10px 0;
+    padding: 20px;
+}
+
 .no_result_message {
     align-items: center;
     background: #00A29A;

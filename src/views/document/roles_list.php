@@ -18,10 +18,13 @@
                 </div>
                 <div class="modal_body">
                     <p>¿Estás seguro de que deseas eliminar el rol <strong>${rolName}</strong>?</p>
-                    <div class="modal_actions">
-                        <button onclick="deleteRol(${rolId})" class="btn_confirm">Eliminar</button>
-                        <button onclick="closeModal('confirmDelete')" class="btn_cancel">Cancelar</button>
-                    </div>
+                    <form action="admin_home.php?page=roles&action=delete" method="POST" id="deleteRolForm">
+                        <input type="hidden" name="rolId" value="${rolId}">
+                        <div class="modal_actions">
+                            <button type="submit" class="btn_confirm">Eliminar</button>
+                            <button onclick="closeModal('confirmDelete')" class="btn_cancel">Cancelar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -31,6 +34,7 @@
     }
 
     function deleteRol(rolId) {
+        window.location.href = `admin_home.php?page=roles&action=delete`;
     }
 
 
@@ -44,7 +48,7 @@
                 </div>
                 <div class="modal_body
                 ">
-                    <form action="index.php?page=roles" method="POST" id="addRolForm">
+                    <form action="admin_home.php?page=roles&action=save" method="POST" id="addRolForm">
                         <div class="form_group
                         ">
                             <label for="rolNombre">Nombre del Rol</label>
@@ -155,19 +159,19 @@ if ($_SESSION['user_role'] == 1) {
 //echo generateModalRol();
 }
 
-if (Session::exists('document_success')) {
-echo showAlert('success', Session::get('document_success'));
+if (Session::exists('rol_success')) {
+echo showAlert('success', Session::get('rol_success'));
 echo "<script>hideAlert('success');</script>";
-Session::delete('document_success');
+Session::delete('rol_success');
 }
-if (Session::exists('document_warning')) {
-echo showAlert('warning', Session::get('document_warning'));
+if (Session::exists('rol_warning')) {
+echo showAlert('warning', Session::get('rol_warning'));
 echo "<script>hideAlert('warning');</script>";
-Session::delete('document_warning');
+Session::delete('rol_warning');
 }
-if (Session::exists('document_error')) {
-echo showAlert('error', Session::get('document_error'));
+if (Session::exists('rol_error')) {
+echo showAlert('error', Session::get('rol_error'));
 echo "<script>hideAlert('error');</script>";
-Session::delete('document_error');
+Session::delete('rol_error');
 }
 ?>

@@ -318,7 +318,6 @@
 
 
 
-<?php if (!empty($return_data)) : ?>
 
     <div class="card_table">
         <div class="card_table_header">
@@ -391,7 +390,6 @@
 <script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>
 
-<?php endif; ?>
 
 <?php
 

@@ -65,25 +65,35 @@ class AbsenceController
         if (!empty($chain)) {
             echo "<table border='1' cellpadding='5' cellspacing='0'>";
             echo "<thead><tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Folio</th>
-                <th>Inicio</th>
-                <th>Fin</th>
-                <th>Dias</th>
-                <th>Estado</th>
-              </tr></thead>";
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Folio</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Dias</th>
+        <th>Estado</th>
+        <th>Documento</th>
+      </tr></thead>";
             echo "<tbody>";
             foreach (array_reverse($chain) as $item) {
                 echo "<tr style='text-align: center;'>
-                    <td>{$item['absence_id']}</td>
-                    <td>" . htmlspecialchars($item['usuario_nombre']) . "</td>
-                    <td>" . htmlspecialchars($item['folio_number']) . "</td>
-                    <td>{$item['start_date']}</td>
-                    <td>{$item['end_date']}</td>
-                    <td>{$item['total_days']}</td>
-                    <td>" . ($item['is_open'] === '1' ? 'Abierto' : 'Cerrado') . "</td>
-                  </tr>";
+            <td>{$item['absence_id']}</td>
+            <td>" . htmlspecialchars($item['usuario_nombre']) . "</td>
+            <td>" . htmlspecialchars($item['folio_number']) . "</td>
+            <td>{$item['start_date']}</td>
+            <td>{$item['end_date']}</td>
+            <td>{$item['total_days']}</td>
+            <td>" . ($item['is_open'] === '1' ? 'Abierto' : 'Cerrado') . "</td>
+            <td>";
+                if (!empty($item['document'])) {
+                    echo '<a href="' . htmlspecialchars($item['document']) . '" target="_blank" title="Ver documento">
+                    <i class="fa-solid fa-file-pdf"></i>
+                  </a>';
+                } else {
+                    echo 'Sin documento';
+                }
+                echo "</td>
+          </tr>";
             }
             echo "</tbody></table>";
         } else {

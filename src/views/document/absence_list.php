@@ -340,6 +340,15 @@
             <div class="table_body" id="tableContainer">
                 <?php foreach ($return_data as $absence) : ?>
                     <div class="table_body_item">
+                        <span class="row_fecha">
+                            <?php if (!empty($absence['document'])): ?>
+                                <a href="<?php echo htmlspecialchars($absence['document']); ?>" target="_blank" title="Ver documento">
+                                                    <i class="fa-solid fa-file-pdf"></i></a>
+                                </a>
+                            <?php else: ?>
+                                <span>Sin documento</span>
+                            <?php endif; ?>
+                        </span>
                         <span class="row_tipo"><?php echo $absence["absence_id"]; ?></span>
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["full_name"]); ?></span>
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["folio_number"]); ?></span>

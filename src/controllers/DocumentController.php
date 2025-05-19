@@ -857,8 +857,22 @@ class PDF extends FPDF
             $this->SetXY(55, 111);
             $this->Cell(0, 10, utf8_decode($fecha_ingreso));
             $this->SetXY(58, 124);
-            $this->Cell(0, 10, utf8_decode($user_cumple));
+
+
+            $fechaActual = date('Y'); // Año actual
+            $fechaOriginal = date_create($user_cumple); // Convierte string a objeto DateTime
+            $fechaNueva = $fechaActual . date('-m-d', strtotime($user_cumple)); // Reemplaza solo el año
+
+            $this->Cell(0, 10, utf8_decode($fechaNueva));
             $this->SetXY(0, 111);
+
+
+
+            //  $this->Cell(0, 10, utf8_decode($user_cumple));
+          //  $this->SetXY(0, 111);
+
+
+
             $this->Ln(1);
             $this->SetFontSize(10);
             $this->Cell(0, 10, utf8_decode("Fecha de ingreso:"));

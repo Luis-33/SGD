@@ -17,7 +17,7 @@ class absenceModel
                 FROM absences
                 LEFT JOIN usuario ON usuario.usuario_id = absences.user_id
                 WHERE absences.is_deleted = '0'
-                AND is_open = '1'";
+                AND absences.is_open = '1'";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -97,12 +97,15 @@ class absenceModel
 
     public function delete($absenceId)
     {
-        // 1. Obtener el path del documento relacionado
-        $query = "SELECT document FROM absences WHERE absence_id = :absence_id LIMIT 1";
+        // 1. Obtener el path del documento y el parent_id
+        $query = "SELECT document, parent_id FROM absences WHERE absence_id = :absence_id LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);
         $stmt->execute();
-        $document = $stmt->fetchColumn(); // Obtiene solo el valor del campo 'document'
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $document = $row['document'] ?? null;
+        $parentId = $row['parent_id'] ?? null;
 
         // 2. Eliminar físicamente el archivo si existe
         if ($document && file_exists($document)) {
@@ -115,8 +118,17 @@ class absenceModel
               WHERE absence_id = :absence_id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);
+        $stmt->execute();
 
-        return $stmt->execute();
+        // 4. Si hay parent_id, actualizarlo a is_open = 1
+        if ($parentId) {
+            $query = "UPDATE absences SET is_open = '1' WHERE absence_id = :parent_id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':parent_id', $parentId, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+
+        return true;
     }
 
     public function getAbsenceChain($absenceId)
@@ -126,7 +138,7 @@ class absenceModel
         while ($absenceId !== null) {
             $query = "SELECT absences.*, usuario.usuario_nombre FROM absences 
          LEFT JOIN usuario on usuario.usuario_id = absences.user_id
-         WHERE absence_id = :id AND is_deleted = '0'";
+         WHERE absence_id = :id ";
 
 
 
@@ -143,6 +155,14 @@ class absenceModel
         return $chain;
     }
 
+    public function getDays($absenceId)
+    {
+        $query = "SELECT absences.* FROM absences WHERE absence_id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute(['id' => $absenceId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        return $row ? $row : null;
+    }
 
 }

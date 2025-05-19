@@ -354,7 +354,7 @@
                         <span class="row_pdf">
                             <?php if (!empty($absence['document'])): ?>
                                 <a href="<?php echo htmlspecialchars($absence['document']); ?>" target="_blank" title="Ver documento">
-                                                    <i class="fa-solid fa-file-pdf"></i></a>
+                                    <i class="fa-solid fa-file-pdf"></i>
                                 </a>
                             <?php else: ?>
                                 <span>Sin documento</span>
@@ -366,11 +366,19 @@
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["start_date"]); ?></span>
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["end_date"]); ?></span>
                         <span class="row_fecha"><?php echo htmlspecialchars($absence["total_days"]); ?></span>
-                        <span class="row_fecha">
-                <?php echo $absence["is_open"] === '1' ? 'Abierto' : 'Cerrado'; ?>
-            </span>
+                        <?php
+                            $estatusClass = '';
+                            switch ($absence['is_open']) {
+                                case "1":
+                                    $estatusClass = 'success';
+                                    break;
+                                case "0":
+                                    $estatusClass = 'warning';
+                                    break;
+                            }
+                            echo "<span class=\"row_estatus {$estatusClass}\">" . ($absence['is_open'] == '1' ? 'Abierto' : 'Cerrado') . "</span>"; ?>
                 <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <div class="row_actions">
+                    <div class="row_actions" style="margin-left: 1rem">
                         <i class="fa-solid fa-plus"
                            title="Agregar relacionado"
                            onclick="addAbsence(
@@ -380,16 +388,17 @@
                            '<?= $absence['end_date']; ?>'
                         )">
                         </i>
-                        <i class="fa-solid fa-trash-can"
-                           title="Eliminar"
-                           onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
-                        </i>
-                        <?php if ($absence['parent_id'] !== null) : ?>
+                            <i class="fa-solid fa-trash-can"
+                               title="Eliminar"
+                               onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
+                            </i>
+                        <?php if ($absence['parent_id'] != null) : ?>
                             <i class="fa-solid fa-eye"
                                title="Ver detalle"
                                onclick="viewAbsence(<?= $absence['parent_id']; ?>)">
                             </i>
                         <?php endif; ?>
+
 
                     </div>
                 <?php endif; ?>

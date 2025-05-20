@@ -75,4 +75,14 @@ class UserController
         }
         echo "<script>$(location).attr('href', 'admin_home.php?page=manage_users');</script>";
     }
+
+    public function existsEmail($email)
+    {
+        return $this->userModel->getUserByEmail($email) ? true : false;
+    }
+
+    public function existsNomina($nomina)
+    {
+        return $this->userModel->getUserByNomina($nomina) ? true : false;
+    }
 }

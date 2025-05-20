@@ -110,14 +110,24 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                             && isset($_POST['userDiasEconomicos'])
-
-
                         ) {
                             $userNomina = $_POST['empleadoNomina'];
+                            $userEmail = $_POST['empleadoCorreo'];
+
+                            // Validación de duplicados
+                            if ($userController->existsEmail($userEmail)) {
+                                echo "<script>alert('El correo ya está registrado.'); window.history.back();</script>";
+                                exit;
+                            }
+                            if ($userController->existsNomina($userNomina)) {
+                                echo "<script>alert('El número de nómina ya está registrado.'); window.history.back();</script>";
+                                exit;
+                            }
+
+                            // Si pasa la validación, continúa con el registro
                             $userName = $_POST['empleadoNombre'];
                             $userCurp = $_POST['empleadoCurp'];
                             $userRFC = $_POST['empleadoRFC'];
-                            $userEmail = $_POST['empleadoCorreo'];
                             $userGenero = $_POST['empleadoGenero'];
                             $userIngreso = $_POST['empleadoIngreso'];
                             $userCumple = $_POST['empleadoCumple'];
@@ -127,7 +137,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $userSindicato = $_POST['empleadoSindicato'];
                             $userRol = $_POST['empleadoRol'];
                             $userDiasEconomicos = $_POST['userDiasEconomicos'];
-                            $userController->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol,$userDiasEconomicos);
+
+                            $userController->addUser(
+                                $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero,
+                                $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe,
+                                $userSindicato, $userRol, $userDiasEconomicos
+                            );
                         } else if (
                             $action === 'editUser'
                             && isset($_POST['empleadoID'])

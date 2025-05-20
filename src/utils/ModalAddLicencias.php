@@ -172,17 +172,21 @@ function generateModalLicencias($areaAdscripcion_id)
             }
 
             if (menu.attr("id") === "meses_menu") {
-                $("#viaticos").val(selectedValue);
-                diasRestantess = selectedValue === "Si" ? 180 : diasRestantes;
-                $("#dias_restantes_info").text("Días restantes: " + diasRestantess);
-            }
+            $("#viaticos").val(selectedValue);
+            diasRestantess = selectedValue === "Si" ? 180 : diasRestantes;
+            $("#dias_restantes_info").text("Días restantes: " + diasRestantess);
+
+        
+            $("#fecha_salida").val('');
+            $("#fecha_regreso").val('');
+        }
         });
 
         $('#fecha_salida').on('change', function () {
             const fechaSalida = new Date(this.value);
             if (isNaN(fechaSalida.getTime())) return;
 
-            let diasDisponibles = diasRestantes;
+            let diasDisponibles = diasRestantess;
             let fechaMaxima = new Date(fechaSalida);
             while (diasDisponibles > 0) {
                 fechaMaxima.setDate(fechaMaxima.getDate() + 1);
@@ -210,8 +214,8 @@ function generateModalLicencias($areaAdscripcion_id)
                 fechaTemp.setDate(fechaTemp.getDate() + 1);
             }
 
-            if (diasSeleccionados > diasRestantes) {
-                alert('No puedes seleccionar más días de los disponibles. Te quedan ' + diasRestantes + ' días.');
+            if (diasSeleccionados > diasRestantess) {
+                alert('No puedes seleccionar más días de los disponibles. Te quedan ' + diasRestantess + ' días.');
                 this.value = '';
             }
         });

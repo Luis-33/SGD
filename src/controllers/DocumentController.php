@@ -29,7 +29,7 @@ class DocumentController
         $documents = $this->documentModel->getAllDocuments($role, $userID);
 
         // Contar días económicos, días de cumpleaños y reportes de incidencia
-        $diasEconomicos = $this->documentModel->countDiasEconomicos($userID)['diasEconomicos'];
+        $diasEconomicos = $this->documentModel->getTotalDiasEconomicosByUser($userID);
         $diaCumple = $this->documentModel->countDiaCumple($userID)['diaCumple'];
         $reportesIncidencia = $this->documentModel->countReportesIncidencia($userID)['reportesIncidencia'];
 
@@ -68,55 +68,45 @@ class DocumentController
         exit;
     }
 
-    public function generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso)
+    public function generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso, $diasEconomicos)
     {
+        $actualDate = date("Y-m-d");
+        $userModel = new UserModel($db);
+        $userInfo = $userModel->getUserById($userID);
+        $directorName = $userModel->getDirectorName();
 
-        // Obtener el número actual de días económicos usados
-    $result = $this->documentModel->countDiasEconomicos($userID);
+        $pdf = new PDF();
+        $pdf->AliasNbPages();
+        $pdf->setHeaderTitle("FORMATO DE SOLICITUD DE DIA ECONÓMICO");
+        $pdf->AddPage();
+        $pdf->generateDiaEconomico(
+            $userInfo['usuario_nombre'], 
+            $userInfo['puesto_nombre'], 
+            $userInfo['usuario_nomina'], 
+            $userInfo['sindicato_id'], 
+            $startDate, 
+            $endDate, 
+            $permiso, 
+            $userInfo['sindicato_jefe'],
+            $userInfo['jefeInmediato_nombre'], 
+            $directorName['usuario_nombre']
+        );
 
-    // Obtener el límite de días económicos permitido desde la columna 'dias_economicos'
-    $userModel = new UserModel($db);
-    $userInfo = $userModel->getUserById($userID);
-    $maxDiasEconomicos = $userInfo['dias_economicos']; // Nueva columna
+        $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia Economico ' . $actualDate . ' ' . time() . '.pdf';
+        $pdf->Output('F', $pathPDF, true);
 
-    // Validar si el número de días económicos usados supera el límite
-    if ($result['diasEconomicos'] >= $maxDiasEconomicos) {
-        Session::set('document_warning', 'Has alcanzado tu límite de días económicos.');
+        // Insertar sin validación de máximo
+        $response = $this->documentModel->insertDocument(
+            $userID,
+            'Dia economico',
+            $pathPDF,
+            $actualDate,
+            $diasEconomicos,
+            'Pendiente'
+        );
+
+        Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Dia economico generado con exito.' : 'No se pudo generar el dia economico.');
         echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
-        return;
-    } else {
-
-            $actualDate = date("Y-m-d");
-            $userModel = new UserModel($db);
-            $userInfo = $userModel->getUserById($userID);
-            
-            $directorName = $userModel->getDirectorName();
-
-            $pdf = new PDF();
-            $pdf->AliasNbPages();
-            $pdf->setHeaderTitle("FORMATO DE SOLICITUD DE DIA ECONÓMICO");
-            $pdf->AddPage();
-            $pdf->generateDiaEconomico(
-                $userInfo['usuario_nombre'], 
-                $userInfo['puesto_nombre'], 
-                $userInfo['usuario_nomina'], 
-                $userInfo['sindicato_id'], 
-                $startDate, 
-                $endDate, 
-                $permiso, 
-                $userInfo['sindicato_jefe'],
-                $userInfo['jefeInmediato_nombre'], 
-                $directorName['usuario_nombre'],
-            );
-
-            $pathPDF = PDF_PATH . 'docs/' . $userInfo['usuario_nombre'] . ' Dia Economico ' . $actualDate . ' ' . time() . '.pdf';
-            $pdf->Output('F', $pathPDF, true);
-
-            $response = $this->documentModel->insertDocument($userID, 'Dia economico', $pathPDF, $actualDate, '','Pendiente');
-
-            Session::set(($response) ? 'document_success' : 'document_error', ($response) ? 'Dia economico generado con exito.' : 'No se pudo generar el dia economico.');
-            echo "<script>$(location).attr('href', 'admin_home.php?page=dashboard');</script>";
-        }
     }
 
     public function generateDiaCumple($db, $userID,$dayOption)
@@ -610,6 +600,10 @@ class DocumentController
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
             header("Location: admin_home.php?page=dashboard&status=error");
         }
+    }
+
+    public function getTotalDiasEconomicosByUser($userID) {
+        return $this->documentModel->getTotalDiasEconomicosByUser($userID);
     }
 }
 

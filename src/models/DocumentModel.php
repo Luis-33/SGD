@@ -46,17 +46,16 @@ class DocumentModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insertDocument($user, $tipo, $pathPDF, $actualDate, $day_option, $status)
+    public function insertDocument($userID, $tipo, $file, $fecha, $day_option_count, $estatus)
     {
-        $query = "INSERT INTO documento (usuario_id, documento_tipo, documento_file, documento_fechaCreacion, day_option, documento_estatus) 
-                    VALUES (:userID, :tipo, :pathPDF, :actualDate, :day_option, :status)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':userID', $user, PDO::PARAM_INT);
+        $stmt = $this->db->prepare("INSERT INTO documento (usuario_id, documento_tipo, documento_file, documento_fechaCreacion, day_option_count, documento_estatus)
+                                VALUES (:userID, :tipo, :file, :fecha, :day_option_count, :estatus)");
+        $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmt->bindParam(':tipo', $tipo, PDO::PARAM_STR);
-        $stmt->bindParam(':pathPDF', $pathPDF, PDO::PARAM_LOB);
-        $stmt->bindParam(':actualDate', $actualDate, PDO::PARAM_STR);
-        $stmt->bindParam(':day_option', $day_option, PDO::PARAM_STR);
-        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->bindParam(':file', $file, PDO::PARAM_STR);
+        $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+        $stmt->bindParam(':day_option_count', $day_option_count, PDO::PARAM_INT);
+        $stmt->bindParam(':estatus', $estatus, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
@@ -102,5 +101,14 @@ class DocumentModel
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalDiasEconomicosByUser($userID)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(day_option_count) as total_dias FROM documento WHERE usuario_id = :userID AND documento_tipo = 'Dia economico'");
+        $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total_dias'] ?? 0;
     }
 }

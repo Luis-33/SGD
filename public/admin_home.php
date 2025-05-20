@@ -58,11 +58,17 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             switch ($page) {
                 case 'dashboard':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
+                        if (
+                            $action === 'addDiaEconomico' &&
+                            isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'], $_POST['dias_economicos'])
+                        ) {
                             $permiso = $_POST['permiso'];
                             $startDate = $_POST['start-date'];
                             $endDate = $_POST['end-date'];
-                            $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso);
+                            $diasEconomicos = intval($_POST['dias_economicos']);
+
+                            // Ya NO validamos el máximo, solo insertamos
+                            $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso, $diasEconomicos);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia economico', null);
                         } else if ($action === 'addDiaCumple' && isset($_POST['dayOption'])) {
                             $dayOption = $_POST['dayOption'];

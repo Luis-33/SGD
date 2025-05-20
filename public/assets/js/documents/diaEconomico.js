@@ -18,18 +18,19 @@ export function addDiaEconomico() {
     
         <div class="input_group date">
             <label>Dias de ausencia</label>
-                <div class="date_container">
-                    <div class="date_input">
-                        <span>Fecha de inicio</span>
-                        <input type="date" name="start-date" disabled>
-                    </div>
-                    <div class="date_input">
-                        <span>Fecha de regreso</span>
-                        <input type="date" name="end-date" disabled>
-                    </div>
+            <div class="date_container">
+                <div class="date_input">
+                    <span>Fecha de inicio</span>
+                    <input type="date" name="start-date" disabled>
                 </div>
+                <div class="date_input">
+                    <span>Fecha de regreso</span>
+                    <input type="date" name="end-date" disabled>
+                </div>
+            </div>
+            <span id="diasContados" style="display:block;margin-top:10px;color:#009;">Días seleccionados: 0</span>
         </div>
-
+        <input type="hidden" name="dias_economicos" id="dias_economicos" value="">
         <input type="hidden" name="permiso" id="permiso" value="">
         <button type="submit">Generar dia económico</button>
     </form>
@@ -81,12 +82,56 @@ export function addDiaEconomico() {
         const startDateInput = document.querySelector('input[name="start-date"]');
         const endDateInput = document.querySelector('input[name="end-date"]');
         const permisoValue = document.querySelector('#permiso').value;
+        const diasInput = document.getElementById('dias_economicos');
 
         if (!startDateInput.value || !endDateInput.value || !permisoValue) {
             event.preventDefault();
             alert('Por favor, completa todos los campos antes de enviar el formulario.');
+            return;
+        }
+
+        const diasSeleccionados = parseInt(diasInput.value, 10);
+        if (isNaN(diasSeleccionados) || diasSeleccionados <= 0) {
+            event.preventDefault();
+            alert('Limite de días excedido.');
+            return;
         }
     });
+
+    function actualizarDiasContados() {
+        const startDateInput = document.querySelector('input[name="start-date"]');
+        const endDateInput = document.querySelector('input[name="end-date"]');
+        const diasContados = document.getElementById('diasContados');
+        const diasInput = document.getElementById('dias_economicos');
+
+        const maxDiasEconomicos = window.maxDiasEconomicos || 0;
+        const diasEconomicosActuales = window.diasEconomicosActuales || 0;
+
+        if (startDateInput.value && endDateInput.value) {
+            const inicio = new Date(startDateInput.value);
+            const regreso = new Date(endDateInput.value);
+            if (regreso >= inicio) {
+                const diffTime = regreso.getTime() - inicio.getTime();
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                if ((diasEconomicosActuales + diffDays) > maxDiasEconomicos) {
+                    diasContados.textContent = "¡No puedes exceder el máximo de días económicos!";
+                    diasInput.value = '';
+                } else {
+                    diasContados.textContent = "Días seleccionados: " + diffDays;
+                    diasInput.value = diffDays;
+                }
+            } else {
+                diasContados.textContent = "Días seleccionados: 0";
+                diasInput.value = '';
+            }
+        } else {
+            diasContados.textContent = "Días seleccionados: 0";
+            diasInput.value = '';
+        }
+    }
+
+    document.querySelector('input[name="start-date"]').addEventListener('change', actualizarDiasContados);
+    document.querySelector('input[name="end-date"]').addEventListener('change', actualizarDiasContados);
 
     modal.show();
 }

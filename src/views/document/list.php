@@ -1,4 +1,3 @@
-
 <?php
 include_once UTIL_PATH . 'ModalEditDocumento.php';
 
@@ -193,3 +192,7 @@ if (Session::exists('document_error')) {
     Session::delete('document_error');
 }
 ?>
+<script>
+    window.maxDiasEconomicos = <?= isset($maxDiasEconomicos) ? intval($maxDiasEconomicos) : 0 ?>;
+    window.diasEconomicosActuales = <?= isset($diasEconomicos) ? intval($diasEconomicos) : 0 ?>;
+</script>

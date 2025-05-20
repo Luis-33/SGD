@@ -1,6 +1,8 @@
 <?php 
 
-if (!empty($users)) : ?>
+if (!empty($users)) : 
+    $users = array_reverse($users); // <-- Invierte el orden
+?>
 
     <div class="card_table">
         <div class="card_table_header">

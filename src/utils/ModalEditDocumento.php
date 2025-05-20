@@ -4,9 +4,10 @@ require_once MODEL_PATH . "DocumentModel.php";
 require_once SERVER_PATH . "DB.php";
 
 if (isset($_GET['action']) && $_GET['action'] === 'editDocument') {
-    if (isset($_POST['docID']) && isset($_POST['documentoEstatus'])) {
+    if (isset($_POST['docID'])) {
         $docID = $_POST['docID'];
-        $estatus = $_POST['documentoEstatus'];
+        // Forzar el estatus a "Entregado"
+        $estatus = "Entregado";
 
         // Manejar la subida del archivo
         $documentoFile = null;
@@ -43,7 +44,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'editDocument') {
             // Redirigir con un mensaje de éxito
             header("Location: admin_home.php?page=dashboard&status=success");
         } else {
-            // Redirigir con un mensaje de error
+            // Redirigir with un mensaje de error
             header("Location: admin_home.php?page=dashboard&status=error");
         }
         exit();
@@ -72,14 +73,7 @@ function generateModalEditDocument($docID)
                         <input type=\"file\" accept=\".pdf\"  name=\"documento\" required>
                     </div>
                     <input type=\"hidden\" name=\"docID\" value=\"{$document['documento_id']}\" >
-                    <div class=\"input_group\">
-                        <label>Estatus</label>
-                        <select name=\"documentoEstatus\" id=\"documentoEstatus\">
-                            <option value=\"Entregado\" " . ($document['documento_estatus'] === 'Entregado' ? 'selected' : '') . ">Entregado</option>
-                            <option value=\"Pendiente\" " . ($document['documento_estatus'] === 'Pendiente' ? 'selected' : '') . ">Pendiente</option>
-                            <option value=\"Sin Entregar\" " . ($document['documento_estatus'] === 'Sin Entregar' ? 'selected' : '') . ">Sin Entregar</option>
-                        </select>
-                    </div>
+                    <input type=\"hidden\" name=\"documentoEstatus\" value=\"Entregado\">
                     <button type=\"submit\">Actualizar documento</button>
                 </form>
             </div>

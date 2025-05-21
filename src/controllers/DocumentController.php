@@ -38,7 +38,15 @@ class DocumentController
         $userInfo = $userModel->getUserById($userID);
         $maxDiasEconomicos = $userInfo['dias_economicos']; // Nueva columna
 
-        // Pasar los datos a la vista
+        // Verificar si el usuario tiene más de 6 meses en la empresa
+        $fechaIngreso = $userInfo['usuario_fechaIngreso']; // Usa el nombre correcto
+
+        $fechaIngresoDate = new DateTime($fechaIngreso);
+        $hoy = new DateTime();
+        $intervalo = $fechaIngresoDate->diff($hoy);
+        $puedeDiaEconomico = ($intervalo->m + ($intervalo->y * 12)) >= 6;
+
+        // Pasa $puedeDiaEconomico a la vista
         require VIEW_PATH . 'document/list.php';
     }
 

@@ -29,8 +29,11 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis documentos" : "Documentos"; ?></h2>
             <div class="card_header_actions">
                 <div class="dias_economicos">
-                    <span><?= $diasEconomicos; ?> / <?= $maxDiasEconomicos; ?></span>
-                    <i class="fa-solid fa-file-lines" title="Dia economico"></i>
+                    
+                    <?php if ($puedeDiaEconomico): ?>
+                        <span><?= $diasEconomicos; ?> / <?= $maxDiasEconomicos; ?></span>
+                        <i class="fa-solid fa-file-lines" title="Dia economico"></i>
+                    <?php endif; ?>
                     <span><?= $diaCumple; ?> / 1</span>
                     <i class="fa-solid fa-birthday-cake" title="Dia de cumpleaños"></i>
                     <span><?= $reportesIncidencia; ?></span>
@@ -120,8 +123,11 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis documentos" : "Documentos"; ?></h2>
             <div class="card_header_actions">
                 <div class="dias_economicos">
-                    <span><?= $diasEconomicos; ?> / <?= $maxDiasEconomicos; ?></span>
-                    <i class="fa-solid fa-file-lines" title="Dia economico"></i>
+                    
+                    <?php if ($puedeDiaEconomico): ?>
+                        <span><?= $diasEconomicos; ?> / <?= $maxDiasEconomicos; ?></span>
+                        <i class="fa-solid fa-file-lines" title="Dia economico"></i>
+                    <?php endif; ?>
                     <span><?= $diaCumple; ?> / 1</span>
                     <i class="fa-solid fa-birthday-cake" title="Dia de cumpleaños"></i>
                     <span><?= $reportesIncidencia; ?></span>
@@ -155,9 +161,13 @@ include_once UTIL_PATH . 'ModalEditDocumento.php';
         addReporteIncidencia
     } from './assets/js/documents/reporteIncidencia.js';
 
-    document.querySelector('.fa-file-lines').addEventListener('click', function() {
-        addDiaEconomico();
-    });
+    const btnDiaEconomico = document.querySelector('.fa-file-lines');
+    if (btnDiaEconomico) {
+        btnDiaEconomico.addEventListener('click', function() {
+            addDiaEconomico();
+        });
+    }
+
     document.querySelector('.fa-birthday-cake').addEventListener('click', function() {
         addDiaCumple();
     });

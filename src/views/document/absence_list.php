@@ -51,10 +51,11 @@
         const endInput = document.getElementById('end_date');
         const totalDaysInput = document.getElementById('total_days');
 
-        const startDate = new Date(startInput.value);
-        const endDate = new Date(endInput.value);
+        if (startInput.value && endInput.value) {
+            // Normalizamos a medianoche UTC
+            const startDate = new Date(startInput.value + 'T00:00:00Z');
+            const endDate = new Date(endInput.value + 'T00:00:00Z');
 
-        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
             const timeDiff = endDate - startDate;
             const dayDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
 
@@ -63,6 +64,7 @@
             totalDaysInput.value = '';
         }
     }
+
 
     function addabsence(users) {
         console.log("usuarios", users);
@@ -93,11 +95,12 @@
                                 </div>
                             </div>
                             <div class="form_group">
-                                <label for="end_date">Fecha Final</label>
-                                <div class="input_group">
-                                    <input class="search_input" type="date" name="end_date" id="end_date" required onchange="calculateDays()">
+                                <label for="total_days">Días</label>
+                               <div class="input_group">
+                                    <input class="search_input" type="number" name="total_days" id="total_days" min="1" oninput="calculateEndDateFromDays()">
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="form_row">
@@ -109,10 +112,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form_group">
-                                <label for="total_days">Días</label>
+                           <div class="form_group">
+                                <label for="end_date">Fecha Final</label>
                                 <div class="input_group">
-                                    <input class="search_input" type="number" name="total_days" id="total_days" readonly>
+                                    <input class="search_input" type="date" name="end_date" id="end_date" required onchange="calculateDays()">
                                 </div>
                             </div>
                         </div>
@@ -174,7 +177,7 @@
                             <div class="form_group">
                                 <label for="total_days">Días</label>
                                 <div class="input_group">
-                                    <input class="search_input" type="number" name="total_days" id="total_days" readonly>
+                                    <input class="search_input" type="number" name="total_days" id="total_days" min="1" oninput="calculateEndDateFromDays()">
                                 </div>
                             </div>
                         </div>
@@ -265,58 +268,59 @@
                 <div class="modal_body">
                     <input type="hidden" name="user_id" value="${selectedUserId}">
                     <form action="admin_home.php?page=absences&action=save" method="POST" id="addAbsenceForm" enctype="multipart/form-data">
-    <input type="hidden" name="user_id" value="${selectedUserId}">
-    ${parentIdInput}
-    <div class="form_row">
-        <div class="form_group">
-            <label for="folio_number">Folio</label>
-            <div class="input_group">
-                <input class="search_input" type="text" name="folio_number" id="folio_number" required>
-            </div>
-        </div>
-        <div class="form_group">
-            <label for="start_date">Fecha de Inicio</label>
-            <div class="input_group">
-                <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()" value="${nextStartDate}" readonly>
-            </div>
-        </div>
-        <div class="form_group">
-            <label for="end_date">Fecha Final</label>
-            <div class="input_group">
-                <input class="search_input" type="date" name="end_date" id="end_date" required onchange="calculateDays()">
-            </div>
-        </div>
-    </div>
+                        <input type="hidden" name="user_id" value="${selectedUserId}">
+                        ${parentIdInput}
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="folio_number">Folio</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="text" name="folio_number" id="folio_number" required>
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="start_date">Fecha de Inicio</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="date" name="start_date" id="start_date" required onchange="calculateDays()" value="${nextStartDate}" readonly>
+                                </div>
+                            </div>
+                            <div class="form_group">
+                                <label for="total_days">Días</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="number" name="total_days" id="total_days" min="1" oninput="calculateEndDateFromDays()">
+                                </div>
+                            </div>
 
-    <div class="form_row">
-        <div class="form_group">
-            <label for="user_select">Usuario</label>
-            <div class="input_group">
-                <select class="selection" id="user_select" disabled>
-                    ${options}
-                </select>
-            </div>
-        </div>
-        <div class="form_group">
-            <label for="total_days">Días</label>
-            <div class="input_group">
-                <input class="search_input" type="number" name="total_days" id="total_days" readonly>
-            </div>
-        </div>
-    </div>
+                        </div>
 
-    <div class="form_group">
-        <label for="file">Documento</label>
-        <div class="input_group">
-            <input class="search_input" type="file" name="document" id="file" required>
-        </div>
-    </div>
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="user_select">Usuario</label>
+                                <div class="input_group">
+                                    <select class="selection" id="user_select" disabled>
+                                        ${options}
+                                    </select>
+                                </div>
+                            </div>
+                           <div class="form_group">
+                                <label for="end_date">Fecha Final</label>
+                                <div class="input_group">
+                                    <input class="search_input" type="date" name="end_date" id="end_date" required onchange="calculateDays()">
+                                </div>
+                            </div>
+                        </div>
 
-    <div class="modal_actions">
-        <button type="submit" class="btn_confirm">Agregar</button>
-        <button type="button" onclick="closeModal('addAbsence')" class="btn_cancel">Cancelar</button>
-    </div>
-</form>
+                        <div class="form_group">
+                            <label for="file">Documento</label>
+                            <div class="input_group">
+                                <input class="search_input" type="file" name="document" id="file" required>
+                            </div>
+                        </div>
+
+                        <div class="modal_actions">
+                            <button type="submit" class="btn_confirm">Agregar</button>
+                            <button type="button" onclick="closeModal('addAbsence')" class="btn_cancel">Cancelar</button>
+                        </div>
+                    </form>
 
                 </div>
             </div>
@@ -325,6 +329,26 @@
         document.body.insertAdjacentHTML('beforeend', modalContent);
         openModal('addAbsence');
     }
+
+
+    function calculateEndDateFromDays() {
+        const startInput = document.getElementById('start_date');
+        const totalDaysInput = document.getElementById('total_days');
+        const endInput = document.getElementById('end_date');
+
+        const startDate = new Date(startInput.value + 'T00:00:00Z');
+        const days = parseInt(totalDaysInput.value, 10);
+
+        if (!isNaN(startDate.getTime()) && !isNaN(days) && days > 0) {
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + days - 1); // se resta 1 porque el inicio cuenta como un día
+
+            endInput.value = endDate.toISOString().split('T')[0];
+        } else {
+            endInput.value = '';
+        }
+    }
+
 
 </script>
 
@@ -335,7 +359,7 @@
     <div class="card_table_header">
         <h2>Incapacidades</h2>
         <div class="card_header_actions">
-            <button id="toggleButton" class="btn_documento" onclick="toggleAbsenceView()">Ver cerradas</button>
+<!--            <button id="toggleButton" class="btn_documento" onclick="toggleAbsenceView()">Ver cerradas</button>-->
             <button class="btn_documento" onclick="addabsence(<?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>)">Agregar</button>
         </div>
     </div>

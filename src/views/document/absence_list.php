@@ -331,98 +331,131 @@
 
 
 
-    <div class="card_table">
-        <div class="card_table_header">
-            <h2>Incapacidades</h2>
-            <div class="card_header_actions">
-                <button class="btn_documento" onclick="addabsence(<?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>)">Agregar</button>
-            </div>
+<div class="card_table">
+    <div class="card_table_header">
+        <h2>Incapacidades</h2>
+        <div class="card_header_actions">
+            <button id="toggleButton" class="btn_documento" onclick="toggleAbsenceView()">Ver cerradas</button>
+            <button class="btn_documento" onclick="addabsence(<?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>)">Agregar</button>
         </div>
-        <div class="card_table_body">
+    </div>
+
+    <div class="card_table_body">
         <div class="search_input" id="searchForm">
             <input type="text" id="searchInput" placeholder="Buscar">
             <i class="fa-solid fa-xmark" id="clear_input"></i>
         </div>
-            <div class="table_header" style="text-align: center">
-                <span class="header_tipo">Documento</span>
-                <span class="header_fecha">Usuario</span>
-                <span class="header_fecha">Folio</span>
-                <span class="header_fecha">Inicio</span>
-                <span class="header_fecha">Fin</span>
-                <span class="header_fecha">Días de incapacidad</span>
-                <span class="header_fecha">Estado</span>
-                <span class="header_actions">Acciones</span>
-            </div>
-            <div class="table_body" id="tableContainer">
-                <?php foreach ($return_data as $absence) : ?>
-                    <div class="table_body_item" style="text-align: center">
-                        <span class="row_pdf">
-                            <?php if (!empty($absence['document'])): ?>
-                                <a href="<?php echo htmlspecialchars($absence['document']); ?>" target="_blank" title="Ver documento">
-                                    <i class="fa-solid fa-file-pdf"></i>
-                                </a>
-                            <?php else: ?>
-                                <span>Sin documento</span>
-                            <?php endif; ?>
-                        </span>
-                        <span class="row_fecha"><?php echo htmlspecialchars($absence["full_name"]); ?></span>
-                        <span class="row_fecha"><?php echo htmlspecialchars($absence["folio_number"]); ?></span>
-                        <span class="row_fecha"><?php echo htmlspecialchars($absence["start_date"]); ?></span>
-                        <span class="row_fecha"><?php echo htmlspecialchars($absence["end_date"]); ?></span>
 
+        <div class="table_header" style="text-align: center">
+            <span class="header_tipo">Documento</span>
+            <span class="header_fecha">Usuario</span>
+            <span class="header_fecha">Folio</span>
+            <span class="header_fecha">Inicio</span>
+            <span class="header_fecha">Fin</span>
+            <span class="header_fecha">Días de incapacidad</span>
+            <span class="header_fecha">Estado</span>
+            <span class="header_actions" id="actionsHeader">Acciones</span>
+        </div>
 
-                        <span class="row_fecha"><?php echo htmlspecialchars($absence["total_days"]); ?></span>
+        <div id="openAbsences" class="table_body">
+            <?php foreach ($return_data as $absence) : ?>
+                <?php if ($absence['is_open'] != '1') continue; ?>
+                <div class="table_body_item" style="text-align: center">
+                    <span class="row_pdf">
+                        <?php if (!empty($absence['document'])): ?>
+                            <a href="<?= htmlspecialchars($absence['document']); ?>" target="_blank" title="Ver documento">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </a>
+                        <?php else: ?>
+                            <span>Sin documento</span>
+                        <?php endif; ?>
+                    </span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["full_name"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["folio_number"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["start_date"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["end_date"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["total_days"]); ?></span>
+                    <span class="row_estatus success">Abierto</span>
 
-
-
-
-
-                        <?php
-                            $estatusClass = '';
-                            switch ($absence['is_open']) {
-                                case "1":
-                                    $estatusClass = 'success';
-                                    break;
-                                case "0":
-                                    $estatusClass = 'warning';
-                                    break;
-                            }
-                            echo "<span class=\"row_estatus {$estatusClass}\">" . ($absence['is_open'] == '1' ? 'Abierto' : 'Cerrado') . "</span>"; ?>
-                <?php if ($_SESSION['user_role'] == 1) : ?>
-                    <div class="row_actions" style="margin-left: 1rem">
-                        <i class="fa-solid fa-plus"
-                           title="Agregar relacionado"
-                           onclick="addAbsence(
-                           <?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>,
-                           <?= $absence['absence_id']; ?>,
-                           <?= $absence['user_id']; ?>,
-                           '<?= $absence['end_date']; ?>'
-                        )">
-                        </i>
+                    <?php if ($_SESSION['user_role'] == 1) : ?>
+                        <div class="row_actions" style="margin-left: 1rem">
+                            <i class="fa-solid fa-plus"
+                               title="Agregar relacionado"
+                               onclick="addAbsence(
+                               <?= htmlspecialchars(json_encode($users), ENT_QUOTES, 'UTF-8'); ?>,
+                               <?= $absence['absence_id']; ?>,
+                               <?= $absence['user_id']; ?>,
+                                       '<?= $absence['end_date']; ?>'
+                                       )">
+                            </i>
                             <i class="fa-solid fa-trash-can"
                                title="Eliminar"
                                onclick="confirmDelete(<?= $absence['absence_id']; ?>, '<?= addslashes($absence['full_name']); ?>')">
                             </i>
-                        <?php if ($absence['parent_id'] != null) : ?>
-                            <i class="fa-solid fa-eye"
-                               title="Ver detalle"
-                               onclick="viewAbsence(<?= $absence['parent_id']; ?>)">
-                            </i>
-                        <?php endif; ?>
-
-
-                    </div>
-                <?php endif; ?>
+                            <?php if ($absence['parent_id'] != null) : ?>
+                                <i class="fa-solid fa-eye"
+                                   title="Ver detalle"
+                                   onclick="viewAbsence(<?= $absence['parent_id']; ?>)">
+                                </i>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
-            </div>
+        </div>
+
+        <div id="closedAbsences" class="table_body" style="display: none;">
+            <?php foreach ($return_data as $absence) : ?>
+                <?php if ($absence['is_open'] != '0') continue; ?>
+                <div class="table_body_item" style="text-align: center">
+                    <span class="row_pdf">
+                        <?php if (!empty($absence['document'])): ?>
+                            <a href="<?= htmlspecialchars($absence['document']); ?>" target="_blank" title="Ver documento">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </a>
+                        <?php else: ?>
+                            <span>Sin documento</span>
+                        <?php endif; ?>
+                    </span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["full_name"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["folio_number"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["start_date"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["end_date"]); ?></span>
+                    <span class="row_fecha"><?= htmlspecialchars($absence["total_days"]); ?></span>
+                    <span class="row_estatus warning">Cerrado</span>
+                </div>
+            <?php endforeach; ?>
+        </div>
 
         <div class="no_result_message" id="noResultsMessage" style="display: none;">
-            <span>No se roles con el nombre ingresado</span>
+            <span>No se encontraron roles con el nombre ingresado</span>
             <i class="fa-solid fa-magnifying-glass"></i>
         </div>
     </div>
-    </div>
+</div>
+
+<script>
+    function toggleAbsenceView() {
+        const openList = document.getElementById('openAbsences');
+        const closedList = document.getElementById('closedAbsences');
+        const btn = document.getElementById('toggleButton');
+        const actionsHeader = document.getElementById('actionsHeader'); // Obtener el encabezado de acciones
+
+        if (openList.style.display !== 'none') {
+            openList.style.display = 'none';
+            closedList.style.display = 'block';
+            btn.textContent = 'Ver abiertas';
+            actionsHeader.style.display = 'none'; // Ocultar el encabezado de acciones
+        } else {
+            openList.style.display = 'block';
+            closedList.style.display = 'none';
+            btn.textContent = 'Ver cerradas';
+            actionsHeader.style.display = 'inline-block'; // Mostrar el encabezado de acciones
+        }
+    }
+</script>
+
+
 <script src="assets/js/search_document.js"></script>
 <script src="assets/js/alert.js"></script>
 <script src="assets/js/modal.js"></script>

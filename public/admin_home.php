@@ -325,10 +325,16 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             break;
                         }
 
+                        if ($action === 'toggle_status' && isset($_GET['id'])) {
+                                $id = $_GET['id'];
+                                $AbsencesController->toggle($id);
+                            break;
+                        }
+
                         $AbsencesController->show();
+
                     }
                     break;
-
                 case 'commissions':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'comision') {

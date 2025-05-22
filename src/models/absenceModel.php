@@ -17,7 +17,8 @@ class absenceModel
                 FROM absences
                 LEFT JOIN usuario ON usuario.usuario_id = absences.user_id
                 WHERE absences.is_deleted = '0'
-                AND absences.is_open = '1'";
+               -- AND absences.is_open = '1'
+                ORDER BY absence_id DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -258,6 +259,14 @@ class absenceModel
         }
 
         return true;
+    }
+
+    public function toggle($absenceId)
+    {
+        $query = "UPDATE absences SET is_open = '1' WHERE absence_id = :absence_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':absence_id', $absenceId, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
     public function getAbsenceChain($absenceId)

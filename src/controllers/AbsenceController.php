@@ -41,6 +41,20 @@ class AbsenceController
         }
     }
 
+    public function toggle($id)
+    {
+        if ($this->absenceModel->toggle($id)) {
+            Session::set('document_success', 'Incapacidad activada exitosamente.');
+            header('Location: admin_home.php?page=absences');
+        } else {
+            Session::set('document_error', 'Error al activar la incapacidad.');
+
+        }
+    }
+
+
+
+
     public function save($data){
         if ($this->absenceModel->save($data)) {
             Session::set('document_success', 'Incapacidad guardada exitosamente.');

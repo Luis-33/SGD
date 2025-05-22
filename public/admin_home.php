@@ -58,11 +58,17 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
             switch ($page) {
                 case 'dashboard':
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        if ($action === 'addDiaEconomico' && isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'])) {
+                        if (
+                            $action === 'addDiaEconomico' &&
+                            isset($_POST['permiso'], $_POST['start-date'], $_POST['end-date'], $_POST['dias_economicos'])
+                        ) {
                             $permiso = $_POST['permiso'];
                             $startDate = $_POST['start-date'];
                             $endDate = $_POST['end-date'];
-                            $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso);
+                            $diasEconomicos = intval($_POST['dias_economicos']);
+
+                            // Ya NO validamos el máximo, solo insertamos
+                            $documentController->generateDiaEconomico($db, $userID, $startDate, $endDate, $permiso, $diasEconomicos);
                             $documentController->sendEmail($db, $userID, null, 'created', 'Creación de documento', 'Dia economico', null);
                         } else if ($action === 'addDiaCumple' && isset($_POST['dayOption'])) {
                             $dayOption = $_POST['dayOption'];
@@ -110,14 +116,24 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             && isset($_POST['empleadoSindicato'])
                             && isset($_POST['empleadoRol'])
                             && isset($_POST['userDiasEconomicos'])
-
-
                         ) {
                             $userNomina = $_POST['empleadoNomina'];
+                            $userEmail = $_POST['empleadoCorreo'];
+
+                            // Validación de duplicados
+                            if ($userController->existsEmail($userEmail)) {
+                                echo "<script>alert('El correo ya está registrado.'); window.history.back();</script>";
+                                exit;
+                            }
+                            if ($userController->existsNomina($userNomina)) {
+                                echo "<script>alert('El número de nómina ya está registrado.'); window.history.back();</script>";
+                                exit;
+                            }
+
+                            // Si pasa la validación, continúa con el registro
                             $userName = $_POST['empleadoNombre'];
                             $userCurp = $_POST['empleadoCurp'];
                             $userRFC = $_POST['empleadoRFC'];
-                            $userEmail = $_POST['empleadoCorreo'];
                             $userGenero = $_POST['empleadoGenero'];
                             $userIngreso = $_POST['empleadoIngreso'];
                             $userCumple = $_POST['empleadoCumple'];
@@ -127,7 +143,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                             $userSindicato = $_POST['empleadoSindicato'];
                             $userRol = $_POST['empleadoRol'];
                             $userDiasEconomicos = $_POST['userDiasEconomicos'];
-                            $userController->addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol,$userDiasEconomicos);
+
+                            $userController->addUser(
+                                $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero,
+                                $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe,
+                                $userSindicato, $userRol, $userDiasEconomicos
+                            );
                         } else if (
                             $action === 'editUser'
                             && isset($_POST['empleadoID'])

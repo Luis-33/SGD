@@ -36,6 +36,17 @@
             $(this).toggleClass('fa-eye fa-eye-slash');
         });
 
+        // Validación de contraseña segura al enviar el formulario
+        $(document).on('submit', 'form[action*="update_password"]', function(e) {
+            const password = $('#new-password').val();
+            // Al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+            if (!regex.test(password)) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.');
+                return false;
+            }
+        });
     });
 </script>
 

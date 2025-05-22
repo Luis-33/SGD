@@ -275,4 +275,18 @@ class UserModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getUserByEmail($email) {
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE usuario_email = :email LIMIT 1");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getUserByNomina($nomina) {
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE usuario_nomina = :nomina LIMIT 1");
+        $stmt->bindParam(':nomina', $nomina, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

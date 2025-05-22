@@ -89,17 +89,22 @@ function procesarArchivoCSV($db)
         }
 
         $success = true;
+        $totalFilas = 0;
+        $filasExitosas = 0;
+        $filasFallidas = 0;
 
         // Leer cada fila del archivo CSV
         while (($datos = fgetcsv($handle, 1000, ",")) !== false) {
             if (count($datos) < 3) {
                 $success = false;
+                $filasFallidas++;
                 $_SESSION['user_error'] = 'Error: El archivo CSV no tiene el formato esperado. Asegúrate de usar la plantilla.';
                 continue;
             }
 
             $numeroNomina = trim($datos[1]);
             $diasEconomicos = trim($datos[2]);
+            $totalFilas++;
 
             if (!empty($numeroNomina) && is_numeric($diasEconomicos)) {
                 $query = "UPDATE usuario 
@@ -110,20 +115,27 @@ function procesarArchivoCSV($db)
                 $stmt->bindParam(':diasEconomicos', $diasEconomicos, PDO::PARAM_INT);
                 $stmt->bindParam(':numeroNomina', $numeroNomina, PDO::PARAM_STR);
 
-                if (!$stmt->execute()) {
+                if ($stmt->execute() && $stmt->rowCount() > 0) {
+                    $filasExitosas++;
+                } else {
                     $success = false;
+                    $filasFallidas++;
                     $_SESSION['user_error'] = "Error al actualizar el registro con Numero Nomina $numeroNomina.";
                 }
             } else {
                 $success = false;
+                $filasFallidas++;
                 $_SESSION['user_error'] = 'Datos inválidos en el archivo CSV: Numero Nomina o Días Económicos vacíos o incorrectos.';
             }
         }
 
         fclose($handle);
 
-        if ($success) {
-            $_SESSION['user_success'] = 'CSV procesado correctamente.';
+        // Mensaje resumen
+        if ($filasExitosas === $totalFilas && $totalFilas > 0) {
+            $_SESSION['user_success'] = "CSV procesado correctamente. Filas procesadas: $totalFilas.";
+        } else {
+            $_SESSION['user_error'] = "CSV procesado con errores. Filas exitosas: $filasExitosas, filas fallidas: $filasFallidas, de un total de $totalFilas.";
         }
     } catch (Exception $e) {
         $_SESSION['user_error'] = 'Error: ' . $e->getMessage();

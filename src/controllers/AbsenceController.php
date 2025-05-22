@@ -22,6 +22,10 @@ class AbsenceController
     public function show()
     {
         $return_data = $this->absenceModel->getAll();
+        $total_days = $this->absenceModel->getAllWithTotals();
+        //$dias_user = $this->absenceModel->getTotalDaysIncludingChildren();
+
+
         $users = $this->userModel->getAll();
 
         require VIEW_PATH . 'document/absence_list.php';
@@ -58,18 +62,21 @@ class AbsenceController
     public function viewChain($absenceId)
     {
         $chain = $this->absenceModel->getAbsenceChain($absenceId);
-        $daysById = $this->absenceModel->getDays($absenceId);
-
         $totalDays = array_sum(array_column($chain, 'total_days'));
 
-        $daysById = array_sum(array_column($daysById, 'total_days'));
+        $daysAById = $this->absenceModel->getDays($absenceId);
 
+        if (is_array($daysAById) && isset($daysAById['total_days'])) {
+            $daysAById = $daysAById['total_days'];
+        }
 
-        echo "<p><strong>Total de días de incapacidad: {$totalDays}</strong></p>";
+// Asegurarse de que sea numérico
+        $total = $totalDays + (is_numeric($daysAById) ? $daysAById : 0);
+
+        echo "<p><strong>Total de días de incapacidad: {$total}</strong></p>";
         if (!empty($chain)) {
             echo "<table border='1' cellpadding='5' cellspacing='0'>";
             echo "<thead><tr>
-        <th>ID</th>
         <th>Nombre</th>
         <th>Folio</th>
         <th>Inicio</th>
@@ -81,7 +88,6 @@ class AbsenceController
             echo "<tbody>";
             foreach (array_reverse($chain) as $item) {
                 echo "<tr style='text-align: center;'>
-            <td>{$item['absence_id']}</td>
             <td>" . htmlspecialchars($item['usuario_nombre']) . "</td>
             <td>" . htmlspecialchars($item['folio_number']) . "</td>
             <td>{$item['start_date']}</td>

@@ -245,8 +245,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
                         }
 
                         if ($action === 'save') {
+
                             // Si el usuario está logueado, usa el ID de la sesión
-                            $userId = isset($_POST['user_id']) ? $_POST['user_id'] : (Session::get('user_id') ?? null);
+                            $userId = !empty($_POST['user_id']) ? $_POST['user_id'] : (Session::get('user_id') ?? null);
 
                             // Valida que user_id no sea null
                             if (!$userId) {

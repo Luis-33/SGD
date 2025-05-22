@@ -23,6 +23,135 @@ class absenceModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAllWithTotals(): array
+    {
+        $query = "SELECT
+                absences.absence_id,
+                absences.total_days,
+                absences.parent_id,
+                absences.user_id,
+                usuario.usuario_nombre AS full_name
+              FROM absences
+              LEFT JOIN usuario ON usuario.usuario_id = absences.user_id
+              WHERE absences.is_deleted = '0'";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Agrupar por usuario
+        $users = [];
+
+        foreach ($results as $row) {
+            $userId = $row['user_id'];
+
+            if (!isset($users[$userId])) {
+                $users[$userId] = [
+                    'user_id' => $userId,
+                    'full_name' => $row['full_name'],
+                    'absences' => [],
+                    'map' => [],
+                    'roots' => [],
+                    'total_chain_days' => 0
+                ];
+            }
+
+            // Guardar la ausencia
+            $absenceId = $row['absence_id'];
+            $users[$userId]['map'][$absenceId] = $row;
+            $users[$userId]['map'][$absenceId]['children'] = [];
+        }
+
+        // Construir jerarquía por usuario
+        foreach ($users as &$user) {
+            foreach ($user['map'] as $id => &$item) {
+                if (!empty($item['parent_id']) && isset($user['map'][$item['parent_id']])) {
+                    $user['map'][$item['parent_id']]['children'][] = &$item;
+                } else {
+                    $user['roots'][] = &$item;
+                }
+            }
+
+            // Sumar días por cada árbol raíz
+            $sumDays = function($node) use (&$sumDays) {
+                $total = (int) $node['total_days'];
+                foreach ($node['children'] as $child) {
+                    $total += $sumDays($child);
+                }
+                return $total;
+            };
+
+            foreach ($user['roots'] as $root) {
+                $user['total_chain_days'] += $sumDays($root);
+            }
+        }
+
+        return array_values($users); // Para que no tenga claves numéricas raras
+    }
+
+    public function getTotalDaysIncludingChildren(): array
+    {
+        $query = "SELECT absence_id, user_id, parent_id, total_days
+              FROM absences
+              WHERE is_deleted = 0";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Agrupar por user_id
+        $byUser = [];
+
+        foreach ($rows as $row) {
+            $userId = $row['user_id'];
+            if (!isset($byUser[$userId])) {
+                $byUser[$userId] = [
+                    'user_id' => $userId,
+                    'total_days' => 0,
+                    'map' => [],
+                ];
+            }
+
+            // Guardar ausencia y preparar hijos
+            $absenceId = $row['absence_id'];
+            $byUser[$userId]['map'][$absenceId] = $row;
+            $byUser[$userId]['map'][$absenceId]['children'] = [];
+        }
+
+        // Construir jerarquía por usuario
+        foreach ($byUser as &$userData) {
+            foreach ($userData['map'] as $id => &$item) {
+                $parentId = $item['parent_id'];
+                if (!empty($parentId) && isset($userData['map'][$parentId])) {
+                    $userData['map'][$parentId]['children'][] = &$item;
+                }
+            }
+
+            // Detectar raíces
+            $roots = array_filter($userData['map'], fn($item) => empty($item['parent_id']));
+
+            // Sumar días desde cada raíz
+            $sumDays = function($node) use (&$sumDays) {
+                $total = (int) $node['total_days'];
+                foreach ($node['children'] as $child) {
+                    $total += $sumDays($child);
+                }
+                return $total;
+            };
+
+            foreach ($roots as $root) {
+                $userData['total_days'] += $sumDays($root);
+            }
+
+            // Limpiar la estructura interna
+            unset($userData['map']);
+        }
+
+        return array_values($byUser); // Resultado limpio
+    }
+
+
+
     public function get($id)
     {
         $query = "SELECT * FROM absences WHERE absence_id = :id";
@@ -155,14 +284,15 @@ class absenceModel
         return $chain;
     }
 
+
     public function getDays($absenceId)
     {
-        $query = "SELECT absences.* FROM absences WHERE absence_id = :id";
+        $query = "SELECT total_days FROM absences WHERE parent_id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->execute(['id' => $absenceId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $row ? $row : null;
+        return $row ? $row['total_days'] : null;
     }
 
 }

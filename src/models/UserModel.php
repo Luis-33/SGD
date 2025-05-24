@@ -139,6 +139,19 @@ class UserModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+        public function getJefeInmediato4($areaAdscripcion_id)
+    {
+        $query = "SELECT usuario.*, puesto.* 
+          FROM usuario 
+          LEFT JOIN puesto ON usuario.puesto_id = puesto.puesto_id 
+          WHERE usuario.areaAdscripcion_id = :areaAdscripcion_id AND usuario.rol_id = 4";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':areaAdscripcion_id', $areaAdscripcion_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol)
     {
         $query = "INSERT INTO usuario (usuario_nomina, usuario_nombre, usuario_curp, usuario_rfc, usuario_email, usuario_password, usuario_genero, usuario_fechaIngreso, usuario_fechaCumpleaños, puesto_id, areaAdscripcion_id, jefeInmediato_id, sindicato_id, rol_id, usuario_estatus) 

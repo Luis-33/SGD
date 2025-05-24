@@ -46,7 +46,7 @@
             } elseif ($diferenciadias >= 90 && $diferenciadias < 180 && $puestoEspecial) {
                 $totalDias = 30;
             } elseif ($diferenciadias >= 180 && $puestoEspecial) {
-                $totalDias = 180;
+                $totalDias = 60;
             } elseif ($diferenciadias < 90) {
                 $totalDias = 15;
             } elseif ($diferenciadias >= 90 && $diferenciadias < 180) {

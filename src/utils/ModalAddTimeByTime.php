@@ -89,7 +89,7 @@ function generateModalDocumentForTime()
             <div id=\"Pagos\"></div>
               
             <input type=\"hidden\" name=\"usuario_id\" id=\"user\">
-            <button class=\"insert_documento_btn\">Subir documento</button>
+            <button class=\"insert_documento_btn\">Crear registro </button>
             </form>
         </div>
     </div>

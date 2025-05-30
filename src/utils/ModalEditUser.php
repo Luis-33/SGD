@@ -28,7 +28,7 @@ function generateModalEditUser($userID)
     <div class=\"modal editUser\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Editar empleado</h2>
+                <h2>Editar empleado </h2>
                 <button onclick=\"closeModal('editUser')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
@@ -187,6 +187,11 @@ function generateModalEditUser($userID)
                             </ul>
                         </div>
                     </div>
+                    <div class=\"input_group\">
+                        <label for=\"empleadoDiasEconomicos\">Días económicos</label>
+                        <input type=\"number\" name=\"userDiasEconomicos\" id=\"empleadoDiasEconomicos\" value=\"{$user['dias_economicos']}\" placeholder=\"Ingresa los días económicos\" min=\"0\" required>
+                    </div>
+                    
 
                     <input type=\"hidden\" name=\"empleadoRol\" id=\"rol\" value=\"{$user['rol_id']}\">
                     <input type=\"hidden\" name=\"empleadoPuesto\" id=\"puesto\" value=\"{$user['puesto_id']}\">

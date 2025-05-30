@@ -34,8 +34,11 @@ class RolesController
 
     public function deleteRole($rolId)
     {
-        if ($this->rolModel->deleteRol($rolId)) {
+        $result = $this->rolModel->deleteRol($rolId);
+        if ($result === true) {
             Session::set('rol_success', 'Rol eliminado exitosamente.');
+        } elseif ($result === 'constraint') {
+            Session::set('rol_error', 'No se puede eliminar el rol porque está asignado a uno o más usuarios.');
         } else {
             Session::set('rol_error', 'Error al eliminar el rol.');
         }

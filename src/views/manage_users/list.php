@@ -1,9 +1,14 @@
-<?php if (!empty($users)) : ?>
+<?php 
+
+if (!empty($users)) : 
+    $users = array_reverse($users); // <-- Invierte el orden
+?>
 
     <div class="card_table">
         <div class="card_table_header">
             <h2>Administrar empleados</h2>
-            <?php if ($_SESSION['user_role'] == 1) : ?>
+            <?php if ($_SESSION['user_role'] == 1) : ?> 
+                <div id="btn_diecomasivo" onclick="openModal('exceldiaseco')" title="Cargar días economicos masivo">CSV</div>
                 <div class="btn_insert" onclick="openModal('addUser')">Agregar empleado</div>
             <?php endif; ?>
         </div>
@@ -68,7 +73,9 @@
 
     <?php if ($_SESSION['user_role'] == 1) :
         echo generateModalAddUser();
+        echo generateModalexceldiaseco();
     endif; ?>
+    
 
 <?php else : ?>
 
@@ -77,6 +84,7 @@
             <h2>Administrar empleados</h2>
             <?php if ($_SESSION['user_role'] == 1) : ?>
                 <div class="btn_insert">Agregar empleado</div>
+                <div class="btn_insert"></div>
             <?php endif; ?>
         </div>
         <div class="card_table_body">

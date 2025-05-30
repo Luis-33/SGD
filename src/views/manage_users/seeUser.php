@@ -30,7 +30,9 @@
                     'Día de cumpleaños' => 'usuario_fechaCumpleaños',
                     'Área de adscripción' => 'areaAdscripcion_nombre',
                     'Puesto' => 'puesto_nombre',
-                    'Sindicato' => 'sindicato_nombre'
+                    'Sindicato' => 'sindicato_nombre',
+                    'Días económicos' => 'dias_economicos'
+                    
                 ];
 
                 foreach ($fields as $label => $field) {

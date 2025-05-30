@@ -14,6 +14,12 @@ generarPDF2 = function (id, id2) {
 }
 
 function closeModal(modalClass) {
-    console.log("close modalClass", modalClass);
     $('.' + modalClass).css('display', 'none');
 }
+
+// function closeModal(className) {
+//     const modal = document.querySelector(`.modal.${className}`);
+//     if (modal) {
+//         modal.remove(); // elimina completamente el modal del DOM
+//     }
+// }

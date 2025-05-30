@@ -13,7 +13,7 @@ function generateModalAddUser()
     <div class=\"modal addUser\">
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2></h2>
+                <h2> Agregar usuario</h2>
                 <button onclick=\"closeModal('addUser')\">Cerrar</button>
             </div>
             <div class=\"modal_body\">
@@ -192,6 +192,10 @@ function generateModalAddUser()
     $modal .= "
                             </ul>
                         </div>
+                    </div>
+                    <div class=\"input_group\">
+                        <label for=\"empleadoDiasEconomicos\">Días económicos</label>
+                        <input type=\"number\" name=\"userDiasEconomicos\" id=\"empleadoDiasEconomicos\" placeholder=\"Ingresa los días económicos\" min=\"0\" required>
                     </div>
 
                     <input type=\"hidden\" name=\"empleadoGenero\" id=\"genero\">

@@ -66,7 +66,7 @@ $commissionModel = new CommissionsModel($db);
 $comisions = $commissionModel->getCommissionsById($comision['id']);
 $usuario = $userModel->getUserById($comision['usuario_id']);
 $director = $userModel->getDirectorName2();
-$jefeinmediato = $userModel->getJefeInmediato3($usuario['areaAdscripcion_id']);
+$jefeinmediato = $userModel->getJefeInmediato4($usuario['areaAdscripcion_id']);
 
 ?>
     <div class="header">

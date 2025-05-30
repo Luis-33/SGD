@@ -192,8 +192,8 @@ class UserModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-   
     public function updateUser($userID, $userNomina, $userName, $userCurp, $userRFC, $userEmail, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol, $userStatus, $userDiasEconomicos)
+
     {
         $query = "UPDATE usuario SET 
         usuario_nomina = :userNomina, 
@@ -229,6 +229,24 @@ class UserModel
 
         return $stmt->execute();
     }
+  
+  < feature/timebytime_pdf
+        public function getJefeInmediato4($areaAdscripcion_id)
+    {
+        $query = "SELECT usuario.*, puesto.* 
+          FROM usuario 
+          LEFT JOIN puesto ON usuario.puesto_id = puesto.puesto_id 
+          WHERE usuario.areaAdscripcion_id = :areaAdscripcion_id AND usuario.rol_id = 4";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':areaAdscripcion_id', $areaAdscripcion_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function addUser($userNomina, $userName, $userCurp, $userRFC, $userEmail, $userGenero, $userIngreso, $userCumple, $userPuesto, $userAdscripcion, $userJefe, $userSindicato, $userRol)
+=======
+   
 
     public function updatePassword($userID, $newPassword)
     {

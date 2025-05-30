@@ -3,16 +3,16 @@
         <div class="card_table_header">
             <h2><?php echo ($_SESSION['user_role'] == 3) ? "Mis Comisiones" : "Comisiones"; ?></h2>
             <div class="card_header_actions">
-                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>
-                    <button class="btn_entregadoo" data-status="Entregado" onclick="filterCommissions('Entregado')">Entregados</button>
+                <button class="btn_entregadoo" data-status="Entregado" onclick="filterCommissions('Entregado')">Entregados</button>
                     <button class="btn_Pendiente" data-status="Pendiente" onclick="filterCommissions('Pendiente')">Pendientes</button>
+                <?php if ($_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 4 || $_SESSION['user_role'] == 2) : ?>
                     <button class="btn_documento" onclick="openModal('comision')">Crear Comisión</button>
                 <?php endif; ?>
             </div>
         </div>
         <div class="card_table_body">
             <div class="search_input" id="searchForm">
-                <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar comision por Empleado - Fecha " : "Buscar comision por Empleado - Fecha " ?>">
+                <input type="text" id="searchInput" placeholder="<?php echo ($_SESSION['user_role'] == 3) ? "Buscar comision por Fecha " : "Buscar comision por Empleado - Fecha " ?>">
                 <i class="fa-solid fa-xmark" id="clear_input"></i>
             </div>
             <div class="table_header">

@@ -13,7 +13,7 @@ function generateModalEditLicencias($id)
     <div class=\"modal editlicencias{$id}\"> 
         <div class=\"modal_content\">
             <div class=\"modal_header\">
-                <h2>Actualizar comision</h2>
+                <h2>Actualizar licencia</h2>
                 <button onclick=\"closeModal('editlicencias{$id}')\">Cerrar</button> 
             </div>
             <div class=\"modal_body\">
